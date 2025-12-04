@@ -1,0 +1,40 @@
+---
+alwaysApply: true
+---
+
+日志要使用 `@nest-boot/logger` 这个日志库，`@nest-boot/logger` 是一个 JSON 日志库支持结构化日志记录。
+
+使用依赖注入日志服务：
+
+```typescript
+import { Logger } from '@nest-boot/logger';
+
+export class ExampleService {
+  constructor(private readonly logger: Logger) {}
+}
+```
+
+可以使用 `assign` 方法附着参数打印到上下文中，接下来打印的日志都会携带这个对象内容，已经 `assign` 过的参数后续打印日志时就不用携带这个参数了：
+
+```typescript
+this.logger.assign({ jobId: job.id });
+```
+
+日志打印消息不能有变量，支持在第二参数传递对象：
+
+```typescript
+this.logger.log('消息', { key: value });
+this.logger.error('消息', { err });
+this.logger.debug('消息', { key: value });
+this.logger.warn('消息', { key: value });
+```
+
+如果有错误对象，要使用 `err` 这个键来打印错误,注意 `err` 接收的是错误对象：
+
+```typescript
+try {
+  //
+} catch (err: Error) {
+  this.logger.error('消息', { err });
+}
+```

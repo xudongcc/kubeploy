@@ -1,0 +1,274 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AcceptWorkspaceInviteInput {
+  name: String
+}
+
+type AcceptWorkspaceInviteResult {
+  workspaceId: ID!
+  workspaceMember: WorkspaceMember!
+}
+
+input AddWorkspaceMemberInput {
+  email: String!
+}
+
+input CreateWorkspaceInput {
+  name: String!
+}
+
+input CreateWorkspaceInviteInput {
+  email: String
+  role: WorkspaceMemberRole!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type FileUpload {
+  fields: [FileUploadField!]!
+  url: String!
+}
+
+type FileUploadField {
+  name: String!
+  value: String!
+}
+
+input FileUploadInput {
+  fileSize: Int!
+  mimeType: String!
+  name: String!
+}
+
+type Mutation {
+  acceptWorkspaceInvite(input: AcceptWorkspaceInviteInput, token: String!): AcceptWorkspaceInviteResult!
+  addWorkspaceMember(input: AddWorkspaceMemberInput!): WorkspaceMember!
+  createFileUploads(input: [FileUploadInput!]!): [FileUpload!]!
+  createWorkspace(input: CreateWorkspaceInput!): Workspace!
+  createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
+  removeWorkspace: Workspace!
+  removeWorkspaceMember(id: ID!): WorkspaceMember!
+  updateWorkspace(input: UpdateWorkspaceInput!): Workspace!
+  updateWorkspaceMember(id: ID!, input: UpdateWorkspaceMemberInput!): WorkspaceMember
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+"""
+Returns information about pagination in a connection, in accordance with the [Relay specification](https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo).
+"""
+type PageInfo {
+  endCursor: String
+
+  """Whether there are more pages to fetch following the current page."""
+  hasNextPage: Boolean!
+
+  """Whether there are any pages prior to the current page."""
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type Query {
+  currentUser: User!
+  currentWorkspace: Workspace!
+  currentWorkspaceMember: WorkspaceMember!
+  workspace(id: ID!): Workspace
+  workspaceMember(id: ID!): WorkspaceMember
+  workspaceMemberByToken(token: String!): WorkspaceMember
+  workspaceMembers(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: WorkspaceMemberOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `role`, `created_at`
+    """
+    query: String
+  ): WorkspaceMemberConnection!
+  workspaces(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: WorkspaceOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): WorkspaceConnection!
+}
+
+input UpdateWorkspaceInput {
+  name: String
+}
+
+input UpdateWorkspaceMemberInput {
+  email: String
+  name: String
+  permissions: [WorkspacePermission!]
+  role: WorkspaceMemberRole
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type Workspace {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  features: [WorkspaceFeature!]!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type WorkspaceConnection {
+  """A list of edges."""
+  edges: [WorkspaceEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""
+An auto-generated type which holds one Workspace and a cursor during pagination.
+"""
+type WorkspaceEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of WorkspaceEdge."""
+  node: Workspace!
+}
+
+enum WorkspaceFeature {
+  AI
+}
+
+type WorkspaceMember {
+  createdAt: DateTime!
+  email: String
+  id: ID!
+  inviteExpiresAt: DateTime
+  inviteStatus: WorkspaceMemberInviteStatus
+  inviteToken: String
+  invitedBy: User
+  invitedByUserName: String
+  name: String!
+  permissions: [WorkspacePermission!]!
+  role: WorkspaceMemberRole!
+  updatedAt: DateTime!
+  user: User
+}
+
+type WorkspaceMemberConnection {
+  """A list of edges."""
+  edges: [WorkspaceMemberEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""
+An auto-generated type which holds one WorkspaceMember and a cursor during pagination.
+"""
+type WorkspaceMemberEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of WorkspaceMemberEdge."""
+  node: WorkspaceMember!
+}
+
+enum WorkspaceMemberInviteStatus {
+  ACCEPTED
+  EXPIRED
+  PENDING
+}
+
+"""Ordering options for workspacemember connections"""
+input WorkspaceMemberOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order workspacemembers by."""
+  field: WorkspaceMemberOrderField!
+}
+
+"""Properties by which workspacemember connections can be ordered."""
+enum WorkspaceMemberOrderField {
+  CREATED_AT
+  ID
+}
+
+enum WorkspaceMemberRole {
+  ADMIN
+  MEMBER
+  OWNER
+}
+
+"""Ordering options for workspace connections"""
+input WorkspaceOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order workspaces by."""
+  field: WorkspaceOrderField!
+}
+
+"""Properties by which workspace connections can be ordered."""
+enum WorkspaceOrderField {
+  CREATED_AT
+  ID
+}
+
+enum WorkspacePermission {
+  DELETE_FILES
+  MANAGE_FILES
+  MANAGE_MEMBERS
+  MANAGE_TAGS
+  MANAGE_WORKSPACE
+}

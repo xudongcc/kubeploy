@@ -1,0 +1,12 @@
+{
+  "extends": "@nest-boot/tsconfig/app.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/common/*": ["./src/common/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/*": ["./src/app/*"]
+    },
+    "outDir": "./dist"
+  }
+}

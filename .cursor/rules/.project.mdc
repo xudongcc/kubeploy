@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## 项目概览
+这是一个视频本地化平台，支持视频转录、翻译、配音和渲染。
+项目采用 pnpm workspace + turborepo 的 monorepo 架构。
+
+## 技术栈
+
+### 后端 (apps/api)
+
+### 前端 (apps/web) 
+
+
+## 辅助开发说明
+1. 不要运行 start 或者 dev 命令。

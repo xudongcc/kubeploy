@@ -1,0 +1,1 @@
+export const PERMISSION_ABILITY = Symbol('PERMISSION_ABILITY');

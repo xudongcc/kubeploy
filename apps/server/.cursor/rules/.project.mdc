@@ -1,0 +1,170 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 视频本地化平台 - 后端规则
+
+## 项目概览
+这是一个基于 NestJS 的视频本地化平台后端服务，支持视频转录、翻译、配音和渲染等功能。
+
+## 技术栈
+
+### 核心框架
+- **NestJS**: 企业级 Node.js 框架
+- **GraphQL**: 使用 Apollo Server 提供 API 服务
+- **TypeScript**: 类型安全的 JavaScript 超集
+
+### 数据库与 ORM
+- **PostgreSQL**: 主数据库
+- **MikroORM**: TypeScript ORM，支持 Active Record 模式
+- **数据库迁移**: 使用 MikroORM 管理数据库版本
+
+### 队列与后台任务
+- **BullMQ**: Redis 队列管理，处理异步任务
+- **背景任务**: 视频处理、转录、翻译、配音等长时间运行的任务
+
+### 第三方服务集成
+- **OpenAI**: 用于转录和翻译服务
+- **DeepL**: 高质量翻译服务
+- **AWS S3**: 文件存储服务
+- **Minimax**: 语音合成服务
+
+## 架构模式
+
+### 模块化架构
+```
+src/
+├── common/           # 通用模块和服务
+├── auth/            # 认证和授权
+├── user/            # 用户管理
+├── workspace/       # 工作空间管理
+├── project/         # 项目管理
+├── dubbing-segment/ # 配音片段
+├── voice/           # 语音管理
+├── voice-cloning/   # 语音克隆
+├── project-*/       # 项目相关的处理模块
+├── credit/          # 积分系统
+├── subscription/    # 订阅管理
+└── storage/         # 存储服务
+```
+
+### 分层架构
+1. **Controller/Resolver**: GraphQL 解析器
+2. **Service**: 业务逻辑层
+3. **Entity**: 数据模型
+4. **Repository**: 数据访问层
+5. **Queue**: 异步任务处理
+
+## 开发规范
+
+### 命名约定
+- **文件命名**: 使用 kebab-case (例: `user-profile.service.ts`)
+- **类命名**: 使用 PascalCase (例: `UserProfileService`)
+- **方法命名**: 使用 camelCase (例: `getUserProfile`)
+- **常量命名**: 使用 UPPER_SNAKE_CASE (例: `MAX_FILE_SIZE`)
+
+### 模块结构
+每个功能模块应包含：
+```
+module-name/
+├── dto/              # 数据传输对象
+├── entities/         # 数据实体
+├── enums/           # 枚举定义
+├── interfaces/      # 接口定义
+├── module-name.module.ts     # 模块定义
+├── module-name.service.ts    # 服务层
+├── module-name.resolver.ts   # GraphQL 解析器
+└── module-name.entity.ts     # 实体定义
+```
+
+### 实体规范
+- 所有实体文件以 `.entity.ts` 结尾
+- 使用 MikroORM 装饰器定义实体关系
+- 同一类型实体下关联名称可以省略类型部分如：
+  ```typescript
+  @Entity()
+  export class DubbingSegment {
+    @ManyToOne(() => DubbingSpeaker)
+    speaker: Ref<DubbingSpeaker>;
+  }
+  ```
+- 实体服务不使用 `@InjectRepository()`，而是继承 `EntityService` 类，在 `EntityService` 中有很多实用方法，尽量复用这些代码。
+  ```typescript
+  @Injectable()
+  export class DubbingSpeakerService extends EntityService<DubbingSpeaker> {
+    constructor(protected readonly em: EntityManager) {
+      super(DubbingSpeaker, em);
+    }
+  }
+  ```
+
+### 数据库规范
+- 迁移文件应当用 `pnpm migration:create` 命令创建
+
+### GraphQL 规范
+- 使用 **Code First** 方式定义 Schema
+- 所有 Input 类型以 `.input.ts` 结尾
+- 所有 Object 类型以 `.object.ts` 结尾
+- 使用 DataLoader 避免 N+1 查询问题
+
+### 错误处理
+- 使用 NestJS 内置的异常过滤器
+- 自定义异常继承自 `HttpException`
+- 统一错误码和错误消息格式
+
+### 队列任务
+- 所有队列服务以 `-queue.service.ts` 结尾
+- 使用 `@Processor` 装饰器定义处理器
+- 任务接口定义在 `interfaces.ts` 文件中
+
+## 环境配置
+
+### 必需环境变量
+- `DATABASE_HOST`: 数据库主机
+- `DATABASE_PORT`: 数据库端口
+- `DATABASE_NAME`: 数据库名称
+- `DATABASE_USERNAME`: 数据库用户名
+- `DATABASE_PASSWORD`: 数据库密码
+- `REDIS_HOST`: Redis 主机
+- `REDIS_PORT`: Redis 端口
+- `JWT_SECRET`: JWT 密钥
+- `AWS_ACCESS_KEY_ID`: AWS 访问密钥
+- `AWS_SECRET_ACCESS_KEY`: AWS 密钥
+- `AWS_REGION`: AWS 区域
+- `AWS_S3_BUCKET`: S3 存储桶
+
+## 部署与运维
+
+### 脚本命令
+- `npm run dev`: 开发模式启动
+- `npm run build`: 构建生产版本
+- `npm run start`: 生产模式启动
+- `npm run migration:up`: 执行数据库迁移
+- `npm run migration:down`: 回滚数据库迁移
+- `npm run seeder:run`: 执行数据库种子
+
+### Docker 部署
+- 使用 Dockerfile 构建镜像
+- 支持 Helm Chart 部署到 Kubernetes
+- 提供 pre-upgrade 和 pre-rollback 钩子
+
+## 测试规范
+- 单元测试文件以 `.spec.ts` 结尾
+- 集成测试文件以 `.e2e-spec.ts` 结尾
+- 使用 Jest 作为测试框架
+- 保持测试覆盖率在 80% 以上
+
+## 安全规范
+- 使用 JWT 进行身份验证
+- 实现基于角色的访问控制 (RBAC)
+- 对所有输入进行验证和清理
+- 使用 HTTPS 传输敏感数据
+- 定期更新依赖项以修复安全漏洞
+
+## 性能优化
+- 使用 DataLoader 优化数据库查询
+- 实现查询缓存机制
+- 使用队列处理耗时任务
+- 实现文件上传的预签名 URL
+- 使用 CDN 加速静态资源访问

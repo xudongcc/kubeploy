@@ -1,0 +1,243 @@
+.merge_request_rules: &merge_request_rules
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+
+.release_merge_request_rules: &release_merge_request_rules
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "beta"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "alpha"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^[0-9]+(.([0-9]+|x))?.x$/
+
+.push_branch_rules: &push_branch_rules
+  - if: $CI_COMMIT_BRANCH =~ /^[0-9]+(.([0-9]+|x))?.x$/
+  - if: $CI_COMMIT_BRANCH == "master"
+  - if: $CI_COMMIT_BRANCH == "beta"
+  - if: $CI_COMMIT_BRANCH == "alpha"
+
+.pnpm_cache: &pnpm_cache
+  key:
+    files:
+      - pnpm-lock.yaml
+  paths:
+    - .pnpm-store
+  policy: pull
+
+.pnpm_template: &pnpm_template
+  image: registry.internal.codefriend.top/ci/node:22
+  before_script:
+    - export PNPM_HOME="/pnpm"
+    - export PATH="$PNPM_HOME:$PATH"
+    - corepack enable pnpm
+    - pnpm config set store-dir .pnpm-store
+    - pnpm install --frozen-lockfile
+  cache:
+    - *pnpm_cache
+
+.dockerized_template: &dockerized_template
+  image: registry.internal.codefriend.top/ci/kaniko-project/executor:v1.9.0-debug
+  before_script:
+    - export DOCKER_TAG=${CI_COMMIT_TAG#v}
+    - if [ -z "$DOCKERFILE_PATH" ]; then export DOCKERFILE_PATH="${CI_PROJECT_DIR}/Dockerfile"; fi
+    - if [ -z "$DOCKER_REPOSITORY" ]; then export DOCKER_REPOSITORY="$CI_PROJECT_PATH"; fi
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"},\"$DOCKER_REGISTRY\":{\"auth\":\"$(printf "%s:%s" ${DOCKER_USERNAME} "${DOCKER_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+  script:
+    - /kaniko/executor
+      --cache=true
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${DOCKERFILE_PATH}"
+      --destination "${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${DOCKER_TAG}"
+
+stages:
+  - build
+  - lint
+  - test
+  - release
+  - dockerized
+  - tag-update
+
+build:
+  <<: *pnpm_template
+  stage: build
+  script:
+    - pnpm build
+  rules:
+    - *merge_request_rules
+  cache:
+    - <<: *pnpm_cache
+      policy: pull-push
+    - key:
+        files:
+          - pnpm-lock.yaml
+      paths:
+        - .turbo
+        - node_modules/.cache/turbo
+        - apps/*/.next/cache
+        - apps/*/.turbo
+  artifacts:
+    expire_in: 1 days
+    when: on_success
+    paths:
+      - apps/*/dist
+      - packages/*/dist
+
+lint:
+  <<: *pnpm_template
+  stage: lint
+  script:
+    - pnpm lint
+  rules:
+    - *merge_request_rules
+
+semantic-release:
+  <<: *pnpm_template
+  stage: release
+  script:
+    - pnpm -g install semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/gitlab
+    - semantic-release
+  rules:
+    - *push_branch_rules
+
+dockerized-web:
+  <<: *dockerized_template
+  stage: dockerized
+  variables:
+    DOCKERFILE_PATH: apps/web/Dockerfile
+    DOCKER_REPOSITORY: creative-hub/web
+  script:
+    - /kaniko/executor
+      --cache=false
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${DOCKERFILE_PATH}"
+      --destination "${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${DOCKER_TAG}"
+  rules:
+    - if: $CI_COMMIT_TAG
+
+dockerized-api:
+  <<: *dockerized_template
+  stage: dockerized
+  variables:
+    DOCKERFILE_PATH: apps/api/Dockerfile
+    DOCKER_REPOSITORY: creative-hub/api
+  script:
+    - /kaniko/executor
+      --cache=false
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${DOCKERFILE_PATH}"
+      --destination "${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${DOCKER_TAG}"
+  rules:
+    - if: $CI_COMMIT_TAG
+
+############################## 其他分支提交触发更新镜像tag动作 ##############################
+tag-update-web-stag:
+  image: registry.internal.codefriend.top/infrastructure/argocd-tag-update:latest
+  dependencies: []
+  stage: tag-update
+  script:
+    - |
+      if [[ `echo ${CI_COMMIT_TAG} | grep -P "^v\d+\.\d+\.\d.*beta.*$" |wc -l` -eq 0 ]]; then
+          echo "${CI_COMMIT_TAG} 不符合stag环境发布条件"
+          exit 0
+      fi
+    - export PROJECT_NAME="creative-hub"
+    - export PROJECT_DEPLOY_ENV="stag"
+    # 国内大陆及香港地区不是使用 git@git.papamk.com:manifests/applications.git
+    # 国外使用 git@git.papamk.com:manifests/applications-us.git
+    - export ARGOCD_APP_REPO="git@git.papamk.com:manifests/applications.git"
+    # 使用对应部署HELM模版的gitlab项目id
+    - export HELM_GITLAB_PROJECT_ID="2637"
+    # 单文件提交的文件名称，与后续arogcd application配置对应
+    - export VALUE_FILE_NAME="values-stag-web.yaml"
+    - export IMAGE_REPO_NAME="repository1"
+    - export IMAGE_REPO_VALUE="${DOCKER_REGISTRY}/creative-hub/web"
+    - export IMAGE_TAG_NAME="tag1"
+    - export IMAGE_TAG_VALUE="${CI_COMMIT_TAG#v}"
+    - argocd-tag-update
+  only:
+    - tags
+############################## 结束镜像tag更新 ##############################
+
+############################## 其他分支提交触发更新镜像tag动作 ##############################
+tag-update-api-stag:
+  image: registry.internal.codefriend.top/infrastructure/argocd-tag-update:latest
+  dependencies: []
+  stage: tag-update
+  script:
+    - |
+      if [[ `echo ${CI_COMMIT_TAG} | grep -P "^v\d+\.\d+\.\d.*beta.*$" |wc -l` -eq 0 ]]; then
+          echo "${CI_COMMIT_TAG} 不符合stag环境发布条件"
+          exit 0
+      fi
+    - export PROJECT_NAME="creative-hub"
+    - export PROJECT_DEPLOY_ENV="stag"
+    # 国内大陆及香港地区不是使用 git@git.papamk.com:manifests/applications.git
+    # 国外使用 git@git.papamk.com:manifests/applications-us.git
+    - export ARGOCD_APP_REPO="git@git.papamk.com:manifests/applications.git"
+    # 使用对应部署HELM模版的gitlab项目id
+    - export HELM_GITLAB_PROJECT_ID="2637"
+    # 单文件提交的文件名称，与后续arogcd application配置对应
+    - export VALUE_FILE_NAME="values-stag-api.yaml"
+    - export IMAGE_REPO_NAME="repository2"
+    - export IMAGE_REPO_VALUE="${DOCKER_REGISTRY}/creative-hub/api"
+    - export IMAGE_TAG_NAME="tag2"
+    - export IMAGE_TAG_VALUE="${CI_COMMIT_TAG#v}"
+    - argocd-tag-update
+  only:
+    - tags
+############################## 结束镜像tag更新 ##############################
+
+############################## 其他分支提交触发更新镜像tag动作 ##############################
+tag-update-web-prod:
+  image: registry.internal.codefriend.top/infrastructure/argocd-tag-update:latest
+  dependencies: []
+  stage: tag-update
+  script:
+    - |
+      if [[ `echo ${CI_COMMIT_TAG} | grep -P "^v\d+\.\d+\.\d$" |wc -l` -eq 0 ]]; then
+          echo "${CI_COMMIT_TAG} 不符合prod环境发布条件"
+          exit 0
+      fi
+    - export PROJECT_NAME="creative-hub"
+    - export PROJECT_DEPLOY_ENV="prod"
+    # 国内大陆及香港地区不是使用 git@git.papamk.com:manifests/applications.git
+    # 国外使用 git@git.papamk.com:manifests/applications-us.git
+    - export ARGOCD_APP_REPO="git@git.papamk.com:manifests/applications.git"
+    # 使用对应部署HELM模版的gitlab项目id
+    - export HELM_GITLAB_PROJECT_ID="2637"
+    # 单文件提交的文件名称，与后续arogcd application配置对应
+    - export VALUE_FILE_NAME="values-prod-web.yaml"
+    - export IMAGE_REPO_NAME="repository1"
+    - export IMAGE_REPO_VALUE="${DOCKER_REGISTRY}/creative-hub/web"
+    - export IMAGE_TAG_NAME="tag1"
+    - export IMAGE_TAG_VALUE="${CI_COMMIT_TAG#v}"
+    - argocd-tag-update
+  only:
+    - tags
+############################## 结束镜像tag更新 ##############################
+
+############################## 其他分支提交触发更新镜像tag动作 ##############################
+tag-update-api-prod:
+  image: registry.internal.codefriend.top/infrastructure/argocd-tag-update:latest
+  dependencies: []
+  stage: tag-update
+  script:
+    - |
+      if [[ `echo ${CI_COMMIT_TAG} | grep -P "^v\d+\.\d+\.\d$" |wc -l` -eq 0 ]]; then
+          echo "${CI_COMMIT_TAG} 不符合prod环境发布条件"
+          exit 0
+      fi
+    - export PROJECT_NAME="creative-hub"
+    - export PROJECT_DEPLOY_ENV="prod"
+    # 国内大陆及香港地区不是使用 git@git.papamk.com:manifests/applications.git
+    # 国外使用 git@git.papamk.com:manifests/applications-us.git
+    - export ARGOCD_APP_REPO="git@git.papamk.com:manifests/applications.git"
+    # 使用对应部署HELM模版的gitlab项目id
+    - export HELM_GITLAB_PROJECT_ID="2637"
+    # 单文件提交的文件名称，与后续arogcd application配置对应
+    - export VALUE_FILE_NAME="values-prod-api.yaml"
+    - export IMAGE_REPO_NAME="repository2"
+    - export IMAGE_REPO_VALUE="${DOCKER_REGISTRY}/creative-hub/api"
+    - export IMAGE_TAG_NAME="tag2"
+    - export IMAGE_TAG_VALUE="${CI_COMMIT_TAG#v}"
+    - argocd-tag-update
+  only:
+    - tags
+############################## 结束镜像tag更新 ##############################

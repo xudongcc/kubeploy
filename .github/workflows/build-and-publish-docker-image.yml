@@ -1,0 +1,82 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    tags:
+      - "@*/*@*"
+
+env:
+  REGISTRY: ghcr.io
+  REPOSITORY: ${{ github.repository }}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine app and version from tag
+        id: app_info
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "Full tag: $TAG_NAME"
+
+          # 使用正则表达式匹配 @scope/app@version 格式
+          if [[ $TAG_NAME =~ ^@[^/]+/([^@]+)@(.+)$ ]]; then
+            APP_NAME="${BASH_REMATCH[1]}"
+            VERSION="${BASH_REMATCH[2]}"
+            
+            # 检查应用目录是否存在
+            if [[ ! -d "./apps/$APP_NAME" ]]; then
+              echo "Error: App directory './apps/$APP_NAME' does not exist"
+              exit 1
+            fi
+            
+            # 检查 Dockerfile 是否存在
+            if [[ ! -f "./apps/$APP_NAME/Dockerfile" ]]; then
+              echo "Error: Dockerfile not found at './apps/$APP_NAME/Dockerfile'"
+              exit 1
+            fi
+            
+            echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "image_name=${{ env.REGISTRY }}/${{ env.REPOSITORY }}/$APP_NAME" >> $GITHUB_OUTPUT
+            echo "dockerfile=./apps/$APP_NAME/Dockerfile" >> $GITHUB_OUTPUT
+            
+            echo "Building $APP_NAME version $VERSION"
+          else
+            echo "Error: Tag format should be @scope/app@version, got: $TAG_NAME"
+            exit 1
+          fi
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.app_info.outputs.image_name }}
+          tags: |
+            type=raw,value=${{ steps.app_info.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ steps.app_info.outputs.dockerfile }}
+          pull: true
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
