@@ -1,0 +1,6 @@
+query GetCurrentWorkspace {
+  currentWorkspace {
+    id
+    ...Workspace @unmask
+  }
+}
