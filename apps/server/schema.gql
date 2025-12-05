@@ -15,6 +15,13 @@ input AddWorkspaceMemberInput {
   email: String!
 }
 
+input CreateDomainInput {
+  host: String!
+  path: String = "/"
+  serviceId: ID!
+  servicePort: Int!
+}
+
 input CreateProjectInput {
   name: String!
 }
@@ -41,6 +48,52 @@ input CreateWorkspaceInviteInput {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Domain {
+  createdAt: DateTime!
+  host: String!
+  id: ID!
+  path: String!
+  servicePort: Int!
+  updatedAt: DateTime!
+}
+
+type DomainConnection {
+  """A list of edges."""
+  edges: [DomainEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""
+An auto-generated type which holds one Domain and a cursor during pagination.
+"""
+type DomainEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of DomainEdge."""
+  node: Domain!
+}
+
+"""Ordering options for domain connections"""
+input DomainOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order domains by."""
+  field: DomainOrderField!
+}
+
+"""Properties by which domain connections can be ordered."""
+enum DomainOrderField {
+  CREATED_AT
+  ID
+}
 
 type EnvironmentVariable {
   key: String!
@@ -71,15 +124,18 @@ input FileUploadInput {
 type Mutation {
   acceptWorkspaceInvite(input: AcceptWorkspaceInviteInput, token: String!): AcceptWorkspaceInviteResult!
   addWorkspaceMember(input: AddWorkspaceMemberInput!): WorkspaceMember!
+  createDomain(input: CreateDomainInput!): Domain!
   createFileUploads(input: [FileUploadInput!]!): [FileUpload!]!
   createProject(input: CreateProjectInput!): Project!
   createService(input: CreateServiceInput!): Service!
   createWorkspace(input: CreateWorkspaceInput!): Workspace!
   createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
+  removeDomain(id: ID!): Domain!
   removeProject(id: ID!): Project!
   removeService(id: ID!): Service!
   removeWorkspace: Workspace!
   removeWorkspaceMember(id: ID!): WorkspaceMember!
+  updateDomain(id: ID!, input: UpdateDomainInput!): Domain!
   updateProject(id: ID!, input: UpdateProjectInput!): Project!
   updateService(id: ID!, input: UpdateServiceInput!): Service!
   updateWorkspace(input: UpdateWorkspaceInput!): Workspace!
@@ -153,6 +209,31 @@ type Query {
   currentUser: User!
   currentWorkspace: Workspace!
   currentWorkspaceMember: WorkspaceMember!
+  domain(id: ID!): Domain
+  domains(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: DomainOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+    serviceId: ID!
+  ): DomainConnection!
   project(id: ID!): Project
   projects(
     """Returns the elements that come after the specified cursor."""
@@ -299,6 +380,12 @@ input ServiceOrder {
 enum ServiceOrderField {
   CREATED_AT
   ID
+}
+
+input UpdateDomainInput {
+  host: String
+  path: String
+  servicePort: Int
 }
 
 input UpdateProjectInput {

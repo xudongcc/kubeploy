@@ -1,9 +1,11 @@
 import {
   ArrayType,
+  Collection,
   Embeddable,
   Embedded,
   Entity,
   ManyToOne,
+  OneToMany,
   Opt,
   PrimaryKey,
   Property,
@@ -13,6 +15,7 @@ import {
 import { Field, ID, Int, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
+import { Domain } from '@/domain/domain.entity';
 import { Project } from '@/project/project.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
@@ -51,7 +54,7 @@ export class Service {
 
   // eslint-disable-next-line @nest-boot/entity-property-config-from-types
   @Field(() => [Int])
-  @Property({ type: new ArrayType((i) => +i), default: [] })
+  @Property({ type: new ArrayType((i) => +i), unsigned: true, default: [] })
   ports: Opt<number[]> = [];
 
   // eslint-disable-next-line @nest-boot/entity-property-config-from-types
@@ -76,6 +79,9 @@ export class Service {
 
   @ManyToOne(() => Project)
   project!: Ref<Project>;
+
+  @OneToMany(() => Domain, (domain) => domain.service)
+  domains = new Collection<Domain>(this);
 
   get kubeDeploymentName(): Opt<string> {
     return `kp-${this.id}`;

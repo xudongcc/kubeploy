@@ -45,6 +45,13 @@ export type AddWorkspaceMemberInput = {
   email: Scalars['String']['input']
 }
 
+export type CreateDomainInput = {
+  host: Scalars['String']['input']
+  path?: InputMaybe<Scalars['String']['input']>
+  serviceId: Scalars['ID']['input']
+  servicePort: Scalars['Int']['input']
+}
+
 export type CreateProjectInput = {
   name: Scalars['String']['input']
 }
@@ -65,6 +72,49 @@ export type CreateWorkspaceInput = {
 export type CreateWorkspaceInviteInput = {
   email?: InputMaybe<Scalars['String']['input']>
   role: WorkspaceMemberRole
+}
+
+export type Domain = {
+  __typename?: 'Domain'
+  createdAt: Scalars['DateTime']['output']
+  host: Scalars['String']['output']
+  id: Scalars['ID']['output']
+  path: Scalars['String']['output']
+  servicePort: Scalars['Int']['output']
+  updatedAt: Scalars['DateTime']['output']
+}
+
+export type DomainConnection = {
+  __typename?: 'DomainConnection'
+  /** A list of edges. */
+  edges: Array<DomainEdge>
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo
+  /** Identifies the total count of items in the connection. */
+  totalCount: Scalars['Int']['output']
+}
+
+/** An auto-generated type which holds one Domain and a cursor during pagination. */
+export type DomainEdge = {
+  __typename?: 'DomainEdge'
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String']['output']
+  /** The item at the end of DomainEdge. */
+  node: Domain
+}
+
+/** Ordering options for domain connections */
+export type DomainOrder = {
+  /** The ordering direction. */
+  direction: OrderDirection
+  /** The field to order domains by. */
+  field: DomainOrderField
+}
+
+/** Properties by which domain connections can be ordered. */
+export enum DomainOrderField {
+  CREATED_AT = 'CREATED_AT',
+  ID = 'ID',
 }
 
 export type EnvironmentVariable = {
@@ -100,15 +150,18 @@ export type Mutation = {
   __typename?: 'Mutation'
   acceptWorkspaceInvite: AcceptWorkspaceInviteResult
   addWorkspaceMember: WorkspaceMember
+  createDomain: Domain
   createFileUploads: Array<FileUpload>
   createProject: Project
   createService: Service
   createWorkspace: Workspace
   createWorkspaceInvite: WorkspaceMember
+  removeDomain: Domain
   removeProject: Project
   removeService: Service
   removeWorkspace: Workspace
   removeWorkspaceMember: WorkspaceMember
+  updateDomain: Domain
   updateProject: Project
   updateService: Service
   updateWorkspace: Workspace
@@ -122,6 +175,10 @@ export type MutationAcceptWorkspaceInviteArgs = {
 
 export type MutationAddWorkspaceMemberArgs = {
   input: AddWorkspaceMemberInput
+}
+
+export type MutationCreateDomainArgs = {
+  input: CreateDomainInput
 }
 
 export type MutationCreateFileUploadsArgs = {
@@ -144,6 +201,10 @@ export type MutationCreateWorkspaceInviteArgs = {
   input: CreateWorkspaceInviteInput
 }
 
+export type MutationRemoveDomainArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationRemoveProjectArgs = {
   id: Scalars['ID']['input']
 }
@@ -154,6 +215,11 @@ export type MutationRemoveServiceArgs = {
 
 export type MutationRemoveWorkspaceMemberArgs = {
   id: Scalars['ID']['input']
+}
+
+export type MutationUpdateDomainArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateDomainInput
 }
 
 export type MutationUpdateProjectArgs = {
@@ -237,6 +303,8 @@ export type Query = {
   currentUser: User
   currentWorkspace: Workspace
   currentWorkspaceMember: WorkspaceMember
+  domain?: Maybe<Domain>
+  domains: DomainConnection
   project?: Maybe<Project>
   projects: ProjectConnection
   service?: Maybe<Service>
@@ -246,6 +314,20 @@ export type Query = {
   workspaceMemberByToken?: Maybe<WorkspaceMember>
   workspaceMembers: WorkspaceMemberConnection
   workspaces: WorkspaceConnection
+}
+
+export type QueryDomainArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryDomainsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  before?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<DomainOrder>
+  query?: InputMaybe<Scalars['String']['input']>
+  serviceId: Scalars['ID']['input']
 }
 
 export type QueryProjectArgs = {
@@ -348,6 +430,12 @@ export type ServiceOrder = {
 export enum ServiceOrderField {
   CREATED_AT = 'CREATED_AT',
   ID = 'ID',
+}
+
+export type UpdateDomainInput = {
+  host?: InputMaybe<Scalars['String']['input']>
+  path?: InputMaybe<Scalars['String']['input']>
+  servicePort?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type UpdateProjectInput = {

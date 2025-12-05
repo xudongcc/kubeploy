@@ -1,4 +1,9 @@
-import { AppsV1Api, CoreV1Api, KubeConfig } from '@kubernetes/client-node';
+import {
+  AppsV1Api,
+  CoreV1Api,
+  KubeConfig,
+  NetworkingV1Api,
+} from '@kubernetes/client-node';
 import { Module } from '@nestjs/common';
 
 @Module({
@@ -25,7 +30,14 @@ import { Module } from '@nestjs/common';
         return kubeConfig.makeApiClient(CoreV1Api);
       },
     },
+    {
+      provide: NetworkingV1Api,
+      inject: [KubeConfig],
+      useFactory: (kubeConfig: KubeConfig) => {
+        return kubeConfig.makeApiClient(NetworkingV1Api);
+      },
+    },
   ],
-  exports: [AppsV1Api, CoreV1Api],
+  exports: [AppsV1Api, CoreV1Api, NetworkingV1Api],
 })
 export class KubernetesModule {}

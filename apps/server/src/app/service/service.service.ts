@@ -1,8 +1,6 @@
 import {
   AppsV1Api,
   CoreV1Api,
-  PatchStrategy,
-  setHeaderOptions,
   V1Deployment,
   V1Service,
 } from '@kubernetes/client-node';
@@ -11,15 +9,10 @@ import { EntityService, IdOrEntity } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
 
 import { CreateEntityData } from '@/common/types/create-entity-data.type';
+import { configurationOptions, fieldManager } from '@/kubernetes';
 import { ProjectService } from '@/project/project.service';
 
 import { Service } from './service.entity';
-
-const FIELD_MANAGER = 'kubeploy';
-const SERVER_SIDE_APPLY_OPTIONS = setHeaderOptions(
-  'Content-Type',
-  PatchStrategy.ServerSideApply,
-);
 
 @Injectable()
 export class ServiceService extends EntityService<Service> {
@@ -72,10 +65,10 @@ export class ServiceService extends EntityService<Service> {
         name: service.kubeDeploymentName,
         namespace,
         body: deploymentBody,
-        fieldManager: FIELD_MANAGER,
+        fieldManager,
         force: true,
       },
-      SERVER_SIDE_APPLY_OPTIONS,
+      configurationOptions,
     );
 
     // Sync Service (only if ports are defined)
@@ -86,10 +79,10 @@ export class ServiceService extends EntityService<Service> {
           name: service.kubeServiceName,
           namespace,
           body: serviceBody,
-          fieldManager: FIELD_MANAGER,
+          fieldManager,
           force: true,
         },
-        SERVER_SIDE_APPLY_OPTIONS,
+        configurationOptions,
       );
     } else {
       // Delete service if no ports are defined

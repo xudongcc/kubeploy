@@ -1,0 +1,70 @@
+import { Args, ID, Mutation, Query, Resolver } from '@nest-boot/graphql';
+import { ConnectionManager } from '@nest-boot/graphql-connection';
+
+import { Can, PermissionAction } from '@/lib/permission';
+
+import {
+  DomainConnection,
+  DomainConnectionArgs,
+} from './domain.connection-definition';
+import { Domain } from './domain.entity';
+import { DomainService } from './domain.service';
+import { CreateDomainInput } from './inputs/create-domain.input';
+import { UpdateDomainInput } from './inputs/update-domain.input';
+
+@Resolver(() => Domain)
+export class DomainResolver {
+  constructor(
+    private readonly domainService: DomainService,
+    private readonly cm: ConnectionManager,
+  ) {}
+
+  @Can(PermissionAction.READ, Domain)
+  @Query(() => Domain, { nullable: true })
+  async domain(
+    @Args({ name: 'id', type: () => ID }) id: string,
+  ): Promise<Domain | null> {
+    return await this.domainService.findOne({ id });
+  }
+
+  @Can(PermissionAction.READ, Domain)
+  @Query(() => DomainConnection)
+  async domains(
+    @Args({ name: 'serviceId', type: () => ID }) serviceId: string,
+    @Args() args: DomainConnectionArgs,
+  ) {
+    return await this.cm.find(DomainConnection, args, {
+      where: { service: { id: serviceId } },
+    });
+  }
+
+  @Can(PermissionAction.CREATE, Domain)
+  @Mutation(() => Domain)
+  async createDomain(
+    @Args('input') input: CreateDomainInput,
+  ): Promise<Domain> {
+    return await this.domainService.createDomain({
+      host: input.host,
+      path: input.path ?? '/',
+      servicePort: input.servicePort,
+      service: input.serviceId,
+    });
+  }
+
+  @Can(PermissionAction.UPDATE, Domain)
+  @Mutation(() => Domain)
+  async updateDomain(
+    @Args({ name: 'id', type: () => ID }) id: string,
+    @Args('input') input: UpdateDomainInput,
+  ): Promise<Domain> {
+    return await this.domainService.update(id, input);
+  }
+
+  @Can(PermissionAction.DELETE, Domain)
+  @Mutation(() => Domain)
+  async removeDomain(
+    @Args({ name: 'id', type: () => ID }) id: string,
+  ): Promise<Domain> {
+    return await this.domainService.remove(id);
+  }
+}

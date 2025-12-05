@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { CommonModule } from '@/common/common.module';
+import { DomainModule } from '@/domain/domain.module';
 import { ProjectModule } from '@/project/project.module';
 import { ServiceModule } from '@/service/service.module';
 import { UserModule } from '@/user/user.module';
@@ -15,6 +16,7 @@ import { WorkspaceMemberModule } from '@/workspace-member/workspace-member.modul
     WorkspaceMemberModule,
     ProjectModule,
     ServiceModule,
+    DomainModule,
   ],
 })
 export class AppModule {}
