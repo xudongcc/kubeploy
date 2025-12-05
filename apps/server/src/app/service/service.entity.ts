@@ -1,4 +1,5 @@
 import {
+  ArrayType,
   Embeddable,
   Embedded,
   Entity,
@@ -48,8 +49,9 @@ export class Service {
   @Property({ type: t.integer, default: 1 })
   replicas: Opt<number> = 1;
 
+  // eslint-disable-next-line @nest-boot/entity-property-config-from-types
   @Field(() => [Int])
-  @Property({ type: t.array, default: [] })
+  @Property({ type: new ArrayType((i) => +i), default: [] })
   ports: Opt<number[]> = [];
 
   // eslint-disable-next-line @nest-boot/entity-property-config-from-types

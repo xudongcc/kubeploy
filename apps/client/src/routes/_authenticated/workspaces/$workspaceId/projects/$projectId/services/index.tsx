@@ -152,6 +152,20 @@ function RouteComponent() {
           {
             accessorKey: 'name',
             header: 'Name',
+            cell: ({ row }) => {
+              return (
+                <Link
+                  to="/workspaces/$workspaceId/projects/$projectId/services/$serviceId"
+                  params={{
+                    workspaceId,
+                    projectId,
+                    serviceId: row.original.id,
+                  }}
+                >
+                  {row.original.name}
+                </Link>
+              )
+            },
           },
           {
             accessorKey: 'image',
