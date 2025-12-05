@@ -45,6 +45,10 @@ export type AddWorkspaceMemberInput = {
   email: Scalars['String']['input']
 }
 
+export type CreateProjectInput = {
+  name: Scalars['String']['input']
+}
+
 export type CreateWorkspaceInput = {
   name: Scalars['String']['input']
 }
@@ -77,10 +81,13 @@ export type Mutation = {
   acceptWorkspaceInvite: AcceptWorkspaceInviteResult
   addWorkspaceMember: WorkspaceMember
   createFileUploads: Array<FileUpload>
+  createProject: Project
   createWorkspace: Workspace
   createWorkspaceInvite: WorkspaceMember
+  removeProject: Project
   removeWorkspace: Workspace
   removeWorkspaceMember: WorkspaceMember
+  updateProject: Project
   updateWorkspace: Workspace
   updateWorkspaceMember?: Maybe<WorkspaceMember>
 }
@@ -98,6 +105,10 @@ export type MutationCreateFileUploadsArgs = {
   input: Array<FileUploadInput>
 }
 
+export type MutationCreateProjectArgs = {
+  input: CreateProjectInput
+}
+
 export type MutationCreateWorkspaceArgs = {
   input: CreateWorkspaceInput
 }
@@ -106,8 +117,17 @@ export type MutationCreateWorkspaceInviteArgs = {
   input: CreateWorkspaceInviteInput
 }
 
+export type MutationRemoveProjectArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationRemoveWorkspaceMemberArgs = {
   id: Scalars['ID']['input']
+}
+
+export type MutationUpdateProjectArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateProjectInput
 }
 
 export type MutationUpdateWorkspaceArgs = {
@@ -135,16 +155,72 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']['output']>
 }
 
+export type Project = {
+  __typename?: 'Project'
+  createdAt: Scalars['DateTime']['output']
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
+  updatedAt: Scalars['DateTime']['output']
+}
+
+export type ProjectConnection = {
+  __typename?: 'ProjectConnection'
+  /** A list of edges. */
+  edges: Array<ProjectEdge>
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo
+  /** Identifies the total count of items in the connection. */
+  totalCount: Scalars['Int']['output']
+}
+
+/** An auto-generated type which holds one Project and a cursor during pagination. */
+export type ProjectEdge = {
+  __typename?: 'ProjectEdge'
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String']['output']
+  /** The item at the end of ProjectEdge. */
+  node: Project
+}
+
+/** Ordering options for project connections */
+export type ProjectOrder = {
+  /** The ordering direction. */
+  direction: OrderDirection
+  /** The field to order projects by. */
+  field: ProjectOrderField
+}
+
+/** Properties by which project connections can be ordered. */
+export enum ProjectOrderField {
+  CREATED_AT = 'CREATED_AT',
+  ID = 'ID',
+}
+
 export type Query = {
   __typename?: 'Query'
   currentUser: User
   currentWorkspace: Workspace
   currentWorkspaceMember: WorkspaceMember
+  project?: Maybe<Project>
+  projects: ProjectConnection
   workspace?: Maybe<Workspace>
   workspaceMember?: Maybe<WorkspaceMember>
   workspaceMemberByToken?: Maybe<WorkspaceMember>
   workspaceMembers: WorkspaceMemberConnection
   workspaces: WorkspaceConnection
+}
+
+export type QueryProjectArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryProjectsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  before?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<ProjectOrder>
+  query?: InputMaybe<Scalars['String']['input']>
 }
 
 export type QueryWorkspaceArgs = {
@@ -175,6 +251,10 @@ export type QueryWorkspacesArgs = {
   last?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<WorkspaceOrder>
   query?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdateProjectInput = {
+  name?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateWorkspaceInput = {
@@ -410,6 +490,49 @@ export type GetWorkspacesQuery = {
   }
 }
 
+export type GetProjectsQueryVariables = Exact<{
+  after?: InputMaybe<Scalars['String']['input']>
+  before?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<ProjectOrder>
+  query?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetProjectsQuery = {
+  __typename?: 'Query'
+  projects: {
+    __typename?: 'ProjectConnection'
+    edges: Array<{
+      __typename?: 'ProjectEdge'
+      node: { __typename?: 'Project'; id: string; name: string; createdAt: any }
+    }>
+    pageInfo: {
+      __typename?: 'PageInfo'
+      endCursor?: string | null
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+      startCursor?: string | null
+    }
+  }
+}
+
+export type ProjectItemFragment = {
+  __typename?: 'Project'
+  id: string
+  name: string
+  createdAt: any
+} & { ' $fragmentName'?: 'ProjectItemFragment' }
+
+export type CreateProjectMutationVariables = Exact<{
+  input: CreateProjectInput
+}>
+
+export type CreateProjectMutation = {
+  __typename?: 'Mutation'
+  createProject: { __typename?: 'Project'; id: string }
+}
+
 export const WorkspaceSwitcherWorkspaceFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -471,6 +594,27 @@ export const WorkspaceFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<WorkspaceFragment, unknown>
+export const ProjectItemFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ProjectItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Project' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ProjectItemFragment, unknown>
 export const WorkspaceSwitcherWorkspacesDocument = {
   kind: 'Document',
   definitions: [
@@ -906,3 +1050,254 @@ export const GetWorkspacesDocument = {
     },
   ],
 } as unknown as DocumentNode<GetWorkspacesQuery, GetWorkspacesQueryVariables>
+export const GetProjectsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetProjects' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'after' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'before' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'first' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'last' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'orderBy' },
+          },
+          type: {
+            kind: 'NamedType',
+            name: { kind: 'Name', value: 'ProjectOrder' },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'query' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'projects' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'after' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'after' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'before' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'before' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'first' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'last' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'last' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'orderBy' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'query' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'query' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'edges' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'node' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'id' },
+                            },
+                            {
+                              kind: 'FragmentSpread',
+                              name: { kind: 'Name', value: 'ProjectItem' },
+                              directives: [
+                                {
+                                  kind: 'Directive',
+                                  name: { kind: 'Name', value: 'unmask' },
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'pageInfo' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'endCursor' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'hasNextPage' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'hasPreviousPage' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'startCursor' },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ProjectItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Project' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetProjectsQuery, GetProjectsQueryVariables>
+export const CreateProjectDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'CreateProject' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'input' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'CreateProjectInput' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'createProject' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'input' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'input' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateProjectMutation,
+  CreateProjectMutationVariables
+>

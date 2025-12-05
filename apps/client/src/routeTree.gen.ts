@@ -17,7 +17,6 @@ import { Route as AdminWorkspacesCreateRouteImport } from './routes/_admin/works
 import { Route as AdminWorkspacesWorkspaceIdRouteImport } from './routes/_admin/workspaces/$workspaceId'
 import { Route as AdminWorkspacesWorkspaceIdIndexRouteImport } from './routes/_admin/workspaces/$workspaceId/index'
 import { Route as AdminWorkspacesWorkspaceIdProjectsIndexRouteImport } from './routes/_admin/workspaces/$workspaceId/projects/index'
-import { Route as AdminWorkspacesWorkspaceIdClustersIndexRouteImport } from './routes/_admin/workspaces/$workspaceId/clusters/index'
 import { Route as AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRouteImport } from './routes/_admin/workspaces/$workspaceId/projects/$projectId/index'
 
 const AdminRoute = AdminRouteImport.update({
@@ -62,12 +61,6 @@ const AdminWorkspacesWorkspaceIdProjectsIndexRoute =
     path: '/projects/',
     getParentRoute: () => AdminWorkspacesWorkspaceIdRoute,
   } as any)
-const AdminWorkspacesWorkspaceIdClustersIndexRoute =
-  AdminWorkspacesWorkspaceIdClustersIndexRouteImport.update({
-    id: '/clusters/',
-    path: '/clusters/',
-    getParentRoute: () => AdminWorkspacesWorkspaceIdRoute,
-  } as any)
 const AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRoute =
   AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRouteImport.update({
     id: '/projects/$projectId/',
@@ -82,7 +75,6 @@ export interface FileRoutesByFullPath {
   '/workspaces/create': typeof AdminWorkspacesCreateRoute
   '/workspaces': typeof AdminWorkspacesIndexRoute
   '/workspaces/$workspaceId/': typeof AdminWorkspacesWorkspaceIdIndexRoute
-  '/workspaces/$workspaceId/clusters': typeof AdminWorkspacesWorkspaceIdClustersIndexRoute
   '/workspaces/$workspaceId/projects': typeof AdminWorkspacesWorkspaceIdProjectsIndexRoute
   '/workspaces/$workspaceId/projects/$projectId': typeof AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
 }
@@ -92,7 +84,6 @@ export interface FileRoutesByTo {
   '/workspaces/create': typeof AdminWorkspacesCreateRoute
   '/workspaces': typeof AdminWorkspacesIndexRoute
   '/workspaces/$workspaceId': typeof AdminWorkspacesWorkspaceIdIndexRoute
-  '/workspaces/$workspaceId/clusters': typeof AdminWorkspacesWorkspaceIdClustersIndexRoute
   '/workspaces/$workspaceId/projects': typeof AdminWorkspacesWorkspaceIdProjectsIndexRoute
   '/workspaces/$workspaceId/projects/$projectId': typeof AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
 }
@@ -105,7 +96,6 @@ export interface FileRoutesById {
   '/_admin/workspaces/create': typeof AdminWorkspacesCreateRoute
   '/_admin/workspaces/': typeof AdminWorkspacesIndexRoute
   '/_admin/workspaces/$workspaceId/': typeof AdminWorkspacesWorkspaceIdIndexRoute
-  '/_admin/workspaces/$workspaceId/clusters/': typeof AdminWorkspacesWorkspaceIdClustersIndexRoute
   '/_admin/workspaces/$workspaceId/projects/': typeof AdminWorkspacesWorkspaceIdProjectsIndexRoute
   '/_admin/workspaces/$workspaceId/projects/$projectId/': typeof AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
 }
@@ -118,7 +108,6 @@ export interface FileRouteTypes {
     | '/workspaces/create'
     | '/workspaces'
     | '/workspaces/$workspaceId/'
-    | '/workspaces/$workspaceId/clusters'
     | '/workspaces/$workspaceId/projects'
     | '/workspaces/$workspaceId/projects/$projectId'
   fileRoutesByTo: FileRoutesByTo
@@ -128,7 +117,6 @@ export interface FileRouteTypes {
     | '/workspaces/create'
     | '/workspaces'
     | '/workspaces/$workspaceId'
-    | '/workspaces/$workspaceId/clusters'
     | '/workspaces/$workspaceId/projects'
     | '/workspaces/$workspaceId/projects/$projectId'
   id:
@@ -140,7 +128,6 @@ export interface FileRouteTypes {
     | '/_admin/workspaces/create'
     | '/_admin/workspaces/'
     | '/_admin/workspaces/$workspaceId/'
-    | '/_admin/workspaces/$workspaceId/clusters/'
     | '/_admin/workspaces/$workspaceId/projects/'
     | '/_admin/workspaces/$workspaceId/projects/$projectId/'
   fileRoutesById: FileRoutesById
@@ -209,13 +196,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWorkspacesWorkspaceIdProjectsIndexRouteImport
       parentRoute: typeof AdminWorkspacesWorkspaceIdRoute
     }
-    '/_admin/workspaces/$workspaceId/clusters/': {
-      id: '/_admin/workspaces/$workspaceId/clusters/'
-      path: '/clusters'
-      fullPath: '/workspaces/$workspaceId/clusters'
-      preLoaderRoute: typeof AdminWorkspacesWorkspaceIdClustersIndexRouteImport
-      parentRoute: typeof AdminWorkspacesWorkspaceIdRoute
-    }
     '/_admin/workspaces/$workspaceId/projects/$projectId/': {
       id: '/_admin/workspaces/$workspaceId/projects/$projectId/'
       path: '/projects/$projectId'
@@ -228,7 +208,6 @@ declare module '@tanstack/react-router' {
 
 interface AdminWorkspacesWorkspaceIdRouteChildren {
   AdminWorkspacesWorkspaceIdIndexRoute: typeof AdminWorkspacesWorkspaceIdIndexRoute
-  AdminWorkspacesWorkspaceIdClustersIndexRoute: typeof AdminWorkspacesWorkspaceIdClustersIndexRoute
   AdminWorkspacesWorkspaceIdProjectsIndexRoute: typeof AdminWorkspacesWorkspaceIdProjectsIndexRoute
   AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRoute: typeof AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
 }
@@ -236,8 +215,6 @@ interface AdminWorkspacesWorkspaceIdRouteChildren {
 const AdminWorkspacesWorkspaceIdRouteChildren: AdminWorkspacesWorkspaceIdRouteChildren =
   {
     AdminWorkspacesWorkspaceIdIndexRoute: AdminWorkspacesWorkspaceIdIndexRoute,
-    AdminWorkspacesWorkspaceIdClustersIndexRoute:
-      AdminWorkspacesWorkspaceIdClustersIndexRoute,
     AdminWorkspacesWorkspaceIdProjectsIndexRoute:
       AdminWorkspacesWorkspaceIdProjectsIndexRoute,
     AdminWorkspacesWorkspaceIdProjectsProjectIdIndexRoute:

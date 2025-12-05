@@ -15,6 +15,10 @@ input AddWorkspaceMemberInput {
   email: String!
 }
 
+input CreateProjectInput {
+  name: String!
+}
+
 input CreateWorkspaceInput {
   name: String!
 }
@@ -49,10 +53,13 @@ type Mutation {
   acceptWorkspaceInvite(input: AcceptWorkspaceInviteInput, token: String!): AcceptWorkspaceInviteResult!
   addWorkspaceMember(input: AddWorkspaceMemberInput!): WorkspaceMember!
   createFileUploads(input: [FileUploadInput!]!): [FileUpload!]!
+  createProject(input: CreateProjectInput!): Project!
   createWorkspace(input: CreateWorkspaceInput!): Workspace!
   createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
+  removeProject(id: ID!): Project!
   removeWorkspace: Workspace!
   removeWorkspaceMember(id: ID!): WorkspaceMember!
+  updateProject(id: ID!, input: UpdateProjectInput!): Project!
   updateWorkspace(input: UpdateWorkspaceInput!): Workspace!
   updateWorkspaceMember(id: ID!, input: UpdateWorkspaceMemberInput!): WorkspaceMember
 }
@@ -76,10 +83,78 @@ type PageInfo {
   startCursor: String
 }
 
+type Project {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type ProjectConnection {
+  """A list of edges."""
+  edges: [ProjectEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""
+An auto-generated type which holds one Project and a cursor during pagination.
+"""
+type ProjectEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of ProjectEdge."""
+  node: Project!
+}
+
+"""Ordering options for project connections"""
+input ProjectOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order projects by."""
+  field: ProjectOrderField!
+}
+
+"""Properties by which project connections can be ordered."""
+enum ProjectOrderField {
+  CREATED_AT
+  ID
+}
+
 type Query {
   currentUser: User!
   currentWorkspace: Workspace!
   currentWorkspaceMember: WorkspaceMember!
+  project(id: ID!): Project
+  projects(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: ProjectOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): ProjectConnection!
   workspace(id: ID!): Workspace
   workspaceMember(id: ID!): WorkspaceMember
   workspaceMemberByToken(token: String!): WorkspaceMember
@@ -129,6 +204,10 @@ type Query {
     """
     query: String
   ): WorkspaceConnection!
+}
+
+input UpdateProjectInput {
+  name: String
 }
 
 input UpdateWorkspaceInput {
