@@ -9,7 +9,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { Link, LinkComponentProps } from '@tanstack/react-router'
+import { LinkComponentProps } from '@tanstack/react-router'
+
+import { Link } from '@/components/link'
 
 export const Main: FC<PropsWithChildren> = ({ children }) => {
   return (

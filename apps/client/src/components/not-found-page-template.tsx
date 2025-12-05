@@ -6,7 +6,7 @@ import {
   EmptyContent,
 } from '@/components/ui/empty'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
+import { Link } from '@/components/link'
 
 export const NotFoundPageTemplate = () => {
   return (

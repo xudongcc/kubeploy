@@ -84,7 +84,7 @@ function RouteComponent() {
           e.stopPropagation()
           form.handleSubmit()
         }}
-        className="space-y-6"
+        className="space-y-4"
       >
         <Card>
           <CardHeader>
@@ -103,7 +103,7 @@ function RouteComponent() {
             >
               {(field) => (
                 <Field>
-                  <FieldLabel htmlFor="name">Service Name</FieldLabel>
+                  <FieldLabel htmlFor="name">Name</FieldLabel>
                   <Input
                     id="name"
                     placeholder="my-service"
@@ -129,7 +129,7 @@ function RouteComponent() {
             >
               {(field) => (
                 <Field>
-                  <FieldLabel htmlFor="image">Container Image</FieldLabel>
+                  <FieldLabel htmlFor="image">Image</FieldLabel>
                   <Input
                     id="image"
                     placeholder="nginx:latest"

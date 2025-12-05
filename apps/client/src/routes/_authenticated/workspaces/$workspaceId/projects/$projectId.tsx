@@ -1,15 +1,12 @@
-import { Page } from '@/components/page'
-import { Tabs, TabsTrigger, TabsList } from '@/components/ui/tabs'
-import { graphql } from '@/gql'
 import {
-  createFileRoute,
-  Link,
-  Outlet,
-  redirect,
-  useMatchRoute,
-  useRouteContext,
-} from '@tanstack/react-router'
-import { useMemo } from 'react'
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from '@/components/ui/navigation-menu'
+import { graphql } from '@/gql'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { Link } from '@/components/link'
 
 const GET_PROJECT_QUERY = graphql(`
   query GetProject($id: ID!) {
@@ -52,68 +49,39 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { workspaceId, projectId } = Route.useParams()
-  const matchRoute = useMatchRoute()
-
-  const project = useRouteContext({
-    from: '/_authenticated/workspaces/$workspaceId/projects/$projectId',
-    select: (context) => context.project,
-  })
-
-  const activeTab = useMemo(() => {
-    if (
-      matchRoute({
-        to: '/workspaces/$workspaceId/projects/$projectId/services',
-      })
-    ) {
-      return 'services'
-    }
-
-    if (
-      matchRoute({
-        to: '/workspaces/$workspaceId/projects/$projectId/settings',
-      })
-    ) {
-      return 'settings'
-    }
-  }, [matchRoute])
-
-  if (!project) {
-    return <div>Project not found</div>
-  }
 
   return (
-    <Page
-      title={project.name}
-      breadcrumbs={[
-        <Link to="/workspaces/$workspaceId/projects" params={{ workspaceId }}>
-          Projects
-        </Link>,
-      ]}
-    >
-      <div className="flex flex-col gap-4">
-        <Tabs defaultValue={activeTab}>
-          <TabsList>
-            <TabsTrigger value="services" asChild>
-              <Link
-                to={`/workspaces/$workspaceId/projects/$projectId/services`}
-                params={{ workspaceId, projectId }}
-              >
-                Services
-              </Link>
-            </TabsTrigger>
-            <TabsTrigger value="settings" asChild>
-              <Link
-                to={`/workspaces/$workspaceId/projects/$projectId/settings`}
-                params={{ workspaceId, projectId }}
-              >
-                Settings
-              </Link>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        <Outlet />
+    <div className="flex flex-col">
+      <div className="flex items-center gap-2">
+        <div className="w-full border-b px-4 pb-2">
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    to={`/workspaces/$workspaceId/projects/$projectId/services`}
+                    params={{ workspaceId, projectId }}
+                  >
+                    Services
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    to={`/workspaces/$workspaceId/projects/$projectId/settings`}
+                    params={{ workspaceId, projectId }}
+                  >
+                    Settings
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
       </div>
-    </Page>
+
+      <Outlet />
+    </div>
   )
 }

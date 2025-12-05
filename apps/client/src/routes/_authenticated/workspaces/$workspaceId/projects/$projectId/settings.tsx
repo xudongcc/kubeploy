@@ -26,6 +26,7 @@ import {
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { graphql } from '@/gql'
+import { Page } from '@/components/page'
 
 const GET_PROJECT_QUERY = graphql(`
   query GetProjectSettings($id: ID!) {
@@ -112,112 +113,117 @@ function RouteComponent() {
   const canDelete = deleteConfirmName === project.name
 
   return (
-    <div className="flex flex-col gap-6">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
-        }}
-      >
-        <Card>
+    <Page
+      title="Settings"
+      description="Update your project name and other settings."
+    >
+      <div className="flex flex-col gap-6">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Project Settings</CardTitle>
+              <CardDescription>
+                Update your project name and other settings.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <form.Field
+                name="name"
+                validators={{
+                  onChange: ({ value }) =>
+                    !value.trim() ? 'Project name is required' : undefined,
+                }}
+              >
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                      id="name"
+                      placeholder="My Project"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <p className="text-sm text-destructive">
+                        {field.state.meta.errors.join(', ')}
+                      </p>
+                    )}
+                  </Field>
+                )}
+              </form.Field>
+            </CardContent>
+            <CardFooter>
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+              >
+                {([canSubmit, isSubmitting]) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                )}
+              </form.Subscribe>
+            </CardFooter>
+          </Card>
+        </form>
+
+        <Card className="border-destructive">
           <CardHeader>
-            <CardTitle>Project Settings</CardTitle>
+            <CardTitle className="text-destructive">Danger Zone</CardTitle>
             <CardDescription>
-              Update your project name and other settings.
+              Once you delete a project, there is no going back. This will
+              permanently delete the project and its associated Kubernetes
+              namespace.
             </CardDescription>
           </CardHeader>
-
-          <CardContent>
-            <form.Field
-              name="name"
-              validators={{
-                onChange: ({ value }) =>
-                  !value.trim() ? 'Project name is required' : undefined,
-              }}
-            >
-              {(field) => (
-                <Field>
-                  <FieldLabel htmlFor="name">Name</FieldLabel>
-                  <Input
-                    id="name"
-                    placeholder="My Project"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-destructive">
-                      {field.state.meta.errors.join(', ')}
-                    </p>
-                  )}
-                </Field>
-              )}
-            </form.Field>
-          </CardContent>
           <CardFooter>
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-            >
-              {([canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                  {isSubmitting ? 'Saving...' : 'Save Changes'}
-                </Button>
-              )}
-            </form.Subscribe>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">Delete Project</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the project <strong>{project.name}</strong> and its
+                    associated Kubernetes namespace.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="py-4">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Please type <strong>{project.name}</strong> to confirm.
+                  </p>
+                  <Input
+                    placeholder={project.name}
+                    value={deleteConfirmName}
+                    onChange={(e) => setDeleteConfirmName(e.target.value)}
+                  />
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmName('')}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    disabled={!canDelete || removing}
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {removing ? 'Deleting...' : 'Delete Project'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardFooter>
         </Card>
-      </form>
-
-      <Card className="border-destructive">
-        <CardHeader>
-          <CardTitle className="text-destructive">Danger Zone</CardTitle>
-          <CardDescription>
-            Once you delete a project, there is no going back. This will
-            permanently delete the project and its associated Kubernetes
-            namespace.
-          </CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">Delete Project</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  project <strong>{project.name}</strong> and its associated
-                  Kubernetes namespace.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="py-4">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Please type <strong>{project.name}</strong> to confirm.
-                </p>
-                <Input
-                  placeholder={project.name}
-                  value={deleteConfirmName}
-                  onChange={(e) => setDeleteConfirmName(e.target.value)}
-                />
-              </div>
-              <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => setDeleteConfirmName('')}>
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  disabled={!canDelete || removing}
-                  onClick={handleDelete}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  {removing ? 'Deleting...' : 'Delete Project'}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </CardFooter>
-      </Card>
-    </div>
+      </div>
+    </Page>
   )
 }

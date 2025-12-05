@@ -1,5 +1,7 @@
 import { useQuery } from '@apollo/client/react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { Link } from '@/components/link'
 import { zodValidator } from '@tanstack/zod-adapter'
 import dayjs from 'dayjs'
 import { EnumLike, z } from 'zod'
@@ -133,7 +135,7 @@ function RouteComponent() {
   return (
     <Page
       title="Services"
-      description="Create and manage your services"
+      description="Create and manage your services."
       actions={
         <Button asChild>
           <Link
@@ -150,20 +152,6 @@ function RouteComponent() {
           {
             accessorKey: 'name',
             header: 'Name',
-            cell: ({ row }) => {
-              return (
-                <Link
-                  to="/workspaces/$workspaceId/projects/$projectId/services/$serviceId"
-                  params={{
-                    workspaceId,
-                    projectId,
-                    serviceId: row.original.id,
-                  }}
-                >
-                  {row.original.name}
-                </Link>
-              )
-            },
           },
           {
             accessorKey: 'image',

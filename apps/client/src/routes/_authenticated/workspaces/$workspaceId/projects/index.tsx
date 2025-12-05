@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useForm } from '@tanstack/react-form'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { Link } from '@/components/link'
 import { zodValidator } from '@tanstack/zod-adapter'
 import { EnumLike, z } from 'zod'
 import dayjs from 'dayjs'

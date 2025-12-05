@@ -16,7 +16,9 @@ import {
 } from '@/components/ui/sidebar'
 import { useSuspenseQuery } from '@apollo/client/react'
 
-import { Link, useRouteContext } from '@tanstack/react-router'
+import { useRouteContext } from '@tanstack/react-router'
+
+import { Link } from '@/components/link'
 import { graphql } from '@/gql'
 
 const WORKSPACE_SWITCHER_WORKSPACES_QUERY = graphql(`

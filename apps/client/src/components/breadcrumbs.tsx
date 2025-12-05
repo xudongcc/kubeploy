@@ -8,7 +8,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { Link, useRouterState } from '@tanstack/react-router'
+import { useRouterState } from '@tanstack/react-router'
+
+import { Link } from '@/components/link'
 
 export const Breadcrumbs: FC = () => {
   const matches = useRouterState({ select: (state) => state.matches })

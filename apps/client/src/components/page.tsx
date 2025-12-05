@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Link } from '@tanstack/react-router'
+import { Link } from '@/components/link'
 
 export interface PageProps {
   children: React.ReactNode
@@ -24,7 +24,7 @@ export function Page({
         fullWidth && 'max-w-full',
       )}
     >
-      <header className="mb-6 flex items-center justify-between gap-2">
+      <header className="mb-4 flex items-center justify-between gap-2">
         <div>
           <h2 className="flex h-9 items-center text-xl font-bold tracking-tight">
             {title}

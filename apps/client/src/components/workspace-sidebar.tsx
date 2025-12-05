@@ -15,12 +15,9 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import {
-  Link,
-  linkOptions,
-  LinkProps,
-  useRouteContext,
-} from '@tanstack/react-router'
+import { linkOptions, LinkProps, useRouteContext } from '@tanstack/react-router'
+
+import { Link } from '@/components/link'
 import { ComponentProps, ComponentType, FC } from 'react'
 
 type SidebarItem = {
