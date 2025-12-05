@@ -15,9 +15,8 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { useSuspenseQuery } from '@apollo/client/react'
-import { GetCurrentWorkspaceDocument } from '@/gql/graphql'
 
-import { Link } from '@tanstack/react-router'
+import { Link, useRouteContext } from '@tanstack/react-router'
 import { graphql } from '@/gql'
 
 const WORKSPACE_SWITCHER_WORKSPACES_QUERY = graphql(`
@@ -41,9 +40,10 @@ const WORKSPACE_SWITCHER_WORKSPACES_QUERY = graphql(`
 export function WorkspaceSwitcher() {
   const { isMobile } = useSidebar()
 
-  const {
-    data: { currentWorkspace },
-  } = useSuspenseQuery(GetCurrentWorkspaceDocument)
+  const workspace = useRouteContext({
+    from: '/_authenticated/workspaces/$workspaceId',
+    select: (context) => context.workspace,
+  })
 
   const {
     data: {
@@ -64,11 +64,9 @@ export function WorkspaceSwitcher() {
                 <Cloudy className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {currentWorkspace.name}
-                </span>
+                <span className="truncate font-medium">{workspace.name}</span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {currentWorkspace.id}
+                  {workspace.id}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />

@@ -10,33 +10,36 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import appCss from '../styles.css?url'
 import { NotFoundPageTemplate } from '@/components/not-found-page-template'
 
-export const Route =
-  createRootRouteWithContext<ApolloClientIntegration.RouterContext>()({
-    head: () => ({
-      meta: [
-        {
-          charSet: 'utf-8',
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1',
-        },
-        {
-          title: 'Kubeploy',
-        },
-      ],
-      links: [
-        {
-          rel: 'stylesheet',
-          href: appCss,
-        },
-      ],
-    }),
+export const Route = createRootRouteWithContext<
+  ApolloClientIntegration.RouterContext & {
+    title?: string
+  }
+>()({
+  head: () => ({
+    meta: [
+      {
+        charSet: 'utf-8',
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
+      },
+      {
+        title: 'Kubeploy',
+      },
+    ],
+    links: [
+      {
+        rel: 'stylesheet',
+        href: appCss,
+      },
+    ],
+  }),
 
-    shellComponent: RootDocument,
+  shellComponent: RootDocument,
 
-    notFoundComponent: NotFoundPageTemplate,
-  })
+  notFoundComponent: NotFoundPageTemplate,
+})
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

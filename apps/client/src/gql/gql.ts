@@ -15,36 +15,43 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
   '\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n': typeof types.WorkspaceSwitcherWorkspacesDocument
-  'fragment User on User {\n  id\n  name\n  email\n}': typeof types.UserFragmentDoc
-  'fragment Workspace on Workspace {\n  id\n  name\n}': typeof types.WorkspaceFragmentDoc
-  'mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n  createWorkspace(input: $input) {\n    id\n    ...Workspace\n  }\n}': typeof types.CreateWorkspaceDocument
-  'query GetCurrentUser {\n  currentUser {\n    id\n    ...User @unmask\n  }\n}': typeof types.GetCurrentUserDocument
-  'query GetCurrentWorkspace {\n  currentWorkspace {\n    id\n    ...Workspace @unmask\n  }\n}': typeof types.GetCurrentWorkspaceDocument
-  'query GetWorkspace($id: ID!) {\n  workspace(id: $id) {\n    id\n    ...Workspace\n  }\n}': typeof types.GetWorkspaceDocument
-  'query GetWorkspaces($first: Int) {\n  workspaces(first: $first) {\n    edges {\n      node {\n        id\n        ...Workspace\n      }\n    }\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n      startCursor\n      endCursor\n    }\n  }\n}': typeof types.GetWorkspacesDocument
+  '\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n': typeof types.GetCurrentUserDocument
+  '\n  query GetCurrentWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n  }\n': typeof types.GetCurrentWorkspaceDocument
+  '\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n  }\n': typeof types.GetProjectDocument
+  '\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n': typeof types.CreateServiceDocument
+  '\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n': typeof types.GetServicesDocument
+  '\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n': typeof types.GetProjectSettingsDocument
+  '\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n': typeof types.UpdateProjectDocument
+  '\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n': typeof types.RemoveProjectDocument
   '\n  query GetProjects(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    projects(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ProjectItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    createdAt\n  }\n': typeof types.GetProjectsDocument
   '\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n': typeof types.CreateProjectDocument
+  '\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n': typeof types.GetFirstWorkspaceDocument
 }
 const documents: Documents = {
   '\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n':
     types.WorkspaceSwitcherWorkspacesDocument,
-  'fragment User on User {\n  id\n  name\n  email\n}': types.UserFragmentDoc,
-  'fragment Workspace on Workspace {\n  id\n  name\n}':
-    types.WorkspaceFragmentDoc,
-  'mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n  createWorkspace(input: $input) {\n    id\n    ...Workspace\n  }\n}':
-    types.CreateWorkspaceDocument,
-  'query GetCurrentUser {\n  currentUser {\n    id\n    ...User @unmask\n  }\n}':
+  '\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n':
     types.GetCurrentUserDocument,
-  'query GetCurrentWorkspace {\n  currentWorkspace {\n    id\n    ...Workspace @unmask\n  }\n}':
+  '\n  query GetCurrentWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n  }\n':
     types.GetCurrentWorkspaceDocument,
-  'query GetWorkspace($id: ID!) {\n  workspace(id: $id) {\n    id\n    ...Workspace\n  }\n}':
-    types.GetWorkspaceDocument,
-  'query GetWorkspaces($first: Int) {\n  workspaces(first: $first) {\n    edges {\n      node {\n        id\n        ...Workspace\n      }\n    }\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n      startCursor\n      endCursor\n    }\n  }\n}':
-    types.GetWorkspacesDocument,
+  '\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n  }\n':
+    types.GetProjectDocument,
+  '\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n':
+    types.CreateServiceDocument,
+  '\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n':
+    types.GetServicesDocument,
+  '\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n':
+    types.GetProjectSettingsDocument,
+  '\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n':
+    types.UpdateProjectDocument,
+  '\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n':
+    types.RemoveProjectDocument,
   '\n  query GetProjects(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    projects(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ProjectItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    createdAt\n  }\n':
     types.GetProjectsDocument,
   '\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n':
     types.CreateProjectDocument,
+  '\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n':
+    types.GetFirstWorkspaceDocument,
 }
 
 /**
@@ -71,44 +78,50 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'fragment User on User {\n  id\n  name\n  email\n}',
-): (typeof documents)['fragment User on User {\n  id\n  name\n  email\n}']
+  source: '\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n',
+): (typeof documents)['\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'fragment Workspace on Workspace {\n  id\n  name\n}',
-): (typeof documents)['fragment Workspace on Workspace {\n  id\n  name\n}']
+  source: '\n  query GetCurrentWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n  }\n',
+): (typeof documents)['\n  query GetCurrentWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n  createWorkspace(input: $input) {\n    id\n    ...Workspace\n  }\n}',
-): (typeof documents)['mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n  createWorkspace(input: $input) {\n    id\n    ...Workspace\n  }\n}']
+  source: '\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n  }\n',
+): (typeof documents)['\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'query GetCurrentUser {\n  currentUser {\n    id\n    ...User @unmask\n  }\n}',
-): (typeof documents)['query GetCurrentUser {\n  currentUser {\n    id\n    ...User @unmask\n  }\n}']
+  source: '\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n',
+): (typeof documents)['\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'query GetCurrentWorkspace {\n  currentWorkspace {\n    id\n    ...Workspace @unmask\n  }\n}',
-): (typeof documents)['query GetCurrentWorkspace {\n  currentWorkspace {\n    id\n    ...Workspace @unmask\n  }\n}']
+  source: '\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n',
+): (typeof documents)['\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'query GetWorkspace($id: ID!) {\n  workspace(id: $id) {\n    id\n    ...Workspace\n  }\n}',
-): (typeof documents)['query GetWorkspace($id: ID!) {\n  workspace(id: $id) {\n    id\n    ...Workspace\n  }\n}']
+  source: '\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n',
+): (typeof documents)['\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: 'query GetWorkspaces($first: Int) {\n  workspaces(first: $first) {\n    edges {\n      node {\n        id\n        ...Workspace\n      }\n    }\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n      startCursor\n      endCursor\n    }\n  }\n}',
-): (typeof documents)['query GetWorkspaces($first: Int) {\n  workspaces(first: $first) {\n    edges {\n      node {\n        id\n        ...Workspace\n      }\n    }\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n      startCursor\n      endCursor\n    }\n  }\n}']
+  source: '\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n',
+): (typeof documents)['\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n']
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n',
+): (typeof documents)['\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -121,6 +134,12 @@ export function graphql(
 export function graphql(
   source: '\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n',
 ): (typeof documents)['\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n']
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n',
+): (typeof documents)['\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n']
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {}

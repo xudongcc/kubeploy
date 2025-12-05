@@ -19,6 +19,15 @@ input CreateProjectInput {
   name: String!
 }
 
+input CreateServiceInput {
+  environmentVariables: [EnvironmentVariableInput!]
+  image: String!
+  name: String!
+  ports: [Int!]
+  projectId: ID!
+  replicas: Int
+}
+
 input CreateWorkspaceInput {
   name: String!
 }
@@ -32,6 +41,16 @@ input CreateWorkspaceInviteInput {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type EnvironmentVariable {
+  key: String!
+  value: String!
+}
+
+input EnvironmentVariableInput {
+  key: String!
+  value: String!
+}
 
 type FileUpload {
   fields: [FileUploadField!]!
@@ -54,12 +73,15 @@ type Mutation {
   addWorkspaceMember(input: AddWorkspaceMemberInput!): WorkspaceMember!
   createFileUploads(input: [FileUploadInput!]!): [FileUpload!]!
   createProject(input: CreateProjectInput!): Project!
+  createService(input: CreateServiceInput!): Service!
   createWorkspace(input: CreateWorkspaceInput!): Workspace!
   createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
   removeProject(id: ID!): Project!
+  removeService(id: ID!): Service!
   removeWorkspace: Workspace!
   removeWorkspaceMember(id: ID!): WorkspaceMember!
   updateProject(id: ID!, input: UpdateProjectInput!): Project!
+  updateService(id: ID!, input: UpdateServiceInput!): Service!
   updateWorkspace(input: UpdateWorkspaceInput!): Workspace!
   updateWorkspaceMember(id: ID!, input: UpdateWorkspaceMemberInput!): WorkspaceMember
 }
@@ -155,6 +177,31 @@ type Query {
     """
     query: String
   ): ProjectConnection!
+  service(id: ID!): Service
+  services(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: ServiceOrder
+    projectId: ID!
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): ServiceConnection!
   workspace(id: ID!): Workspace
   workspaceMember(id: ID!): WorkspaceMember
   workspaceMemberByToken(token: String!): WorkspaceMember
@@ -206,8 +253,64 @@ type Query {
   ): WorkspaceConnection!
 }
 
+type Service {
+  createdAt: DateTime!
+  environmentVariables: [EnvironmentVariable!]!
+  id: ID!
+  image: String!
+  name: String!
+  ports: [Int!]!
+  replicas: Int!
+  updatedAt: DateTime!
+}
+
+type ServiceConnection {
+  """A list of edges."""
+  edges: [ServiceEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""
+An auto-generated type which holds one Service and a cursor during pagination.
+"""
+type ServiceEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of ServiceEdge."""
+  node: Service!
+}
+
+"""Ordering options for service connections"""
+input ServiceOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order services by."""
+  field: ServiceOrderField!
+}
+
+"""Properties by which service connections can be ordered."""
+enum ServiceOrderField {
+  CREATED_AT
+  ID
+}
+
 input UpdateProjectInput {
   name: String
+}
+
+input UpdateServiceInput {
+  environmentVariables: [EnvironmentVariableInput!]
+  image: String
+  name: String
+  ports: [Int!]
+  replicas: Int
 }
 
 input UpdateWorkspaceInput {

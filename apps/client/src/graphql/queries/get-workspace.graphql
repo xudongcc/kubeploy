@@ -1,6 +1,0 @@
-query GetWorkspace($id: ID!) {
-  workspace(id: $id) {
-    id
-    ...Workspace
-  }
-}

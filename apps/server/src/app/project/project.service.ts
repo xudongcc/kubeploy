@@ -27,7 +27,7 @@ export class ProjectService extends EntityService<Project> {
     await this.coreV1Api.createNamespace({
       body: {
         metadata: {
-          name: `kp-${project.id}`,
+          name: project.kubeNamespaceName,
           labels: {
             'managed-by': 'kubeploy',
             'kubeploy.com/project-id': project.id,
@@ -43,7 +43,7 @@ export class ProjectService extends EntityService<Project> {
   async remove(idOrEntity: IdOrEntity<Project>): Promise<Project> {
     const project = await this.findOneOrFail(idOrEntity);
 
-    await this.coreV1Api.deleteNamespace({ name: `kp-${project.id}` });
+    await this.coreV1Api.deleteNamespace({ name: project.kubeNamespaceName });
 
     return await super.remove(project);
   }

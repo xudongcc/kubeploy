@@ -136,10 +136,13 @@ const productConnectionSchema = createConnectionSchema({
 })
 
 export const Route = createFileRoute(
-  '/_admin/workspaces/$workspaceId/projects/',
+  '/_authenticated/workspaces/$workspaceId/projects/',
 )({
   component: RouteComponent,
   validateSearch: zodValidator(productConnectionSchema),
+  beforeLoad: () => {
+    return { title: 'Projects' }
+  },
 })
 
 function RouteComponent() {
@@ -221,7 +224,7 @@ function RouteComponent() {
                       <FieldLabel htmlFor="name">Project Name</FieldLabel>
                       <Input
                         id="name"
-                        placeholder="my-project"
+                        placeholder="My Project"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}

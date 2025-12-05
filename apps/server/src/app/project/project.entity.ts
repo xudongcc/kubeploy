@@ -39,4 +39,8 @@ export class Project {
 
   @ManyToOne(() => Workspace)
   workspace!: Ref<Workspace>;
+
+  get kubeNamespaceName(): Opt<string> {
+    return `kp-${this.id}`;
+  }
 }

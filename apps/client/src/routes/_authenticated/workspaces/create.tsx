@@ -14,7 +14,7 @@ import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@apollo/client/react'
 import { CreateWorkspaceDocument } from '@/gql/graphql'
 
-export const Route = createFileRoute('/_admin/workspaces/create')({
+export const Route = createFileRoute('/_authenticated/workspaces/create')({
   component: RouteComponent,
 })
 

@@ -1,4 +1,4 @@
-import { Folder, Users, Settings, Server } from 'lucide-react'
+import { Folder, Users, Settings } from 'lucide-react'
 
 import { SidebarUser } from '@/components/sidebar-user'
 import { WorkspaceSwitcher } from '@/components/workspace-switcher'
@@ -15,24 +15,28 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { Link } from '@tanstack/react-router'
-import { FC } from 'react'
+import {
+  Link,
+  linkOptions,
+  LinkProps,
+  useRouteContext,
+} from '@tanstack/react-router'
+import { ComponentProps, ComponentType, FC } from 'react'
 
 type SidebarItem = {
   title: string
-  url: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: ComponentType<{ className?: string }>
+  link: LinkProps
 }
 
-export interface WorkspaceSidebarProps
-  extends React.ComponentProps<typeof Sidebar> {
-  workspaceId: string
-}
-
-export const WorkspaceSidebar: FC<WorkspaceSidebarProps> = ({
-  workspaceId,
+export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
   ...props
 }) => {
+  const workspace = useRouteContext({
+    from: '/_authenticated/workspaces/$workspaceId',
+    select: (context) => context.workspace,
+  })
+
   const sidebarGroups: Array<{
     title: string
     items: SidebarItem[]
@@ -42,13 +46,11 @@ export const WorkspaceSidebar: FC<WorkspaceSidebarProps> = ({
       items: [
         {
           title: 'Projects',
-          url: `/workspaces/${workspaceId}/projects`,
           icon: Folder,
-        },
-        {
-          title: 'Clusters',
-          url: `/workspaces/${workspaceId}/clusters`,
-          icon: Server,
+          link: linkOptions({
+            to: '/workspaces/$workspaceId/projects',
+            params: { workspaceId: workspace.id },
+          }),
         },
       ],
     },
@@ -57,13 +59,19 @@ export const WorkspaceSidebar: FC<WorkspaceSidebarProps> = ({
       items: [
         {
           title: 'Members',
-          url: `/workspaces/${workspaceId}/members`,
           icon: Users,
+          link: linkOptions({
+            to: '/workspaces/$workspaceId/members',
+            params: { workspaceId: workspace.id },
+          }),
         },
         {
           title: 'Settings',
-          url: `/workspaces/${workspaceId}/settings`,
           icon: Settings,
+          link: linkOptions({
+            to: '/workspaces/$workspaceId/settings',
+            params: { workspaceId: workspace.id },
+          }),
         },
       ],
     },
@@ -83,7 +91,7 @@ export const WorkspaceSidebar: FC<WorkspaceSidebarProps> = ({
                 {group.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link to={item.url}>
+                      <Link {...item.link}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
