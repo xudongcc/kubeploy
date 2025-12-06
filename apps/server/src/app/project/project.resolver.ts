@@ -4,6 +4,7 @@ import {
   Mutation,
   Parent,
   Query,
+  ResolveField,
   Resolver,
 } from '@nest-boot/graphql';
 import { ConnectionManager } from '@nest-boot/graphql-connection';
@@ -79,13 +80,13 @@ export class ProjectResolver {
   }
 
   @Can(PermissionAction.READ, Cluster)
-  @Query(() => Cluster)
+  @ResolveField(() => Cluster)
   async cluster(@Parent() project: Project) {
     return await project.cluster.loadOrFail();
   }
 
   @Can(PermissionAction.READ, Service)
-  @Query(() => ServiceConnection)
+  @ResolveField(() => ServiceConnection)
   async services(
     @Parent() project: Project,
     @Args() args: ServiceConnectionArgs,

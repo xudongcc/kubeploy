@@ -26,6 +26,7 @@ export class ClusterClientFactory {
           name: 'default',
           server: cluster.server,
           caData: cluster.certificateAuthorityData,
+          skipTLSVerify: true,
         },
       ],
       users: [

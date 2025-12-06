@@ -20,15 +20,15 @@ export const Route = createFileRoute('/_authenticated/workspaces/')({
     })
 
     if (data?.workspaces.edges && data.workspaces.edges.length > 0) {
-      redirect({
+      throw redirect({
         to: '/workspaces/$workspaceId',
         params: {
           workspaceId: data.workspaces.edges[0].node.id,
         },
       })
     } else {
-      redirect({
-        to: `/workspaces/create`,
+      throw redirect({
+        to: '/workspaces/create',
       })
     }
   },

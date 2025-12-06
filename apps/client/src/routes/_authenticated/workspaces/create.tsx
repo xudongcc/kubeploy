@@ -12,7 +12,15 @@ import {
 import { Input } from '@/components/ui/input'
 import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@apollo/client/react'
-import { CreateWorkspaceDocument } from '@/gql/graphql'
+import { graphql } from '@/gql'
+
+const CREATE_WORKSPACE_MUTATION = graphql(`
+  mutation CreateWorkspace($input: CreateWorkspaceInput!) {
+    createWorkspace(input: $input) {
+      id
+    }
+  }
+`)
 
 export const Route = createFileRoute('/_authenticated/workspaces/create')({
   component: RouteComponent,
@@ -22,7 +30,7 @@ function RouteComponent() {
   const router = useRouter()
   const navigate = Route.useNavigate()
 
-  const [createWorkspace, { loading }] = useMutation(CreateWorkspaceDocument)
+  const [createWorkspace, { loading }] = useMutation(CREATE_WORKSPACE_MUTATION)
 
   const form = useForm({
     defaultValues: {

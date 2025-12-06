@@ -1,7 +1,21 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nest-boot/graphql';
+import {
+  Args,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nest-boot/graphql';
 import { ConnectionManager } from '@nest-boot/graphql-connection';
 
+import {
+  DomainConnection,
+  DomainConnectionArgs,
+} from '@/domain/domain.connection-definition';
+import { Domain } from '@/domain/domain.entity';
 import { Can, PermissionAction } from '@/lib/permission';
+import { Project } from '@/project/project.entity';
 import { ProjectService } from '@/project/project.service';
 
 import { CreateServiceInput } from './inputs/create-service.input';
@@ -70,5 +84,22 @@ export class ServiceResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Service> {
     return await this.serviceService.remove(id);
+  }
+
+  @Can(PermissionAction.READ, Project)
+  @ResolveField(() => Project)
+  async project(@Parent() service: Service) {
+    return await service.project.loadOrFail();
+  }
+
+  @Can(PermissionAction.READ, Domain)
+  @ResolveField(() => DomainConnection)
+  async domains(
+    @Parent() service: Service,
+    @Args() args: DomainConnectionArgs,
+  ) {
+    return await this.cm.find(DomainConnection, args, {
+      where: { service },
+    });
   }
 }

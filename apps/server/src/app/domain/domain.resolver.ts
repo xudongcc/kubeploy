@@ -1,7 +1,16 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nest-boot/graphql';
+import {
+  Args,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nest-boot/graphql';
 import { ConnectionManager } from '@nest-boot/graphql-connection';
 
 import { Can, PermissionAction } from '@/lib/permission';
+import { Service } from '@/service/service.entity';
 
 import {
   DomainConnection,
@@ -40,9 +49,7 @@ export class DomainResolver {
 
   @Can(PermissionAction.CREATE, Domain)
   @Mutation(() => Domain)
-  async createDomain(
-    @Args('input') input: CreateDomainInput,
-  ): Promise<Domain> {
+  async createDomain(@Args('input') input: CreateDomainInput): Promise<Domain> {
     return await this.domainService.createDomain({
       host: input.host,
       path: input.path ?? '/',
@@ -66,5 +73,11 @@ export class DomainResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Domain> {
     return await this.domainService.remove(id);
+  }
+
+  @Can(PermissionAction.READ, Service)
+  @ResolveField(() => Service)
+  async service(@Parent() domain: Domain) {
+    return await domain.service.loadOrFail();
   }
 }

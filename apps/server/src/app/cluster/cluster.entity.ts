@@ -7,7 +7,7 @@ import {
   Ref,
   t,
 } from '@mikro-orm/core';
-import { Field, ID, ObjectType } from '@nest-boot/graphql';
+import { Field, HideField, ID, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
 import { Workspace } from '@/workspace/workspace.entity';
@@ -29,9 +29,11 @@ export class Cluster {
   @Property({ type: t.string })
   server!: string;
 
+  @HideField()
   @Property({ type: t.text })
   certificateAuthorityData!: string;
 
+  @HideField()
   @Property({ type: t.text })
   token!: string;
 

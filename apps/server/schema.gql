@@ -19,6 +19,29 @@ type Cluster {
   createdAt: DateTime!
   id: ID!
   name: String!
+  projects(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: ProjectOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): ProjectConnection!
   server: String!
   updatedAt: DateTime!
 }
@@ -108,6 +131,7 @@ type Domain {
   host: String!
   id: ID!
   path: String!
+  service: Service!
   servicePort: Int!
   updatedAt: DateTime!
 }
@@ -219,9 +243,33 @@ type PageInfo {
 }
 
 type Project {
+  cluster: Cluster!
   createdAt: DateTime!
   id: ID!
   name: String!
+  services(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: ServiceOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): ServiceConnection!
   updatedAt: DateTime!
 }
 
@@ -417,11 +465,35 @@ type Query {
 
 type Service {
   createdAt: DateTime!
+  domains(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: DomainOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): DomainConnection!
   environmentVariables: [EnvironmentVariable!]!
   id: ID!
   image: String!
   name: String!
   ports: [Int!]!
+  project: Project!
   replicas: Int!
   updatedAt: DateTime!
 }
@@ -508,11 +580,57 @@ type User {
 }
 
 type Workspace {
+  clusters(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: ClusterOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): ClusterConnection!
   createdAt: DateTime!
   deletedAt: DateTime
   features: [WorkspaceFeature!]!
   id: ID!
   name: String!
+  projects(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: ProjectOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): ProjectConnection!
   updatedAt: DateTime!
 }
 

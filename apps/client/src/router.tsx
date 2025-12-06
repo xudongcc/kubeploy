@@ -33,12 +33,8 @@ export const getRouter = () => {
       }),
       new ApolloLink((operation, forward) => {
         operation.setContext(({ headers = {} }) => {
-          console.log('location', location)
-
           const workspaceId =
             location.pathname.match(/^\/workspaces\/(\d+)/)?.[1]
-
-          console.log('workspaceId', workspaceId)
 
           return {
             headers: {

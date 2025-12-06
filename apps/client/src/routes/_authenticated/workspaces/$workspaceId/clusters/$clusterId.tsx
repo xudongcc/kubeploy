@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useMutation, useSuspenseQuery } from '@apollo/client/react'
+import { useMutation } from '@apollo/client/react'
 import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 import { Page } from '@/components/page'
 import {
@@ -29,12 +29,19 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { graphql } from '@/gql'
 
-const GET_CLUSTER_SETTINGS_QUERY = graphql(`
-  query GetClusterSettings($id: ID!) {
+const GET_CLUSTER_QUERY = graphql(`
+  query GetCluster($id: ID!) {
     cluster(id: $id) {
       id
       ...ClusterDetail @unmask
     }
+  }
+
+  fragment ClusterDetail on Cluster {
+    id
+    name
+    server
+    createdAt
   }
 `)
 
@@ -59,8 +66,23 @@ export const Route = createFileRoute(
   '/_authenticated/workspaces/$workspaceId/clusters/$clusterId',
 )({
   component: RouteComponent,
-  beforeLoad: () => {
-    return { title: 'Settings' }
+  beforeLoad: async ({
+    context: { apolloClient },
+    params: { workspaceId, clusterId },
+  }) => {
+    const { data } = await apolloClient.query({
+      query: GET_CLUSTER_QUERY,
+      variables: { id: clusterId },
+    })
+
+    if (!data?.cluster) {
+      throw redirect({
+        to: '/workspaces/$workspaceId/clusters',
+        params: { workspaceId },
+      })
+    }
+
+    return { title: data.cluster.name, cluster: data.cluster }
   },
 })
 
@@ -68,13 +90,9 @@ function RouteComponent() {
   const { workspaceId, clusterId } = Route.useParams()
   const navigate = Route.useNavigate()
 
+  const { cluster } = Route.useRouteContext()
+
   const [deleteConfirmName, setDeleteConfirmName] = useState('')
-
-  const { data } = useSuspenseQuery(GET_CLUSTER_SETTINGS_QUERY, {
-    variables: { id: clusterId },
-  })
-
-  const cluster = data?.cluster
 
   const [updateCluster] = useMutation(UPDATE_CLUSTER_MUTATION)
   const [removeCluster, { loading: removing }] = useMutation(
@@ -134,8 +152,8 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Settings"
-      description="Update your cluster connection settings."
+      title={cluster.name}
+      description={`Update your cluster connection settings.`}
     >
       <div className="flex flex-col gap-6">
         <form
@@ -215,7 +233,7 @@ function RouteComponent() {
                     <Textarea
                       id="certificateAuthorityData"
                       placeholder="Base64 encoded CA certificate"
-                      className="font-mono text-xs"
+                      className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
                       rows={4}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
@@ -234,7 +252,7 @@ function RouteComponent() {
                     <Textarea
                       id="token"
                       placeholder="Service account token for authentication"
-                      className="font-mono text-xs"
+                      className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
                       rows={4}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}

@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute } from '@tanstack/react-router'
-
-import { Link } from '@/components/link'
 import { zodValidator } from '@tanstack/zod-adapter'
-import { EnumLike, z } from 'zod'
 import dayjs from 'dayjs'
 
+import { ClusterSelect } from '@/components/cluster-select'
+import { Link } from '@/components/link'
 import { Page } from '@/components/page'
+import { DataTable } from '@/components/turboost-ui/data-table'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,8 +22,8 @@ import {
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { graphql } from '@/gql'
-import { DataTable } from '@/components/turboost-ui/data-table'
 import { OrderDirection, ProjectOrderField } from '@/gql/graphql'
+import { createConnectionSchema } from '@/utils/create-connection-schema'
 
 const GET_PROJECTS_QUERY = graphql(`
   query GetProjects(
@@ -60,6 +60,10 @@ const GET_PROJECTS_QUERY = graphql(`
   fragment ProjectItem on Project {
     id
     name
+    cluster {
+      id
+      name
+    }
     createdAt
   }
 `)
@@ -72,65 +76,7 @@ const CREATE_PROJECT_MUTATION = graphql(`
   }
 `)
 
-interface CreateConnectionSchemaOptions<OrderField extends EnumLike> {
-  pageSize: number
-  orderField: OrderField
-  defaultOrderField: OrderField[keyof OrderField]
-  defaultOrderDirection: OrderDirection
-}
-
-function createConnectionSchema<OrderField extends EnumLike>(
-  options: CreateConnectionSchemaOptions<OrderField>,
-) {
-  return z
-    .object({
-      first: z.number().int().positive().optional(),
-      last: z.number().int().positive().optional(),
-      after: z.string().optional(),
-      before: z.string().optional(),
-      query: z.string().optional(),
-      orderBy: z
-        .object({
-          field: z
-            .nativeEnum(options.orderField)
-            .default(options.defaultOrderField),
-          direction: z
-            .nativeEnum(OrderDirection)
-            .default(options.defaultOrderDirection),
-        })
-        .optional(),
-    })
-    .transform((data) => {
-      const { first, last, after, before, ...rest } = data
-
-      // first/after 和 last/before 互斥
-      // 如果两者都有，保留 first/after
-      // 如果都没有，使用 first = pageSize
-      if (first !== undefined || after !== undefined) {
-        return {
-          ...rest,
-          first: first ?? options.pageSize,
-          after,
-        }
-      }
-
-      if (last !== undefined || before !== undefined) {
-        return {
-          ...rest,
-          last: last ?? options.pageSize,
-          before,
-        }
-      }
-
-      // 都没有传入，默认使用 first
-      return {
-        ...rest,
-        first: options.pageSize,
-      }
-    })
-}
-
-const productConnectionSchema = createConnectionSchema({
+const projectConnectionSchema = createConnectionSchema({
   pageSize: 20,
   orderField: ProjectOrderField,
   defaultOrderField: ProjectOrderField.CREATED_AT,
@@ -141,7 +87,7 @@ export const Route = createFileRoute(
   '/_authenticated/workspaces/$workspaceId/projects/',
 )({
   component: RouteComponent,
-  validateSearch: zodValidator(productConnectionSchema),
+  validateSearch: zodValidator(projectConnectionSchema),
   beforeLoad: () => {
     return { title: 'Projects' }
   },
@@ -161,12 +107,14 @@ function RouteComponent() {
   const form = useForm({
     defaultValues: {
       name: '',
+      clusterId: '',
     },
     onSubmit: async ({ value }) => {
       const { data } = await createProject({
         variables: {
           input: {
             name: value.name.trim(),
+            clusterId: value.clusterId,
           },
         },
       })
@@ -214,6 +162,29 @@ function RouteComponent() {
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
+                <form.Field
+                  name="clusterId"
+                  validators={{
+                    onChange: ({ value }) =>
+                      !value ? 'Cluster is required' : undefined,
+                  }}
+                >
+                  {(field) => (
+                    <Field>
+                      <FieldLabel>Cluster</FieldLabel>
+                      <ClusterSelect
+                        value={field.state.value}
+                        onChange={field.handleChange}
+                      />
+                      {field.state.meta.errors.length > 0 && (
+                        <p className="text-sm text-destructive">
+                          {field.state.meta.errors.join(', ')}
+                        </p>
+                      )}
+                    </Field>
+                  )}
+                </form.Field>
+
                 <form.Field
                   name="name"
                   validators={{
@@ -275,6 +246,20 @@ function RouteComponent() {
                   params={{ workspaceId, projectId: row.original.id }}
                 >
                   {row.original.name}
+                </Link>
+              )
+            },
+          },
+          {
+            accessorKey: 'cluster',
+            header: 'Cluster',
+            cell: ({ row }) => {
+              return (
+                <Link
+                  to="/workspaces/$workspaceId/clusters/$clusterId"
+                  params={{ workspaceId, clusterId: row.original.cluster.id }}
+                >
+                  {row.original.cluster.name}
                 </Link>
               )
             },

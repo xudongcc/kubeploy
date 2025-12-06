@@ -5,6 +5,7 @@ import {
   Mutation,
   Parent,
   Query,
+  ResolveField,
   Resolver,
 } from '@nest-boot/graphql';
 import { ConnectionManager } from '@nest-boot/graphql-connection';
@@ -114,7 +115,7 @@ export class WorkspaceResolver {
   }
 
   @Can(PermissionAction.READ, Cluster)
-  @Query(() => ClusterConnection)
+  @ResolveField(() => ClusterConnection)
   async clusters(
     @Parent() workspace: Workspace,
     @Args() args: ClusterConnectionArgs,
@@ -125,7 +126,7 @@ export class WorkspaceResolver {
   }
 
   @Can(PermissionAction.READ, Cluster)
-  @Query(() => ProjectConnection)
+  @ResolveField(() => ProjectConnection)
   async projects(
     @Parent() workspace: Workspace,
     @Args() args: ProjectConnectionArgs,

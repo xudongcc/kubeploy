@@ -246,13 +246,17 @@ function RouteComponent() {
                   Lines starting with # are ignored.
                 </p>
                 <Textarea
-                  className="min-h-[200px] font-mono"
+                  className="min-h-[200px] field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
                   placeholder={`# Example:\nDATABASE_URL=postgres://localhost:5432/db\nAPI_KEY=your-api-key`}
                   value={rawValue}
                   onChange={(e) => setRawValue(e.target.value)}
                   rows={rawLineCount}
                 />
-                <Button type="button" onClick={handleRawSubmit} className="w-fit">
+                <Button
+                  type="button"
+                  onClick={handleRawSubmit}
+                  className="w-fit"
+                >
                   Save Changes
                 </Button>
               </div>

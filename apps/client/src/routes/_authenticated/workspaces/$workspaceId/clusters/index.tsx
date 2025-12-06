@@ -238,7 +238,7 @@ function RouteComponent() {
                       <Textarea
                         id="certificateAuthorityData"
                         placeholder="Base64 encoded CA certificate"
-                        className="font-mono text-xs"
+                        className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
                         rows={4}
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -305,7 +305,7 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
                       <Textarea
                         id="token"
                         placeholder="Service account token for authentication"
-                        className="font-mono text-xs"
+                        className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
                         rows={4}
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
