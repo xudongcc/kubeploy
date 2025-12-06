@@ -100,6 +100,18 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
+          title: 'Volumes',
+          icon: HardDrive,
+          link: linkOptions({
+            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes',
+            params: {
+              workspaceId: workspace.id,
+              projectId: project.id,
+              serviceId: service.id,
+            },
+          }),
+        },
+        {
           title: 'Logs',
           icon: FileText,
           link: linkOptions({
@@ -147,14 +159,6 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
             to: '/workspaces/$workspaceId/projects/$projectId/services',
             params: { workspaceId: workspace.id, projectId: project.id },
             activeOptions: { exact: true },
-          }),
-        },
-        {
-          title: 'Volumes',
-          icon: HardDrive,
-          link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/volumes',
-            params: { workspaceId: workspace.id, projectId: project.id },
           }),
         },
         {

@@ -55,14 +55,6 @@ export const ProjectSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: 'Volumes',
-          icon: HardDrive,
-          link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/volumes',
-            params: { workspaceId: workspace.id, projectId: project.id },
-          }),
-        },
-        {
           title: 'Settings',
           icon: Settings,
           link: linkOptions({
