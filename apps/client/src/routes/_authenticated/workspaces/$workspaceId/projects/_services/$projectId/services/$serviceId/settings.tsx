@@ -64,6 +64,14 @@ function RouteComponent() {
   const [updateService] = useMutation(UPDATE_SERVICE_MUTATION)
   const [removeService, { loading: removing }] = useMutation(
     REMOVE_SERVICE_MUTATION,
+    {
+      update(cache, result) {
+        if (result.data?.removeService) {
+          cache.evict({ id: cache.identify(result.data.removeService) })
+          cache.gc()
+        }
+      },
+    },
   )
 
   const form = useForm({

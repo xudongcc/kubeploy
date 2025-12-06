@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useMutation, useSuspenseQuery } from '@apollo/client/react'
+import { useMutation } from '@apollo/client/react'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute } from '@tanstack/react-router'
 
+import { Page } from '@/components/page'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,16 +27,6 @@ import {
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { graphql } from '@/gql'
-import { Page } from '@/components/page'
-
-const GET_PROJECT_QUERY = graphql(`
-  query GetProjectSettings($id: ID!) {
-    project(id: $id) {
-      id
-      ...ProjectDetail @unmask
-    }
-  }
-`)
 
 const UPDATE_PROJECT_MUTATION = graphql(`
   mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
@@ -69,15 +60,19 @@ function RouteComponent() {
 
   const [deleteConfirmName, setDeleteConfirmName] = useState('')
 
-  const { data } = useSuspenseQuery(GET_PROJECT_QUERY, {
-    variables: { id: projectId },
-  })
-
-  const project = data?.project
+  const { project } = Route.useRouteContext()
 
   const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION)
   const [removeProject, { loading: removing }] = useMutation(
     REMOVE_PROJECT_MUTATION,
+    {
+      update(cache, result) {
+        if (result.data?.removeProject) {
+          cache.evict({ id: cache.identify(result.data.removeProject) })
+          cache.gc()
+        }
+      },
+    },
   )
 
   const form = useForm({
@@ -214,7 +209,6 @@ function RouteComponent() {
                   <AlertDialogAction
                     disabled={!canDelete || removing}
                     onClick={handleDelete}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
                     {removing ? 'Deleting...' : 'Delete Project'}
                   </AlertDialogAction>

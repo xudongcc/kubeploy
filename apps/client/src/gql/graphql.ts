@@ -962,20 +962,6 @@ export type ServiceItemFragment = {
   createdAt: any
 } & { ' $fragmentName'?: 'ServiceItemFragment' }
 
-export type GetProjectSettingsQueryVariables = Exact<{
-  id: Scalars['ID']['input']
-}>
-
-export type GetProjectSettingsQuery = {
-  __typename?: 'Query'
-  project?: {
-    __typename?: 'Project'
-    id: string
-    name: string
-    createdAt: any
-  } | null
-}
-
 export type UpdateProjectMutationVariables = Exact<{
   id: Scalars['ID']['input']
   input: UpdateProjectInput
@@ -2431,80 +2417,6 @@ export const GetServicesDocument = {
     },
   ],
 } as unknown as DocumentNode<GetServicesQuery, GetServicesQueryVariables>
-export const GetProjectSettingsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetProjectSettings' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'project' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'id' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'id' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ProjectDetail' },
-                  directives: [
-                    {
-                      kind: 'Directive',
-                      name: { kind: 'Name', value: 'unmask' },
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ProjectDetail' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'Project' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetProjectSettingsQuery,
-  GetProjectSettingsQueryVariables
->
 export const UpdateProjectDocument = {
   kind: 'Document',
   definitions: [

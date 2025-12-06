@@ -5,7 +5,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ClusterService } from '@/cluster/cluster.service';
 import { ClusterClientFactory } from '@/cluster/cluster-client.factory';
-import { configurationOptions, fieldManager } from '@/kubernetes';
+import {
+  configurationOptions,
+  fieldManager,
+  isNotFoundError,
+} from '@/kubernetes';
 
 import { CreateProjectInput } from './inputs/create-project.input';
 import { Project } from './project.entity';
@@ -70,7 +74,7 @@ export class ProjectService extends EntityService<Project> {
     try {
       await coreV1Api.deleteNamespace({ name: project.kubeNamespaceName });
     } catch (error: unknown) {
-      if (!this.isNotFoundError(error)) {
+      if (!isNotFoundError(error)) {
         throw error;
       }
     }
@@ -91,16 +95,5 @@ export class ProjectService extends EntityService<Project> {
         },
       },
     };
-  }
-
-  private isNotFoundError(error: unknown): boolean {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'response' in error &&
-      typeof (error as { response: unknown }).response === 'object' &&
-      (error as { response: { statusCode?: number } }).response?.statusCode ===
-        404
-    );
   }
 }

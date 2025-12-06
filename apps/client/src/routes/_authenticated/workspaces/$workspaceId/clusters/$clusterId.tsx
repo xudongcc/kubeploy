@@ -97,6 +97,14 @@ function RouteComponent() {
   const [updateCluster] = useMutation(UPDATE_CLUSTER_MUTATION)
   const [removeCluster, { loading: removing }] = useMutation(
     REMOVE_CLUSTER_MUTATION,
+    {
+      update(cache, result) {
+        if (result.data?.removeCluster) {
+          cache.evict({ id: cache.identify(result.data.removeCluster) })
+          cache.gc()
+        }
+      },
+    },
   )
 
   const form = useForm({

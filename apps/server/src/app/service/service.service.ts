@@ -5,7 +5,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ClusterClientFactory } from '@/cluster/cluster-client.factory';
 import { CreateEntityData } from '@/common/types/create-entity-data.type';
-import { configurationOptions, fieldManager } from '@/kubernetes';
+import {
+  configurationOptions,
+  fieldManager,
+  isNotFoundError,
+} from '@/kubernetes';
 import { ProjectService } from '@/project/project.service';
 
 import { Service } from './service.entity';
@@ -91,7 +95,7 @@ export class ServiceService extends EntityService<Service> {
           namespace,
         });
       } catch (error: unknown) {
-        if (!this.isNotFoundError(error)) {
+        if (!isNotFoundError(error)) {
           throw error;
         }
       }
@@ -114,7 +118,7 @@ export class ServiceService extends EntityService<Service> {
         namespace,
       });
     } catch (error: unknown) {
-      if (!this.isNotFoundError(error)) {
+      if (!isNotFoundError(error)) {
         throw error;
       }
     }
@@ -125,7 +129,7 @@ export class ServiceService extends EntityService<Service> {
         namespace,
       });
     } catch (error: unknown) {
-      if (!this.isNotFoundError(error)) {
+      if (!isNotFoundError(error)) {
         throw error;
       }
     }
@@ -208,16 +212,5 @@ export class ServiceService extends EntityService<Service> {
         })),
       },
     };
-  }
-
-  private isNotFoundError(error: unknown): boolean {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'response' in error &&
-      typeof (error as { response: unknown }).response === 'object' &&
-      (error as { response: { statusCode?: number } }).response?.statusCode ===
-        404
-    );
   }
 }

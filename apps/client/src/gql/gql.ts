@@ -26,7 +26,6 @@ type Documents = {
   '\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n  }\n': typeof types.GetProjectDocument
   '\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n': typeof types.CreateServiceDocument
   '\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n': typeof types.GetServicesDocument
-  '\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n': typeof types.GetProjectSettingsDocument
   '\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n': typeof types.UpdateProjectDocument
   '\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n': typeof types.RemoveProjectDocument
   '\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n  }\n': typeof types.GetServiceDocument
@@ -63,8 +62,6 @@ const documents: Documents = {
     types.CreateServiceDocument,
   '\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n':
     types.GetServicesDocument,
-  '\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n':
-    types.GetProjectSettingsDocument,
   '\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n':
     types.UpdateProjectDocument,
   '\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n':
@@ -173,12 +170,6 @@ export function graphql(
 export function graphql(
   source: '\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n',
 ): (typeof documents)['\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    services(\n      projectId: $projectId\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ServiceItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    image\n    replicas\n    ports\n    createdAt\n  }\n']
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
-  source: '\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n',
-): (typeof documents)['\n  query GetProjectSettings($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
