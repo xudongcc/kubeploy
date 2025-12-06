@@ -6,6 +6,7 @@ import { DomainModule } from '@/domain/domain.module';
 import { ProjectModule } from '@/project/project.module';
 import { ServiceModule } from '@/service/service.module';
 import { UserModule } from '@/user/user.module';
+import { VolumeModule } from '@/volume/volume.module';
 import { WorkspaceModule } from '@/workspace/workspace.module';
 import { WorkspaceMemberModule } from '@/workspace-member/workspace-member.module';
 
@@ -19,6 +20,7 @@ import { WorkspaceMemberModule } from '@/workspace-member/workspace-member.modul
     ProjectModule,
     ServiceModule,
     DomainModule,
+    VolumeModule,
   ],
 })
 export class AppModule {}

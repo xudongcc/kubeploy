@@ -1,15 +1,6 @@
-import { WorkspaceSidebar } from '@/components/workspace-sidebar'
-
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 import { graphql } from '@/gql'
-import { Separator } from '@/components/ui/separator'
-import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const GET_CURRENT_WORKSPACE_QUERY = graphql(`
   query GetCurrentWorkspace($id: ID!) {
@@ -27,7 +18,7 @@ const GET_CURRENT_WORKSPACE_QUERY = graphql(`
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')(
   {
-    component: RouteComponent,
+    component: Outlet,
     beforeLoad: async ({
       context: { apolloClient },
       params: { workspaceId },
@@ -47,27 +38,3 @@ export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')(
     },
   },
 )
-
-function RouteComponent() {
-  return (
-    <SidebarProvider>
-      <WorkspaceSidebar />
-
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-
-            <Breadcrumbs />
-          </div>
-        </header>
-
-        <Outlet />
-      </SidebarInset>
-    </SidebarProvider>
-  )
-}

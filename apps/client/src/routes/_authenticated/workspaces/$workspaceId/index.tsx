@@ -1,19 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId/')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  const { workspaceId } = Route.useParams()
-  const navigate = Route.useNavigate()
-
-  useEffect(() => {
-    navigate({
-      to: `/workspaces/${workspaceId}/projects`,
+export const Route = createFileRoute(
+  '/_authenticated/workspaces/$workspaceId/',
+)({
+  beforeLoad: ({ params: { workspaceId } }) => {
+    throw redirect({
+      to: '/workspaces/$workspaceId/projects',
+      params: { workspaceId },
     })
-  }, [workspaceId])
-
-  return null
-}
+  },
+})

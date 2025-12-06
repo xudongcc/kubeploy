@@ -58,8 +58,9 @@ export class DomainService extends EntityService<Domain> {
     const cluster = await project.cluster.loadOrFail();
     const namespace = project.kubeNamespaceName;
 
-    const networkingV1Api = this.clusterClientFactory.getNetworkingV1Api(cluster);
-    const ingressBody = this.buildIngress(domain, service);
+    const networkingV1Api =
+      this.clusterClientFactory.getNetworkingV1Api(cluster);
+    const ingressBody = await this.buildIngress(domain);
 
     await networkingV1Api.patchNamespacedIngress(
       {
@@ -81,7 +82,8 @@ export class DomainService extends EntityService<Domain> {
     const cluster = await project.cluster.loadOrFail();
     const namespace = project.kubeNamespaceName;
 
-    const networkingV1Api = this.clusterClientFactory.getNetworkingV1Api(cluster);
+    const networkingV1Api =
+      this.clusterClientFactory.getNetworkingV1Api(cluster);
 
     try {
       await networkingV1Api.deleteNamespacedIngress({
@@ -97,10 +99,9 @@ export class DomainService extends EntityService<Domain> {
     return await super.remove(domain);
   }
 
-  private buildIngress(
-    domain: Domain,
-    service: { kubeServiceName: string; id: string; project: { id: string } },
-  ): V1Ingress {
+  private async buildIngress(domain: Domain): Promise<V1Ingress> {
+    const service = await domain.service.loadOrFail();
+
     return {
       apiVersion: 'networking.k8s.io/v1',
       kind: 'Ingress',

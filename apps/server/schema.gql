@@ -112,6 +112,13 @@ input CreateServiceInput {
   replicas: Int
 }
 
+input CreateVolumeInput {
+  name: String!
+  serviceId: ID!
+  size: String!
+  storageClass: String
+}
+
 input CreateWorkspaceInput {
   name: String!
 }
@@ -207,18 +214,21 @@ type Mutation {
   createFileUploads(input: [FileUploadInput!]!): [FileUpload!]!
   createProject(input: CreateProjectInput!): Project!
   createService(input: CreateServiceInput!): Service!
+  createVolume(input: CreateVolumeInput!): Volume!
   createWorkspace(input: CreateWorkspaceInput!): Workspace!
   createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
   removeCluster(id: ID!): Cluster!
   removeDomain(id: ID!): Domain!
   removeProject(id: ID!): Project!
   removeService(id: ID!): Service!
+  removeVolume(id: ID!): Volume!
   removeWorkspace: Workspace!
   removeWorkspaceMember(id: ID!): WorkspaceMember!
   updateCluster(id: ID!, input: UpdateClusterInput!): Cluster!
   updateDomain(id: ID!, input: UpdateDomainInput!): Domain!
   updateProject(id: ID!, input: UpdateProjectInput!): Project!
   updateService(id: ID!, input: UpdateServiceInput!): Service!
+  updateVolume(id: ID!, input: UpdateVolumeInput!): Volume!
   updateWorkspace(input: UpdateWorkspaceInput!): Workspace!
   updateWorkspaceMember(id: ID!, input: UpdateWorkspaceMemberInput!): WorkspaceMember
 }
@@ -388,30 +398,7 @@ type Query {
     query: String
   ): ProjectConnection!
   service(id: ID!): Service
-  services(
-    """Returns the elements that come after the specified cursor."""
-    after: String
-
-    """Returns the elements that come before the specified cursor."""
-    before: String
-
-    """Returns up to the first `n` elements from the list."""
-    first: Int
-
-    """Returns up to the last `n` elements from the list."""
-    last: Int
-
-    """Ordering options for the returned topics."""
-    orderBy: ServiceOrder
-    projectId: ID!
-
-    """
-    Apply one or multiple filters to the query.
-    Supported filter parameters:
-    `created_at`
-    """
-    query: String
-  ): ServiceConnection!
+  volume(id: ID!): Volume
   workspace(id: ID!): Workspace
   workspaceMember(id: ID!): WorkspaceMember
   workspaceMemberByToken(token: String!): WorkspaceMember
@@ -560,6 +547,12 @@ input UpdateServiceInput {
   replicas: Int
 }
 
+input UpdateVolumeInput {
+  name: String
+  size: String
+  storageClass: String
+}
+
 input UpdateWorkspaceInput {
   name: String
 }
@@ -576,6 +569,16 @@ type User {
   email: String!
   id: ID!
   name: String!
+  updatedAt: DateTime!
+}
+
+type Volume {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  service: Service!
+  size: String!
+  storageClass: String
   updatedAt: DateTime!
 }
 

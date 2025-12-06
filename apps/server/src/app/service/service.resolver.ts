@@ -16,14 +16,9 @@ import {
 import { Domain } from '@/domain/domain.entity';
 import { Can, PermissionAction } from '@/lib/permission';
 import { Project } from '@/project/project.entity';
-import { ProjectService } from '@/project/project.service';
 
 import { CreateServiceInput } from './inputs/create-service.input';
 import { UpdateServiceInput } from './inputs/update-service.input';
-import {
-  ServiceConnection,
-  ServiceConnectionArgs,
-} from './service.connection-definition';
 import { Service } from './service.entity';
 import { ServiceService } from './service.service';
 
@@ -31,7 +26,6 @@ import { ServiceService } from './service.service';
 export class ServiceResolver {
   constructor(
     private readonly serviceService: ServiceService,
-    private readonly projectService: ProjectService,
     private readonly cm: ConnectionManager,
   ) {}
 
@@ -41,17 +35,6 @@ export class ServiceResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Service | null> {
     return await this.serviceService.findOne({ id });
-  }
-
-  @Can(PermissionAction.READ, Service)
-  @Query(() => ServiceConnection)
-  async services(
-    @Args({ name: 'projectId', type: () => ID }) projectId: string,
-    @Args() args: ServiceConnectionArgs,
-  ) {
-    return await this.cm.find(ServiceConnection, args, {
-      where: { project: { id: projectId } },
-    });
   }
 
   @Can(PermissionAction.CREATE, Service)
