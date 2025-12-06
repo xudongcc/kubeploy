@@ -20,7 +20,9 @@ import { Route as AuthenticatedWorkspacesWorkspaceIdSettingsRouteImport } from '
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdMembersIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/members/index'
+import { Route as AuthenticatedWorkspacesWorkspaceIdClustersIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/clusters/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId'
+import { Route as AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId/clusters/$clusterId'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsServicesProjectIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/_services/$projectId'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdSettingsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/settings'
@@ -99,11 +101,23 @@ const AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute =
     path: '/members/',
     getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
   } as any)
+const AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute =
+  AuthenticatedWorkspacesWorkspaceIdClustersIndexRouteImport.update({
+    id: '/clusters/',
+    path: '/clusters/',
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
+  } as any)
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute =
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteImport.update({
     id: '/$projectId',
     path: '/$projectId',
     getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdProjectsRoute,
+  } as any)
+const AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute =
+  AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRouteImport.update({
+    id: '/clusters/$clusterId',
+    path: '/clusters/$clusterId',
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRouteImport.update({
@@ -247,7 +261,9 @@ export interface FileRoutesByFullPath {
   '/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren
   '/workspaces/$workspaceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdSettingsRoute
   '/workspaces/$workspaceId/': typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  '/workspaces/$workspaceId/clusters/$clusterId': typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute
   '/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsServicesProjectIdRouteWithChildren
+  '/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute
   '/workspaces/$workspaceId/members': typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute
   '/workspaces/$workspaceId/projects/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/services': typeof AuthenticatedWorkspacesWorkspaceIdProjectsServicesProjectIdServicesRouteWithChildren
@@ -271,6 +287,8 @@ export interface FileRoutesByTo {
   '/workspaces': typeof AuthenticatedWorkspacesIndexRoute
   '/workspaces/$workspaceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdSettingsRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  '/workspaces/$workspaceId/clusters/$clusterId': typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute
+  '/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute
   '/workspaces/$workspaceId/members': typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute
   '/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdSettingsRoute
@@ -296,7 +314,9 @@ export interface FileRoutesById {
   '/_authenticated/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdSettingsRoute
   '/_authenticated/workspaces/$workspaceId/': typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  '/_authenticated/workspaces/$workspaceId/clusters/$clusterId': typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteWithChildren
+  '/_authenticated/workspaces/$workspaceId/clusters/': typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute
   '/_authenticated/workspaces/$workspaceId/members/': typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute
   '/_authenticated/workspaces/$workspaceId/projects/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteWithChildren
@@ -326,7 +346,9 @@ export interface FileRouteTypes {
     | '/workspaces/$workspaceId/projects'
     | '/workspaces/$workspaceId/settings'
     | '/workspaces/$workspaceId/'
+    | '/workspaces/$workspaceId/clusters/$clusterId'
     | '/workspaces/$workspaceId/projects/$projectId'
+    | '/workspaces/$workspaceId/clusters'
     | '/workspaces/$workspaceId/members'
     | '/workspaces/$workspaceId/projects/'
     | '/workspaces/$workspaceId/projects/$projectId/services'
@@ -350,6 +372,8 @@ export interface FileRouteTypes {
     | '/workspaces'
     | '/workspaces/$workspaceId/settings'
     | '/workspaces/$workspaceId'
+    | '/workspaces/$workspaceId/clusters/$clusterId'
+    | '/workspaces/$workspaceId/clusters'
     | '/workspaces/$workspaceId/members'
     | '/workspaces/$workspaceId/projects'
     | '/workspaces/$workspaceId/projects/$projectId/settings'
@@ -374,7 +398,9 @@ export interface FileRouteTypes {
     | '/_authenticated/workspaces/$workspaceId/projects'
     | '/_authenticated/workspaces/$workspaceId/settings'
     | '/_authenticated/workspaces/$workspaceId/'
+    | '/_authenticated/workspaces/$workspaceId/clusters/$clusterId'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId'
+    | '/_authenticated/workspaces/$workspaceId/clusters/'
     | '/_authenticated/workspaces/$workspaceId/members/'
     | '/_authenticated/workspaces/$workspaceId/projects/'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services'
@@ -479,12 +505,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRouteImport
       parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
     }
+    '/_authenticated/workspaces/$workspaceId/clusters/': {
+      id: '/_authenticated/workspaces/$workspaceId/clusters/'
+      path: '/clusters'
+      fullPath: '/workspaces/$workspaceId/clusters'
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
+    }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId'
       path: '/$projectId'
       fullPath: '/workspaces/$workspaceId/projects/$projectId'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteImport
       parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRoute
+    }
+    '/_authenticated/workspaces/$workspaceId/clusters/$clusterId': {
+      id: '/_authenticated/workspaces/$workspaceId/clusters/$clusterId'
+      path: '/clusters/$clusterId'
+      fullPath: '/workspaces/$workspaceId/clusters/$clusterId'
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/'
@@ -721,6 +761,8 @@ interface AuthenticatedWorkspacesWorkspaceIdRouteChildren {
   AuthenticatedWorkspacesWorkspaceIdProjectsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren
   AuthenticatedWorkspacesWorkspaceIdSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdSettingsRoute
   AuthenticatedWorkspacesWorkspaceIdIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute
+  AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute
   AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute
 }
 
@@ -732,6 +774,10 @@ const AuthenticatedWorkspacesWorkspaceIdRouteChildren: AuthenticatedWorkspacesWo
       AuthenticatedWorkspacesWorkspaceIdSettingsRoute,
     AuthenticatedWorkspacesWorkspaceIdIndexRoute:
       AuthenticatedWorkspacesWorkspaceIdIndexRoute,
+    AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute:
+      AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute,
+    AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute:
+      AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute,
     AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute:
       AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute,
   }

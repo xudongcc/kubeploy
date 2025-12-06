@@ -1,8 +1,21 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nest-boot/graphql';
+import {
+  Args,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  Resolver,
+} from '@nest-boot/graphql';
 import { ConnectionManager } from '@nest-boot/graphql-connection';
 
+import { Cluster } from '@/cluster/cluster.entity';
 import { CurrentWorkspace } from '@/common/decorators/current-workspace.decorator';
 import { Can, PermissionAction } from '@/lib/permission';
+import {
+  ServiceConnection,
+  ServiceConnectionArgs,
+} from '@/service/service.connection-definition';
+import { Service } from '@/service/service.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
 import { CreateProjectInput } from './inputs/create-project.input';
@@ -43,13 +56,9 @@ export class ProjectResolver {
   @Can(PermissionAction.CREATE, Project)
   @Mutation(() => Project)
   async createProject(
-    @CurrentWorkspace() workspace: Workspace,
     @Args('input') input: CreateProjectInput,
   ): Promise<Project> {
-    return await this.projectService.create({
-      name: input.name,
-      workspace,
-    });
+    return await this.projectService.createProject(input);
   }
 
   @Can(PermissionAction.UPDATE, Project)
@@ -67,5 +76,22 @@ export class ProjectResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Project> {
     return await this.projectService.remove(id);
+  }
+
+  @Can(PermissionAction.READ, Cluster)
+  @Query(() => Cluster)
+  async cluster(@Parent() project: Project) {
+    return await project.cluster.loadOrFail();
+  }
+
+  @Can(PermissionAction.READ, Service)
+  @Query(() => ServiceConnection)
+  async services(
+    @Parent() project: Project,
+    @Args() args: ServiceConnectionArgs,
+  ) {
+    return await this.cm.find(ServiceConnection, args, {
+      where: { project },
+    });
   }
 }

@@ -1,13 +1,9 @@
-import {
-  AppsV1Api,
-  CoreV1Api,
-  V1Deployment,
-  V1Service,
-} from '@kubernetes/client-node';
+import { V1Deployment, V1Service } from '@kubernetes/client-node';
 import { EntityData, EntityManager } from '@mikro-orm/core';
 import { EntityService, IdOrEntity } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
 
+import { ClusterClientFactory } from '@/cluster/cluster-client.factory';
 import { CreateEntityData } from '@/common/types/create-entity-data.type';
 import { configurationOptions, fieldManager } from '@/kubernetes';
 import { ProjectService } from '@/project/project.service';
@@ -18,8 +14,7 @@ import { Service } from './service.entity';
 export class ServiceService extends EntityService<Service> {
   constructor(
     protected readonly em: EntityManager,
-    private readonly appsV1Api: AppsV1Api,
-    private readonly coreV1Api: CoreV1Api,
+    private readonly clusterClientFactory: ClusterClientFactory,
     private readonly projectService: ProjectService,
   ) {
     super(Service, em);
@@ -54,13 +49,17 @@ export class ServiceService extends EntityService<Service> {
 
   async sync(service: Service): Promise<void> {
     const project = await service.project.loadOrFail();
+    const cluster = await project.cluster.loadOrFail();
     const namespace = project.kubeNamespaceName;
+
+    const appsV1Api = this.clusterClientFactory.getAppsV1Api(cluster);
+    const coreV1Api = this.clusterClientFactory.getCoreV1Api(cluster);
 
     const deploymentBody = this.buildDeployment(service);
     const serviceBody = this.buildService(service);
 
     // Apply Deployment using Server-Side Apply
-    await this.appsV1Api.patchNamespacedDeployment(
+    await appsV1Api.patchNamespacedDeployment(
       {
         name: service.kubeDeploymentName,
         namespace,
@@ -74,7 +73,7 @@ export class ServiceService extends EntityService<Service> {
     // Sync Service (only if ports are defined)
     if (service.ports.length > 0) {
       // Apply Service using Server-Side Apply
-      await this.coreV1Api.patchNamespacedService(
+      await coreV1Api.patchNamespacedService(
         {
           name: service.kubeServiceName,
           namespace,
@@ -87,7 +86,7 @@ export class ServiceService extends EntityService<Service> {
     } else {
       // Delete service if no ports are defined
       try {
-        await this.coreV1Api.deleteNamespacedService({
+        await coreV1Api.deleteNamespacedService({
           name: service.kubeServiceName,
           namespace,
         });
@@ -103,10 +102,14 @@ export class ServiceService extends EntityService<Service> {
     const service = await this.findOneOrFail(idOrEntity);
 
     const project = await service.project.loadOrFail();
+    const cluster = await project.cluster.loadOrFail();
     const namespace = project.kubeNamespaceName;
 
+    const appsV1Api = this.clusterClientFactory.getAppsV1Api(cluster);
+    const coreV1Api = this.clusterClientFactory.getCoreV1Api(cluster);
+
     try {
-      await this.appsV1Api.deleteNamespacedDeployment({
+      await appsV1Api.deleteNamespacedDeployment({
         name: service.kubeDeploymentName,
         namespace,
       });
@@ -117,7 +120,7 @@ export class ServiceService extends EntityService<Service> {
     }
 
     try {
-      await this.coreV1Api.deleteNamespacedService({
+      await coreV1Api.deleteNamespacedService({
         name: service.kubeServiceName,
         namespace,
       });

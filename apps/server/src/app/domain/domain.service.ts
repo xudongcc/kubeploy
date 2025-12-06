@@ -1,8 +1,9 @@
-import { NetworkingV1Api, V1Ingress } from '@kubernetes/client-node';
+import { V1Ingress } from '@kubernetes/client-node';
 import { EntityData, EntityManager } from '@mikro-orm/core';
 import { EntityService, IdOrEntity } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
 
+import { ClusterClientFactory } from '@/cluster/cluster-client.factory';
 import { CreateEntityData } from '@/common/types/create-entity-data.type';
 import { configurationOptions, fieldManager } from '@/kubernetes';
 import { ServiceService } from '@/service/service.service';
@@ -13,7 +14,7 @@ import { Domain } from './domain.entity';
 export class DomainService extends EntityService<Domain> {
   constructor(
     protected readonly em: EntityManager,
-    private readonly networkingV1Api: NetworkingV1Api,
+    private readonly clusterClientFactory: ClusterClientFactory,
     private readonly serviceService: ServiceService,
   ) {
     super(Domain, em);
@@ -50,11 +51,13 @@ export class DomainService extends EntityService<Domain> {
   async sync(domain: Domain): Promise<void> {
     const service = await domain.service.loadOrFail();
     const project = await service.project.loadOrFail();
+    const cluster = await project.cluster.loadOrFail();
     const namespace = project.kubeNamespaceName;
 
+    const networkingV1Api = this.clusterClientFactory.getNetworkingV1Api(cluster);
     const ingressBody = this.buildIngress(domain, service);
 
-    await this.networkingV1Api.patchNamespacedIngress(
+    await networkingV1Api.patchNamespacedIngress(
       {
         name: domain.kubeIngressName,
         namespace,
@@ -71,10 +74,13 @@ export class DomainService extends EntityService<Domain> {
 
     const service = await domain.service.loadOrFail();
     const project = await service.project.loadOrFail();
+    const cluster = await project.cluster.loadOrFail();
     const namespace = project.kubeNamespaceName;
 
+    const networkingV1Api = this.clusterClientFactory.getNetworkingV1Api(cluster);
+
     try {
-      await this.networkingV1Api.deleteNamespacedIngress({
+      await networkingV1Api.deleteNamespacedIngress({
         name: domain.kubeIngressName,
         namespace,
       });

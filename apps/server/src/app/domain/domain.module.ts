@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { KubernetesModule } from '@/kubernetes';
+import { ClusterModule } from '@/cluster/cluster.module';
 import { ServiceModule } from '@/service/service.module';
 
 import { DomainResolver } from './domain.resolver';
 import { DomainService } from './domain.service';
 
 @Module({
-  imports: [KubernetesModule, ServiceModule],
+  imports: [ClusterModule, ServiceModule],
   providers: [DomainResolver, DomainService],
   exports: [DomainService],
 })

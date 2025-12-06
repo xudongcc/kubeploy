@@ -1,4 +1,4 @@
-import { Folder, Users, Settings } from 'lucide-react'
+import { Folder, Users, Settings, Server } from 'lucide-react'
 
 import { SidebarUser } from '@/components/sidebar-user'
 import { WorkspaceSwitcher } from '@/components/workspace-switcher'
@@ -46,6 +46,14 @@ export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           icon: Folder,
           link: linkOptions({
             to: '/workspaces/$workspaceId/projects',
+            params: { workspaceId: workspace.id },
+          }),
+        },
+        {
+          title: 'Clusters',
+          icon: Server,
+          link: linkOptions({
+            to: '/workspaces/$workspaceId/clusters',
             params: { workspaceId: workspace.id },
           }),
         },

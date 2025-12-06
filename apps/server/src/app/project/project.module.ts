@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { KubernetesModule } from '@/kubernetes/kubernetes.module';
+import { ClusterModule } from '@/cluster/cluster.module';
 
 import { ProjectResolver } from './project.resolver';
 import { ProjectService } from './project.service';
 
 @Module({
-  imports: [KubernetesModule],
+  imports: [ClusterModule],
   providers: [ProjectResolver, ProjectService],
   exports: [ProjectService],
 })

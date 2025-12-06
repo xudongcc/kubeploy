@@ -10,12 +10,11 @@ import {
 import { Field, ID, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
-import { Cluster } from '@/cluster/cluster.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
 @ObjectType()
 @Entity()
-export class Project {
+export class Cluster {
   @Field(() => ID)
   @PrimaryKey({
     type: t.bigint,
@@ -25,6 +24,16 @@ export class Project {
   @Field(() => String)
   @Property({ type: t.string })
   name!: string;
+
+  @Field(() => String)
+  @Property({ type: t.string })
+  server!: string;
+
+  @Property({ type: t.text })
+  certificateAuthorityData!: string;
+
+  @Property({ type: t.text })
+  token!: string;
 
   @Field(() => Date)
   @Property({ type: t.datetime, defaultRaw: 'now()' })
@@ -40,11 +49,4 @@ export class Project {
 
   @ManyToOne(() => Workspace)
   workspace!: Ref<Workspace>;
-
-  @ManyToOne(() => Cluster)
-  cluster!: Ref<Cluster>;
-
-  get kubeNamespaceName(): Opt<string> {
-    return `kp-${this.id}`;
-  }
 }

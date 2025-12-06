@@ -1,14 +1,30 @@
 import { CurrentUser } from '@nest-boot/auth';
-import { Args, ID, Mutation, Query, Resolver } from '@nest-boot/graphql';
+import {
+  Args,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  Resolver,
+} from '@nest-boot/graphql';
 import { ConnectionManager } from '@nest-boot/graphql-connection';
 import { ForbiddenException } from '@nestjs/common';
 
-import { User } from '@/user/user.entity';
-import { WorkspaceMemberRole } from '@/workspace-member/enums/workspace-member-role.enum';
-import { WorkspaceMember } from '@/workspace-member/workspace-member.entity';
+import {
+  ClusterConnection,
+  ClusterConnectionArgs,
+} from '@/cluster/cluster.connection-definition';
+import { Cluster } from '@/cluster/cluster.entity';
 import { CurrentWorkspace } from '@/common/decorators/current-workspace.decorator';
 import { CurrentWorkspaceMember } from '@/common/decorators/current-workspace-member.decorator';
 import { Can, PermissionAction } from '@/lib/permission';
+import {
+  ProjectConnection,
+  ProjectConnectionArgs,
+} from '@/project/project.connection-definition';
+import { User } from '@/user/user.entity';
+import { WorkspaceMemberRole } from '@/workspace-member/enums/workspace-member-role.enum';
+import { WorkspaceMember } from '@/workspace-member/workspace-member.entity';
 
 import { CreateWorkspaceInput } from './inputs/create-workspace.input';
 import { UpdateWorkspaceInput } from './inputs/update-workspace.input';
@@ -94,6 +110,28 @@ export class WorkspaceResolver {
 
     return await this.workspaceService.update(workspace, {
       deletedAt: new Date(),
+    });
+  }
+
+  @Can(PermissionAction.READ, Cluster)
+  @Query(() => ClusterConnection)
+  async clusters(
+    @Parent() workspace: Workspace,
+    @Args() args: ClusterConnectionArgs,
+  ) {
+    return await this.cm.find(ClusterConnection, args, {
+      where: { workspace },
+    });
+  }
+
+  @Can(PermissionAction.READ, Cluster)
+  @Query(() => ProjectConnection)
+  async projects(
+    @Parent() workspace: Workspace,
+    @Args() args: ProjectConnectionArgs,
+  ) {
+    return await this.cm.find(ProjectConnection, args, {
+      where: { workspace },
     });
   }
 }

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ClusterModule } from '@/cluster/cluster.module';
 import { CommonModule } from '@/common/common.module';
 import { DomainModule } from '@/domain/domain.module';
 import { ProjectModule } from '@/project/project.module';
@@ -14,6 +15,7 @@ import { WorkspaceMemberModule } from '@/workspace-member/workspace-member.modul
     UserModule,
     WorkspaceModule,
     WorkspaceMemberModule,
+    ClusterModule,
     ProjectModule,
     ServiceModule,
     DomainModule,

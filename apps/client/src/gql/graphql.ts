@@ -45,6 +45,56 @@ export type AddWorkspaceMemberInput = {
   email: Scalars['String']['input']
 }
 
+export type Cluster = {
+  __typename?: 'Cluster'
+  createdAt: Scalars['DateTime']['output']
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
+  server: Scalars['String']['output']
+  updatedAt: Scalars['DateTime']['output']
+}
+
+export type ClusterConnection = {
+  __typename?: 'ClusterConnection'
+  /** A list of edges. */
+  edges: Array<ClusterEdge>
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo
+  /** Identifies the total count of items in the connection. */
+  totalCount: Scalars['Int']['output']
+}
+
+/** An auto-generated type which holds one Cluster and a cursor during pagination. */
+export type ClusterEdge = {
+  __typename?: 'ClusterEdge'
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String']['output']
+  /** The item at the end of ClusterEdge. */
+  node: Cluster
+}
+
+/** Ordering options for cluster connections */
+export type ClusterOrder = {
+  /** The ordering direction. */
+  direction: OrderDirection
+  /** The field to order clusters by. */
+  field: ClusterOrderField
+}
+
+/** Properties by which cluster connections can be ordered. */
+export enum ClusterOrderField {
+  CREATED_AT = 'CREATED_AT',
+  ID = 'ID',
+}
+
+export type CreateClusterInput = {
+  certificateAuthorityData: Scalars['String']['input']
+  name: Scalars['String']['input']
+  server: Scalars['String']['input']
+  token: Scalars['String']['input']
+  workspaceId: Scalars['ID']['input']
+}
+
 export type CreateDomainInput = {
   host: Scalars['String']['input']
   path?: InputMaybe<Scalars['String']['input']>
@@ -53,6 +103,7 @@ export type CreateDomainInput = {
 }
 
 export type CreateProjectInput = {
+  clusterId: Scalars['ID']['input']
   name: Scalars['String']['input']
 }
 
@@ -150,17 +201,20 @@ export type Mutation = {
   __typename?: 'Mutation'
   acceptWorkspaceInvite: AcceptWorkspaceInviteResult
   addWorkspaceMember: WorkspaceMember
+  createCluster: Cluster
   createDomain: Domain
   createFileUploads: Array<FileUpload>
   createProject: Project
   createService: Service
   createWorkspace: Workspace
   createWorkspaceInvite: WorkspaceMember
+  removeCluster: Cluster
   removeDomain: Domain
   removeProject: Project
   removeService: Service
   removeWorkspace: Workspace
   removeWorkspaceMember: WorkspaceMember
+  updateCluster: Cluster
   updateDomain: Domain
   updateProject: Project
   updateService: Service
@@ -175,6 +229,10 @@ export type MutationAcceptWorkspaceInviteArgs = {
 
 export type MutationAddWorkspaceMemberArgs = {
   input: AddWorkspaceMemberInput
+}
+
+export type MutationCreateClusterArgs = {
+  input: CreateClusterInput
 }
 
 export type MutationCreateDomainArgs = {
@@ -201,6 +259,10 @@ export type MutationCreateWorkspaceInviteArgs = {
   input: CreateWorkspaceInviteInput
 }
 
+export type MutationRemoveClusterArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationRemoveDomainArgs = {
   id: Scalars['ID']['input']
 }
@@ -215,6 +277,11 @@ export type MutationRemoveServiceArgs = {
 
 export type MutationRemoveWorkspaceMemberArgs = {
   id: Scalars['ID']['input']
+}
+
+export type MutationUpdateClusterArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateClusterInput
 }
 
 export type MutationUpdateDomainArgs = {
@@ -300,6 +367,8 @@ export enum ProjectOrderField {
 
 export type Query = {
   __typename?: 'Query'
+  cluster?: Maybe<Cluster>
+  clusters: ClusterConnection
   currentUser: User
   currentWorkspace: Workspace
   currentWorkspaceMember: WorkspaceMember
@@ -314,6 +383,19 @@ export type Query = {
   workspaceMemberByToken?: Maybe<WorkspaceMember>
   workspaceMembers: WorkspaceMemberConnection
   workspaces: WorkspaceConnection
+}
+
+export type QueryClusterArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryClustersArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  before?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<ClusterOrder>
+  query?: InputMaybe<Scalars['String']['input']>
 }
 
 export type QueryDomainArgs = {
@@ -430,6 +512,13 @@ export type ServiceOrder = {
 export enum ServiceOrderField {
   CREATED_AT = 'CREATED_AT',
   ID = 'ID',
+}
+
+export type UpdateClusterInput = {
+  certificateAuthorityData?: InputMaybe<Scalars['String']['input']>
+  name?: InputMaybe<Scalars['String']['input']>
+  server?: InputMaybe<Scalars['String']['input']>
+  token?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateDomainInput = {
@@ -636,6 +725,115 @@ export type CurrentWorkspaceFragment = {
   id: string
   name: string
 } & { ' $fragmentName'?: 'CurrentWorkspaceFragment' }
+
+export type GetClusterQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type GetClusterQuery = {
+  __typename?: 'Query'
+  cluster?: {
+    __typename?: 'Cluster'
+    id: string
+    name: string
+    server: string
+    createdAt: any
+  } | null
+}
+
+export type ClusterDetailFragment = {
+  __typename?: 'Cluster'
+  id: string
+  name: string
+  server: string
+  createdAt: any
+} & { ' $fragmentName'?: 'ClusterDetailFragment' }
+
+export type GetClusterSettingsQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type GetClusterSettingsQuery = {
+  __typename?: 'Query'
+  cluster?: {
+    __typename?: 'Cluster'
+    id: string
+    name: string
+    server: string
+    createdAt: any
+  } | null
+}
+
+export type UpdateClusterMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  input: UpdateClusterInput
+}>
+
+export type UpdateClusterMutation = {
+  __typename?: 'Mutation'
+  updateCluster: { __typename?: 'Cluster'; id: string } & {
+    ' $fragmentRefs'?: { ClusterDetailFragment: ClusterDetailFragment }
+  }
+}
+
+export type RemoveClusterMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type RemoveClusterMutation = {
+  __typename?: 'Mutation'
+  removeCluster: { __typename?: 'Cluster'; id: string }
+}
+
+export type GetClustersQueryVariables = Exact<{
+  after?: InputMaybe<Scalars['String']['input']>
+  before?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<ClusterOrder>
+  query?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetClustersQuery = {
+  __typename?: 'Query'
+  clusters: {
+    __typename?: 'ClusterConnection'
+    edges: Array<{
+      __typename?: 'ClusterEdge'
+      node: {
+        __typename?: 'Cluster'
+        id: string
+        name: string
+        server: string
+        createdAt: any
+      }
+    }>
+    pageInfo: {
+      __typename?: 'PageInfo'
+      endCursor?: string | null
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+      startCursor?: string | null
+    }
+  }
+}
+
+export type ClusterItemFragment = {
+  __typename?: 'Cluster'
+  id: string
+  name: string
+  server: string
+  createdAt: any
+} & { ' $fragmentName'?: 'ClusterItemFragment' }
+
+export type CreateClusterMutationVariables = Exact<{
+  input: CreateClusterInput
+}>
+
+export type CreateClusterMutation = {
+  __typename?: 'Mutation'
+  createCluster: { __typename?: 'Cluster'; id: string }
+}
 
 export type GetProjectQueryVariables = Exact<{
   id: Scalars['ID']['input']
@@ -935,6 +1133,50 @@ export const CurrentWorkspaceFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<CurrentWorkspaceFragment, unknown>
+export const ClusterDetailFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ClusterDetail' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Cluster' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'server' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ClusterDetailFragment, unknown>
+export const ClusterItemFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ClusterItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Cluster' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'server' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ClusterItemFragment, unknown>
 export const ProjectDetailFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -1243,6 +1485,544 @@ export const GetCurrentWorkspaceDocument = {
 } as unknown as DocumentNode<
   GetCurrentWorkspaceQuery,
   GetCurrentWorkspaceQueryVariables
+>
+export const GetClusterDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetCluster' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'cluster' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ClusterDetail' },
+                  directives: [
+                    {
+                      kind: 'Directive',
+                      name: { kind: 'Name', value: 'unmask' },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ClusterDetail' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Cluster' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'server' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetClusterQuery, GetClusterQueryVariables>
+export const GetClusterSettingsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetClusterSettings' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'cluster' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ClusterDetail' },
+                  directives: [
+                    {
+                      kind: 'Directive',
+                      name: { kind: 'Name', value: 'unmask' },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ClusterDetail' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Cluster' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'server' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetClusterSettingsQuery,
+  GetClusterSettingsQueryVariables
+>
+export const UpdateClusterDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'UpdateCluster' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'input' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'UpdateClusterInput' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'updateCluster' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'input' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'input' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ClusterDetail' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ClusterDetail' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Cluster' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'server' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateClusterMutation,
+  UpdateClusterMutationVariables
+>
+export const RemoveClusterDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'RemoveCluster' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'removeCluster' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RemoveClusterMutation,
+  RemoveClusterMutationVariables
+>
+export const GetClustersDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetClusters' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'after' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'before' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'first' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'last' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'orderBy' },
+          },
+          type: {
+            kind: 'NamedType',
+            name: { kind: 'Name', value: 'ClusterOrder' },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'query' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'clusters' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'after' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'after' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'before' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'before' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'first' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'last' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'last' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'orderBy' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'query' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'query' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'edges' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'node' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'id' },
+                            },
+                            {
+                              kind: 'FragmentSpread',
+                              name: { kind: 'Name', value: 'ClusterItem' },
+                              directives: [
+                                {
+                                  kind: 'Directive',
+                                  name: { kind: 'Name', value: 'unmask' },
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'pageInfo' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'endCursor' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'hasNextPage' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'hasPreviousPage' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'startCursor' },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ClusterItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Cluster' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'server' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetClustersQuery, GetClustersQueryVariables>
+export const CreateClusterDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'CreateCluster' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'input' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'CreateClusterInput' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'createCluster' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'input' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'input' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateClusterMutation,
+  CreateClusterMutationVariables
 >
 export const GetProjectDocument = {
   kind: 'Document',

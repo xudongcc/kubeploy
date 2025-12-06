@@ -1,29 +1,34 @@
-import { CoreV1Api, V1Namespace } from '@kubernetes/client-node';
-import { EntityData, EntityManager, RequiredEntityData } from '@mikro-orm/core';
+import { V1Namespace } from '@kubernetes/client-node';
+import { EntityData, EntityManager } from '@mikro-orm/core';
 import { EntityService, IdOrEntity } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
 
+import { ClusterService } from '@/cluster/cluster.service';
+import { ClusterClientFactory } from '@/cluster/cluster-client.factory';
 import { configurationOptions, fieldManager } from '@/kubernetes';
-import { Workspace } from '@/workspace/workspace.entity';
 
+import { CreateProjectInput } from './inputs/create-project.input';
 import { Project } from './project.entity';
-
-export interface CreateProjectData {
-  name: string;
-  workspace: Workspace;
-}
 
 @Injectable()
 export class ProjectService extends EntityService<Project> {
   constructor(
     protected readonly em: EntityManager,
-    private readonly coreV1Api: CoreV1Api,
+    private readonly clusterService: ClusterService,
+    private readonly clusterClientFactory: ClusterClientFactory,
   ) {
     super(Project, em);
   }
 
-  async create(data: RequiredEntityData<Project>): Promise<Project> {
-    const project = await super.create(data);
+  async createProject(input: CreateProjectInput): Promise<Project> {
+    const cluster = await this.clusterService.findOneOrFail(input.clusterId);
+    const workspace = await cluster.workspace.loadOrFail();
+
+    const project = await super.create({
+      name: input.name,
+      cluster,
+      workspace,
+    });
 
     await this.sync(project);
 
@@ -42,9 +47,11 @@ export class ProjectService extends EntityService<Project> {
   }
 
   async sync(project: Project): Promise<void> {
+    const cluster = await project.cluster.loadOrFail();
+    const coreV1Api = this.clusterClientFactory.getCoreV1Api(cluster);
     const namespaceBody = this.buildNamespace(project);
 
-    await this.coreV1Api.patchNamespace(
+    await coreV1Api.patchNamespace(
       {
         name: project.kubeNamespaceName,
         body: namespaceBody,
@@ -57,9 +64,11 @@ export class ProjectService extends EntityService<Project> {
 
   async remove(idOrEntity: IdOrEntity<Project>): Promise<Project> {
     const project = await this.findOneOrFail(idOrEntity);
+    const cluster = await project.cluster.loadOrFail();
+    const coreV1Api = this.clusterClientFactory.getCoreV1Api(cluster);
 
     try {
-      await this.coreV1Api.deleteNamespace({ name: project.kubeNamespaceName });
+      await coreV1Api.deleteNamespace({ name: project.kubeNamespaceName });
     } catch (error: unknown) {
       if (!this.isNotFoundError(error)) {
         throw error;

@@ -15,6 +15,59 @@ input AddWorkspaceMemberInput {
   email: String!
 }
 
+type Cluster {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  server: String!
+  updatedAt: DateTime!
+}
+
+type ClusterConnection {
+  """A list of edges."""
+  edges: [ClusterEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""
+An auto-generated type which holds one Cluster and a cursor during pagination.
+"""
+type ClusterEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of ClusterEdge."""
+  node: Cluster!
+}
+
+"""Ordering options for cluster connections"""
+input ClusterOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order clusters by."""
+  field: ClusterOrderField!
+}
+
+"""Properties by which cluster connections can be ordered."""
+enum ClusterOrderField {
+  CREATED_AT
+  ID
+}
+
+input CreateClusterInput {
+  certificateAuthorityData: String!
+  name: String!
+  server: String!
+  token: String!
+  workspaceId: ID!
+}
+
 input CreateDomainInput {
   host: String!
   path: String = "/"
@@ -23,6 +76,7 @@ input CreateDomainInput {
 }
 
 input CreateProjectInput {
+  clusterId: ID!
   name: String!
 }
 
@@ -124,17 +178,20 @@ input FileUploadInput {
 type Mutation {
   acceptWorkspaceInvite(input: AcceptWorkspaceInviteInput, token: String!): AcceptWorkspaceInviteResult!
   addWorkspaceMember(input: AddWorkspaceMemberInput!): WorkspaceMember!
+  createCluster(input: CreateClusterInput!): Cluster!
   createDomain(input: CreateDomainInput!): Domain!
   createFileUploads(input: [FileUploadInput!]!): [FileUpload!]!
   createProject(input: CreateProjectInput!): Project!
   createService(input: CreateServiceInput!): Service!
   createWorkspace(input: CreateWorkspaceInput!): Workspace!
   createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
+  removeCluster(id: ID!): Cluster!
   removeDomain(id: ID!): Domain!
   removeProject(id: ID!): Project!
   removeService(id: ID!): Service!
   removeWorkspace: Workspace!
   removeWorkspaceMember(id: ID!): WorkspaceMember!
+  updateCluster(id: ID!, input: UpdateClusterInput!): Cluster!
   updateDomain(id: ID!, input: UpdateDomainInput!): Domain!
   updateProject(id: ID!, input: UpdateProjectInput!): Project!
   updateService(id: ID!, input: UpdateServiceInput!): Service!
@@ -206,6 +263,30 @@ enum ProjectOrderField {
 }
 
 type Query {
+  cluster(id: ID!): Cluster
+  clusters(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned topics."""
+    orderBy: ClusterOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): ClusterConnection!
   currentUser: User!
   currentWorkspace: Workspace!
   currentWorkspaceMember: WorkspaceMember!
@@ -380,6 +461,13 @@ input ServiceOrder {
 enum ServiceOrderField {
   CREATED_AT
   ID
+}
+
+input UpdateClusterInput {
+  certificateAuthorityData: String
+  name: String
+  server: String
+  token: String
 }
 
 input UpdateDomainInput {
