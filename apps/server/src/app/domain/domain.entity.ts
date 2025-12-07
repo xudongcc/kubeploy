@@ -53,6 +53,6 @@ export class Domain {
   service!: Ref<Service>;
 
   get kubeIngressName(): Opt<string> {
-    return `kp-${this.id}`;
+    return `kp-domain-${this.id}`;
   }
 }

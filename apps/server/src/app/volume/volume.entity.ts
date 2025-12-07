@@ -6,14 +6,16 @@ import {
   Property,
   Ref,
   t,
+  Unique,
 } from '@mikro-orm/core';
-import { Field, ID, ObjectType } from '@nest-boot/graphql';
+import { Field, ID, Int, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
 import { Service } from '@/service/service.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
 @ObjectType()
+@Unique({ properties: ['service', 'name'] })
 @Entity()
 export class Volume {
   @Field(() => ID)
@@ -26,9 +28,9 @@ export class Volume {
   @Property({ type: t.string })
   name!: string;
 
-  @Field(() => String)
-  @Property({ type: t.string })
-  size!: string;
+  @Field(() => Int)
+  @Property({ type: t.integer, unsigned: true })
+  size!: number;
 
   @Field(() => String, { nullable: true })
   @Property({ type: t.string, nullable: true })
@@ -52,7 +54,7 @@ export class Volume {
   @ManyToOne(() => Service)
   service!: Ref<Service>;
 
-  get kubePvcName(): Opt<string> {
-    return `kp-${this.id}`;
+  get kubePersistentVolumeClaimName(): Opt<string> {
+    return `kp-volume-${this.id}`;
   }
 }

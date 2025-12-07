@@ -51,25 +51,26 @@ const GET_DOMAINS_QUERY = graphql(`
     $last: Int
     $orderBy: DomainOrder
   ) {
-    domains(
-      serviceId: $serviceId
-      after: $after
-      before: $before
-      first: $first
-      last: $last
-      orderBy: $orderBy
-    ) {
-      edges {
-        node {
-          id
-          ...DomainItem @unmask
+    service(id: $serviceId) {
+      domains(
+        after: $after
+        before: $before
+        first: $first
+        last: $last
+        orderBy: $orderBy
+      ) {
+        edges {
+          node {
+            id
+            ...DomainItem @unmask
+          }
         }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
+        pageInfo {
+          endCursor
+          hasNextPage
+          hasPreviousPage
+          startCursor
+        }
       }
     }
   }
@@ -184,7 +185,7 @@ function RouteComponent() {
     setDeletingDomainId(null)
   }
 
-  const domains = data?.domains.edges.map((edge) => edge.node) || []
+  const domains = data?.service?.domains?.edges.map((edge) => edge.node) || []
   const ports = service?.ports ?? []
 
   return (

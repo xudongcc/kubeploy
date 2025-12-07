@@ -1,4 +1,4 @@
-import { Field, ID, InputType } from '@nest-boot/graphql';
+import { Field, ID, InputType, Int } from '@nest-boot/graphql';
 
 @InputType()
 export class CreateVolumeInput {
@@ -8,8 +8,8 @@ export class CreateVolumeInput {
   @Field(() => String)
   name!: string;
 
-  @Field(() => String)
-  size!: string;
+  @Field(() => Int)
+  size!: number;
 
   @Field(() => String, { nullable: true })
   storageClass?: string;

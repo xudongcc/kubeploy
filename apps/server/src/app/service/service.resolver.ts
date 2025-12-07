@@ -16,6 +16,11 @@ import {
 import { Domain } from '@/domain/domain.entity';
 import { Can, PermissionAction } from '@/lib/permission';
 import { Project } from '@/project/project.entity';
+import {
+  VolumeConnection,
+  VolumeConnectionArgs,
+} from '@/volume/volume.connection-definition';
+import { Volume } from '@/volume/volume.entity';
 
 import { CreateServiceInput } from './inputs/create-service.input';
 import { UpdateServiceInput } from './inputs/update-service.input';
@@ -82,6 +87,17 @@ export class ServiceResolver {
     @Args() args: DomainConnectionArgs,
   ) {
     return await this.cm.find(DomainConnection, args, {
+      where: { service },
+    });
+  }
+
+  @Can(PermissionAction.READ, Volume)
+  @ResolveField(() => VolumeConnection)
+  async volumes(
+    @Parent() service: Service,
+    @Args() args: VolumeConnectionArgs,
+  ) {
+    return await this.cm.find(VolumeConnection, args, {
       where: { service },
     });
   }

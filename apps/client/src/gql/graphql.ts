@@ -129,7 +129,7 @@ export type CreateServiceInput = {
 export type CreateVolumeInput = {
   name: Scalars['String']['input']
   serviceId: Scalars['ID']['input']
-  size: Scalars['String']['input']
+  size: Scalars['Int']['input']
   storageClass?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -418,7 +418,6 @@ export type Query = {
   currentWorkspace: Workspace
   currentWorkspaceMember: WorkspaceMember
   domain?: Maybe<Domain>
-  domains: DomainConnection
   project?: Maybe<Project>
   projects: ProjectConnection
   service?: Maybe<Service>
@@ -445,16 +444,6 @@ export type QueryClustersArgs = {
 
 export type QueryDomainArgs = {
   id: Scalars['ID']['input']
-}
-
-export type QueryDomainsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>
-  before?: InputMaybe<Scalars['String']['input']>
-  first?: InputMaybe<Scalars['Int']['input']>
-  last?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<DomainOrder>
-  query?: InputMaybe<Scalars['String']['input']>
-  serviceId: Scalars['ID']['input']
 }
 
 export type QueryProjectArgs = {
@@ -520,6 +509,7 @@ export type Service = {
   project: Project
   replicas: Scalars['Int']['output']
   updatedAt: Scalars['DateTime']['output']
+  volumes: VolumeConnection
 }
 
 export type ServiceDomainsArgs = {
@@ -528,6 +518,15 @@ export type ServiceDomainsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   last?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<DomainOrder>
+  query?: InputMaybe<Scalars['String']['input']>
+}
+
+export type ServiceVolumesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  before?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<VolumeOrder>
   query?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -591,7 +590,7 @@ export type UpdateServiceInput = {
 
 export type UpdateVolumeInput = {
   name?: InputMaybe<Scalars['String']['input']>
-  size?: InputMaybe<Scalars['String']['input']>
+  size?: InputMaybe<Scalars['Int']['input']>
   storageClass?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -621,9 +620,42 @@ export type Volume = {
   id: Scalars['ID']['output']
   name: Scalars['String']['output']
   service: Service
-  size: Scalars['String']['output']
+  size: Scalars['Int']['output']
   storageClass?: Maybe<Scalars['String']['output']>
   updatedAt: Scalars['DateTime']['output']
+}
+
+export type VolumeConnection = {
+  __typename?: 'VolumeConnection'
+  /** A list of edges. */
+  edges: Array<VolumeEdge>
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo
+  /** Identifies the total count of items in the connection. */
+  totalCount: Scalars['Int']['output']
+}
+
+/** An auto-generated type which holds one Volume and a cursor during pagination. */
+export type VolumeEdge = {
+  __typename?: 'VolumeEdge'
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String']['output']
+  /** The item at the end of VolumeEdge. */
+  node: Volume
+}
+
+/** Ordering options for volume connections */
+export type VolumeOrder = {
+  /** The ordering direction. */
+  direction: OrderDirection
+  /** The field to order volumes by. */
+  field: VolumeOrderField
+}
+
+/** Properties by which volume connections can be ordered. */
+export enum VolumeOrderField {
+  CREATED_AT = 'CREATED_AT',
+  ID = 'ID',
 }
 
 export type Workspace = {
@@ -974,27 +1006,30 @@ export type GetDomainsQueryVariables = Exact<{
 
 export type GetDomainsQuery = {
   __typename?: 'Query'
-  domains: {
-    __typename?: 'DomainConnection'
-    edges: Array<{
-      __typename?: 'DomainEdge'
-      node: {
-        __typename?: 'Domain'
-        id: string
-        host: string
-        path: string
-        servicePort: number
-        createdAt: any
+  service?: {
+    __typename?: 'Service'
+    domains: {
+      __typename?: 'DomainConnection'
+      edges: Array<{
+        __typename?: 'DomainEdge'
+        node: {
+          __typename?: 'Domain'
+          id: string
+          host: string
+          path: string
+          servicePort: number
+          createdAt: any
+        }
+      }>
+      pageInfo: {
+        __typename?: 'PageInfo'
+        endCursor?: string | null
+        hasNextPage: boolean
+        hasPreviousPage: boolean
+        startCursor?: string | null
       }
-    }>
-    pageInfo: {
-      __typename?: 'PageInfo'
-      endCursor?: string | null
-      hasNextPage: boolean
-      hasPreviousPage: boolean
-      startCursor?: string | null
     }
-  }
+  } | null
 }
 
 export type DomainItemFragment = {
@@ -1057,6 +1092,72 @@ export type RemoveServiceMutationVariables = Exact<{
 export type RemoveServiceMutation = {
   __typename?: 'Mutation'
   removeService: { __typename?: 'Service'; id: string }
+}
+
+export type GetVolumesQueryVariables = Exact<{
+  serviceId: Scalars['ID']['input']
+  after?: InputMaybe<Scalars['String']['input']>
+  before?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<VolumeOrder>
+}>
+
+export type GetVolumesQuery = {
+  __typename?: 'Query'
+  service?: {
+    __typename?: 'Service'
+    volumes: {
+      __typename?: 'VolumeConnection'
+      edges: Array<{
+        __typename?: 'VolumeEdge'
+        node: {
+          __typename?: 'Volume'
+          id: string
+          name: string
+          size: number
+          storageClass?: string | null
+          createdAt: any
+        }
+      }>
+      pageInfo: {
+        __typename?: 'PageInfo'
+        endCursor?: string | null
+        hasNextPage: boolean
+        hasPreviousPage: boolean
+        startCursor?: string | null
+      }
+    }
+  } | null
+}
+
+export type VolumeItemFragment = {
+  __typename?: 'Volume'
+  id: string
+  name: string
+  size: number
+  storageClass?: string | null
+  createdAt: any
+} & { ' $fragmentName'?: 'VolumeItemFragment' }
+
+export type CreateVolumeMutationVariables = Exact<{
+  input: CreateVolumeInput
+}>
+
+export type CreateVolumeMutation = {
+  __typename?: 'Mutation'
+  createVolume: { __typename?: 'Volume'; id: string } & {
+    ' $fragmentRefs'?: { VolumeItemFragment: VolumeItemFragment }
+  }
+}
+
+export type RemoveVolumeMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type RemoveVolumeMutation = {
+  __typename?: 'Mutation'
+  removeVolume: { __typename?: 'Volume'; id: string }
 }
 
 export type GetClusterQueryVariables = Exact<{
@@ -1389,6 +1490,29 @@ export const DomainItemFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<DomainItemFragment, unknown>
+export const VolumeItemFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'VolumeItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Volume' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'size' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'storageClass' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<VolumeItemFragment, unknown>
 export const ClusterDetailFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -2379,54 +2503,14 @@ export const GetDomainsDocument = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'domains' },
+            name: { kind: 'Name', value: 'service' },
             arguments: [
               {
                 kind: 'Argument',
-                name: { kind: 'Name', value: 'serviceId' },
+                name: { kind: 'Name', value: 'id' },
                 value: {
                   kind: 'Variable',
                   name: { kind: 'Name', value: 'serviceId' },
-                },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'after' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'after' },
-                },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'before' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'before' },
-                },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'first' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'first' },
-                },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'last' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'last' },
-                },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'orderBy' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'orderBy' },
                 },
               },
             ],
@@ -2435,57 +2519,108 @@ export const GetDomainsDocument = {
               selections: [
                 {
                   kind: 'Field',
-                  name: { kind: 'Name', value: 'edges' },
+                  name: { kind: 'Name', value: 'domains' },
+                  arguments: [
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'after' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'after' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'before' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'before' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'first' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'first' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'last' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'last' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'orderBy' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'orderBy' },
+                      },
+                    },
+                  ],
                   selectionSet: {
                     kind: 'SelectionSet',
                     selections: [
                       {
                         kind: 'Field',
-                        name: { kind: 'Name', value: 'node' },
+                        name: { kind: 'Name', value: 'edges' },
                         selectionSet: {
                           kind: 'SelectionSet',
                           selections: [
                             {
                               kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
-                            },
-                            {
-                              kind: 'FragmentSpread',
-                              name: { kind: 'Name', value: 'DomainItem' },
-                              directives: [
-                                {
-                                  kind: 'Directive',
-                                  name: { kind: 'Name', value: 'unmask' },
-                                },
-                              ],
+                              name: { kind: 'Name', value: 'node' },
+                              selectionSet: {
+                                kind: 'SelectionSet',
+                                selections: [
+                                  {
+                                    kind: 'Field',
+                                    name: { kind: 'Name', value: 'id' },
+                                  },
+                                  {
+                                    kind: 'FragmentSpread',
+                                    name: { kind: 'Name', value: 'DomainItem' },
+                                    directives: [
+                                      {
+                                        kind: 'Directive',
+                                        name: { kind: 'Name', value: 'unmask' },
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
                             },
                           ],
                         },
                       },
-                    ],
-                  },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'pageInfo' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [
                       {
                         kind: 'Field',
-                        name: { kind: 'Name', value: 'endCursor' },
-                      },
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'hasNextPage' },
-                      },
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'hasPreviousPage' },
-                      },
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'startCursor' },
+                        name: { kind: 'Name', value: 'pageInfo' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'endCursor' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'hasNextPage' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'hasPreviousPage' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'startCursor' },
+                            },
+                          ],
+                        },
                       },
                     ],
                   },
@@ -2895,6 +3030,343 @@ export const RemoveServiceDocument = {
 } as unknown as DocumentNode<
   RemoveServiceMutation,
   RemoveServiceMutationVariables
+>
+export const GetVolumesDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetVolumes' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'serviceId' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'after' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'before' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'first' },
+          },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'last' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'orderBy' },
+          },
+          type: {
+            kind: 'NamedType',
+            name: { kind: 'Name', value: 'VolumeOrder' },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'service' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'serviceId' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'volumes' },
+                  arguments: [
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'after' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'after' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'before' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'before' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'first' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'first' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'last' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'last' },
+                      },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'orderBy' },
+                      value: {
+                        kind: 'Variable',
+                        name: { kind: 'Name', value: 'orderBy' },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'edges' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'node' },
+                              selectionSet: {
+                                kind: 'SelectionSet',
+                                selections: [
+                                  {
+                                    kind: 'Field',
+                                    name: { kind: 'Name', value: 'id' },
+                                  },
+                                  {
+                                    kind: 'FragmentSpread',
+                                    name: { kind: 'Name', value: 'VolumeItem' },
+                                    directives: [
+                                      {
+                                        kind: 'Directive',
+                                        name: { kind: 'Name', value: 'unmask' },
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'pageInfo' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'endCursor' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'hasNextPage' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'hasPreviousPage' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'startCursor' },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'VolumeItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Volume' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'size' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'storageClass' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetVolumesQuery, GetVolumesQueryVariables>
+export const CreateVolumeDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'CreateVolume' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'input' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'CreateVolumeInput' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'createVolume' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'input' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'input' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'VolumeItem' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'VolumeItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Volume' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'size' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'storageClass' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateVolumeMutation,
+  CreateVolumeMutationVariables
+>
+export const RemoveVolumeDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'RemoveVolume' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'removeVolume' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RemoveVolumeMutation,
+  RemoveVolumeMutationVariables
 >
 export const GetClusterDocument = {
   kind: 'Document',

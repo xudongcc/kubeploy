@@ -7,6 +7,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nest-boot/graphql';
+import { ConnectionManager } from '@nest-boot/graphql-connection';
 
 import { Can, PermissionAction } from '@/lib/permission';
 import { Service } from '@/service/service.entity';
@@ -18,7 +19,10 @@ import { VolumeService } from './volume.service';
 
 @Resolver(() => Volume)
 export class VolumeResolver {
-  constructor(private readonly volumeService: VolumeService) {}
+  constructor(
+    private readonly volumeService: VolumeService,
+    private readonly cm: ConnectionManager,
+  ) {}
 
   @Can(PermissionAction.READ, Volume)
   @Query(() => Volume, { nullable: true })

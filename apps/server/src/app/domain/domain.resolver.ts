@@ -12,10 +12,6 @@ import { ConnectionManager } from '@nest-boot/graphql-connection';
 import { Can, PermissionAction } from '@/lib/permission';
 import { Service } from '@/service/service.entity';
 
-import {
-  DomainConnection,
-  DomainConnectionArgs,
-} from './domain.connection-definition';
 import { Domain } from './domain.entity';
 import { DomainService } from './domain.service';
 import { CreateDomainInput } from './inputs/create-domain.input';
@@ -34,17 +30,6 @@ export class DomainResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Domain | null> {
     return await this.domainService.findOne({ id });
-  }
-
-  @Can(PermissionAction.READ, Domain)
-  @Query(() => DomainConnection)
-  async domains(
-    @Args({ name: 'serviceId', type: () => ID }) serviceId: string,
-    @Args() args: DomainConnectionArgs,
-  ) {
-    return await this.cm.find(DomainConnection, args, {
-      where: { service: { id: serviceId } },
-    });
   }
 
   @Can(PermissionAction.CREATE, Domain)

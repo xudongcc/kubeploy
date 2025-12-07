@@ -63,7 +63,7 @@ export class VolumeService extends EntityService<Volume> {
 
     await coreV1Api.patchNamespacedPersistentVolumeClaim(
       {
-        name: volume.kubePvcName,
+        name: volume.kubePersistentVolumeClaimName,
         namespace,
         body: pvcBody,
         fieldManager,
@@ -85,7 +85,7 @@ export class VolumeService extends EntityService<Volume> {
 
     try {
       await coreV1Api.deleteNamespacedPersistentVolumeClaim({
-        name: volume.kubePvcName,
+        name: volume.kubePersistentVolumeClaimName,
         namespace,
       });
     } catch (error: unknown) {
@@ -102,7 +102,7 @@ export class VolumeService extends EntityService<Volume> {
       apiVersion: 'v1',
       kind: 'PersistentVolumeClaim',
       metadata: {
-        name: volume.kubePvcName,
+        name: volume.kubePersistentVolumeClaimName,
         labels: {
           'managed-by': 'kubeploy',
           'kubeploy.com/volume-id': volume.id,
@@ -114,7 +114,7 @@ export class VolumeService extends EntityService<Volume> {
         storageClassName: volume.storageClass,
         resources: {
           requests: {
-            storage: volume.size,
+            storage: `${volume.size}Gi`,
           },
         },
       },

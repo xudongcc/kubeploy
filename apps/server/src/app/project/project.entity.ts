@@ -1,6 +1,8 @@
 import {
+  Collection,
   Entity,
   ManyToOne,
+  OneToMany,
   Opt,
   PrimaryKey,
   Property,
@@ -11,6 +13,7 @@ import { Field, ID, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
 import { Cluster } from '@/cluster/cluster.entity';
+import { Service } from '@/service/service.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
 @ObjectType()
@@ -44,7 +47,10 @@ export class Project {
   @ManyToOne(() => Cluster)
   cluster!: Ref<Cluster>;
 
+  @OneToMany(() => Service, (service) => service.project)
+  services = new Collection<Service>(this);
+
   get kubeNamespaceName(): Opt<string> {
-    return `kp-${this.id}`;
+    return `kp-project-${this.id}`;
   }
 }

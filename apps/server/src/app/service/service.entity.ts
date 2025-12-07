@@ -11,6 +11,7 @@ import {
   Property,
   Ref,
   t,
+  Unique,
 } from '@mikro-orm/core';
 import { Field, ID, Int, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
@@ -32,6 +33,7 @@ export class EnvironmentVariable {
 }
 
 @ObjectType()
+@Unique({ properties: ['project', 'name'] })
 @Entity()
 export class Service {
   @Field(() => ID)
@@ -84,10 +86,10 @@ export class Service {
   domains = new Collection<Domain>(this);
 
   get kubeDeploymentName(): Opt<string> {
-    return `kp-${this.id}`;
+    return this.name;
   }
 
   get kubeServiceName(): Opt<string> {
-    return `kp-${this.id}`;
+    return this.name;
   }
 }

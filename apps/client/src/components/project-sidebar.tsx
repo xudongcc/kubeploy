@@ -1,4 +1,4 @@
-import { Folder, Users, Settings, Server, HardDrive } from 'lucide-react'
+import { Folder, Users, Settings, Server } from 'lucide-react'
 
 import { SidebarUser } from '@/components/sidebar-user'
 import { WorkspaceSwitcher } from '@/components/workspace-switcher'
