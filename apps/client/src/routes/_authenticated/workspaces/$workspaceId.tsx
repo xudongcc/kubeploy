@@ -23,18 +23,20 @@ export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')(
       context: { apolloClient },
       params: { workspaceId },
     }) => {
-      const { data } = await apolloClient.query({
-        query: GET_CURRENT_WORKSPACE_QUERY,
-        variables: { id: workspaceId },
-      })
-
-      if (!data?.workspace) {
-        throw redirect({
-          to: '/auth/login',
+      try {
+        const { data } = await apolloClient.query({
+          query: GET_CURRENT_WORKSPACE_QUERY,
+          variables: { id: workspaceId },
         })
-      }
 
-      return { workspace: data.workspace }
+        if (data?.workspace) {
+          return { workspace: data.workspace }
+        }
+      } catch {}
+
+      throw redirect({
+        to: '/workspaces',
+      })
     },
   },
 )

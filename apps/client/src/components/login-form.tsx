@@ -9,11 +9,17 @@ import {
 } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup } from '@/components/ui/field'
 import { authClient } from '@/lib/auth-client'
+import { useSearch } from '@tanstack/react-router'
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
+  const redirect = useSearch({
+    from: '/auth/login',
+    select: (search) => search.redirect,
+  })
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -31,7 +37,7 @@ export function LoginForm({
                   onClick={() =>
                     authClient.signIn.social({
                       provider: 'github',
-                      callbackURL: '/workspaces',
+                      callbackURL: redirect,
                     })
                   }
                 >

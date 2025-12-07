@@ -1,9 +1,16 @@
 import { LoginForm } from '@/components/login-form'
 import { createFileRoute } from '@tanstack/react-router'
+import { zodValidator } from '@tanstack/zod-adapter'
 import { CloudyIcon } from 'lucide-react'
+import z from 'zod'
 
 export const Route = createFileRoute('/auth/login')({
   component: RouteComponent,
+  validateSearch: zodValidator(
+    z.object({
+      redirect: z.url().optional(),
+    }),
+  ),
 })
 
 function RouteComponent() {

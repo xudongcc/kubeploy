@@ -31,18 +31,20 @@ export const Route = createFileRoute(
     context: { apolloClient },
     params: { workspaceId, projectId, serviceId },
   }) => {
-    const { data } = await apolloClient.query({
-      query: GET_SERVICE_QUERY,
-      variables: { id: serviceId },
-    })
-
-    if (!data?.service) {
-      throw redirect({
-        to: '/workspaces/$workspaceId/projects/$projectId/services',
-        params: { workspaceId, projectId },
+    try {
+      const { data } = await apolloClient.query({
+        query: GET_SERVICE_QUERY,
+        variables: { id: serviceId },
       })
-    }
 
-    return { title: data.service.name, service: data.service }
+      if (data?.service) {
+        return { title: data.service.name, service: data.service }
+      }
+    } catch {}
+
+    throw redirect({
+      to: '/workspaces/$workspaceId/projects/$projectId/services',
+      params: { workspaceId, projectId },
+    })
   },
 })

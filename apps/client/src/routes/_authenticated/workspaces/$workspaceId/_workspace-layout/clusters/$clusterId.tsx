@@ -70,19 +70,21 @@ export const Route = createFileRoute(
     context: { apolloClient },
     params: { workspaceId, clusterId },
   }) => {
-    const { data } = await apolloClient.query({
-      query: GET_CLUSTER_QUERY,
-      variables: { id: clusterId },
-    })
-
-    if (!data?.cluster) {
-      throw redirect({
-        to: '/workspaces/$workspaceId/clusters',
-        params: { workspaceId },
+    try {
+      const { data } = await apolloClient.query({
+        query: GET_CLUSTER_QUERY,
+        variables: { id: clusterId },
       })
-    }
 
-    return { title: data.cluster.name, cluster: data.cluster }
+      if (data?.cluster) {
+        return { title: data.cluster.name, cluster: data.cluster }
+      }
+    } catch {}
+
+    throw redirect({
+      to: '/workspaces/$workspaceId/clusters',
+      params: { workspaceId },
+    })
   },
 })
 
