@@ -34,6 +34,7 @@ RUN pnpm i --frozen-lockfile
 
 COPY --from=pruner /app/out/server/full/ .
 RUN pnpm run build
+RUN pnpm prune --prod
  
 FROM base AS runner
 
