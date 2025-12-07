@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
 export type Maybe<T> = T | null
-export type InputMaybe<T> = Maybe<T>
+export type InputMaybe<T> = T | null | undefined
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K]
 }
@@ -197,31 +197,12 @@ export type EnvironmentVariableInput = {
   value: Scalars['String']['input']
 }
 
-export type FileUpload = {
-  __typename?: 'FileUpload'
-  fields: Array<FileUploadField>
-  url: Scalars['String']['output']
-}
-
-export type FileUploadField = {
-  __typename?: 'FileUploadField'
-  name: Scalars['String']['output']
-  value: Scalars['String']['output']
-}
-
-export type FileUploadInput = {
-  fileSize: Scalars['Int']['input']
-  mimeType: Scalars['String']['input']
-  name: Scalars['String']['input']
-}
-
 export type Mutation = {
   __typename?: 'Mutation'
   acceptWorkspaceInvite: AcceptWorkspaceInviteResult
   addWorkspaceMember: WorkspaceMember
   createCluster: Cluster
   createDomain: Domain
-  createFileUploads: Array<FileUpload>
   createProject: Project
   createService: Service
   createVolume: Volume
@@ -258,10 +239,6 @@ export type MutationCreateClusterArgs = {
 
 export type MutationCreateDomainArgs = {
   input: CreateDomainInput
-}
-
-export type MutationCreateFileUploadsArgs = {
-  input: Array<FileUploadInput>
 }
 
 export type MutationCreateProjectArgs = {

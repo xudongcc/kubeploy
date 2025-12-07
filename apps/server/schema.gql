@@ -190,28 +190,11 @@ input EnvironmentVariableInput {
   value: String!
 }
 
-type FileUpload {
-  fields: [FileUploadField!]!
-  url: String!
-}
-
-type FileUploadField {
-  name: String!
-  value: String!
-}
-
-input FileUploadInput {
-  fileSize: Int!
-  mimeType: String!
-  name: String!
-}
-
 type Mutation {
   acceptWorkspaceInvite(input: AcceptWorkspaceInviteInput, token: String!): AcceptWorkspaceInviteResult!
   addWorkspaceMember(input: AddWorkspaceMemberInput!): WorkspaceMember!
   createCluster(input: CreateClusterInput!): Cluster!
   createDomain(input: CreateDomainInput!): Domain!
-  createFileUploads(input: [FileUploadInput!]!): [FileUpload!]!
   createProject(input: CreateProjectInput!): Project!
   createService(input: CreateServiceInput!): Service!
   createVolume(input: CreateVolumeInput!): Volume!
