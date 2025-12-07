@@ -38,7 +38,7 @@ export class VolumeResolver {
     return await this.volumeService.createVolume({
       name: input.name,
       size: input.size,
-      storageClass: input.storageClass,
+      mountPath: input.mountPath,
       service: input.serviceId,
     });
   }

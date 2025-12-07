@@ -12,5 +12,5 @@ export class CreateVolumeInput {
   size!: number;
 
   @Field(() => String, { nullable: true })
-  storageClass?: string;
+  mountPath?: string;
 }

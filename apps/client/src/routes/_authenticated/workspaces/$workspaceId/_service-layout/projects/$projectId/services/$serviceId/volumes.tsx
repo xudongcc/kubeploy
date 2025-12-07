@@ -4,10 +4,15 @@ import { useForm } from '@tanstack/react-form'
 import { createFileRoute } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-adapter'
 import dayjs from 'dayjs'
-import { Trash2 } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 
 import { Page } from '@/components/page'
 import { DataTable } from '@/components/turboost-ui/data-table'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +22,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -29,6 +33,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { graphql } from '@/gql'
@@ -72,7 +82,7 @@ const GET_VOLUMES_QUERY = graphql(`
     id
     name
     size
-    storageClass
+    mountPath
     createdAt
   }
 `)
@@ -87,6 +97,15 @@ const volumeConnectionSchema = createConnectionSchema({
 const CREATE_VOLUME_MUTATION = graphql(`
   mutation CreateVolume($input: CreateVolumeInput!) {
     createVolume(input: $input) {
+      id
+      ...VolumeItem
+    }
+  }
+`)
+
+const UPDATE_VOLUME_MUTATION = graphql(`
+  mutation UpdateVolume($id: ID!, $input: UpdateVolumeInput!) {
+    updateVolume(id: $id, input: $input) {
       id
       ...VolumeItem
     }
@@ -111,18 +130,33 @@ export const Route = createFileRoute(
   },
 })
 
+type VolumeItem = {
+  id: string
+  name: string
+  size: number
+  mountPath?: string | null
+  createdAt: string
+}
+
 function RouteComponent() {
   const { serviceId } = Route.useParams()
   const search = Route.useSearch()
 
-  const [open, setOpen] = useState(false)
-  const [deletingVolumeId, setDeletingVolumeId] = useState<string | null>(null)
+  const [createOpen, setCreateOpen] = useState(false)
+  const [editingVolume, setEditingVolume] = useState<VolumeItem | null>(null)
+  const [deletingVolume, setDeletingVolume] = useState<VolumeItem | null>(null)
 
   const { data, refetch } = useQuery(GET_VOLUMES_QUERY, {
     variables: { serviceId, ...search },
   })
 
   const [createVolume] = useMutation(CREATE_VOLUME_MUTATION, {
+    onCompleted: () => {
+      refetch()
+    },
+  })
+
+  const [updateVolume] = useMutation(UPDATE_VOLUME_MUTATION, {
     onCompleted: () => {
       refetch()
     },
@@ -140,11 +174,11 @@ function RouteComponent() {
     },
   )
 
-  const form = useForm({
+  const createForm = useForm({
     defaultValues: {
       name: '',
-      size: '1Gi',
-      storageClass: '',
+      size: 1,
+      mountPath: '',
     },
     onSubmit: async ({ value }) => {
       await createVolume({
@@ -152,29 +186,70 @@ function RouteComponent() {
           input: {
             serviceId,
             name: value.name.trim(),
-            size: value.size.trim(),
-            storageClass: value.storageClass.trim() || undefined,
+            size: value.size,
+            mountPath: value.mountPath.trim() || undefined,
           },
         },
       })
 
-      setOpen(false)
-      form.reset()
+      setCreateOpen(false)
+      createForm.reset()
     },
   })
 
-  const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen)
+  const editForm = useForm({
+    defaultValues: {
+      name: '',
+      size: 1,
+      mountPath: '',
+    },
+    onSubmit: async ({ value }) => {
+      if (!editingVolume) return
+
+      await updateVolume({
+        variables: {
+          id: editingVolume.id,
+          input: {
+            name: value.name.trim(),
+            size: value.size,
+            mountPath: value.mountPath.trim() || undefined,
+          },
+        },
+      })
+
+      setEditingVolume(null)
+      editForm.reset()
+    },
+  })
+
+  const handleCreateOpenChange = (isOpen: boolean) => {
+    setCreateOpen(isOpen)
     if (!isOpen) {
-      form.reset()
+      createForm.reset()
     }
   }
 
-  const handleDelete = async (volumeId: string) => {
+  const handleEditOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setEditingVolume(null)
+      editForm.reset()
+    }
+  }
+
+  const handleEdit = (volume: VolumeItem) => {
+    setEditingVolume(volume)
+    editForm.setFieldValue('name', volume.name)
+    editForm.setFieldValue('size', volume.size)
+    editForm.setFieldValue('mountPath', volume.mountPath || '')
+  }
+
+  const handleDelete = async () => {
+    if (!deletingVolume) return
+
     await removeVolume({
-      variables: { id: volumeId },
+      variables: { id: deletingVolume.id },
     })
-    setDeletingVolumeId(null)
+    setDeletingVolume(null)
   }
 
   const volumes = data?.service?.volumes?.edges.map((edge) => edge.node) || []
@@ -184,7 +259,7 @@ function RouteComponent() {
       title="Volumes"
       description="Manage your service volumes."
       actions={
-        <Dialog open={open} onOpenChange={handleOpenChange}>
+        <Dialog open={createOpen} onOpenChange={handleCreateOpenChange}>
           <DialogTrigger asChild>
             <Button>Add Volume</Button>
           </DialogTrigger>
@@ -193,7 +268,7 @@ function RouteComponent() {
               onSubmit={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                form.handleSubmit()
+                createForm.handleSubmit()
               }}
             >
               <DialogHeader>
@@ -203,7 +278,7 @@ function RouteComponent() {
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-                <form.Field
+                <createForm.Field
                   name="name"
                   validators={{
                     onChange: ({ value }) =>
@@ -227,25 +302,34 @@ function RouteComponent() {
                       )}
                     </Field>
                   )}
-                </form.Field>
+                </createForm.Field>
 
-                <form.Field
+                <createForm.Field
                   name="size"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? 'Size is required' : undefined,
+                      value <= 0 ? 'Size must be greater than 0' : undefined,
                   }}
                 >
                   {(field) => (
                     <Field>
                       <FieldLabel htmlFor="size">Size</FieldLabel>
-                      <Input
-                        id="size"
-                        placeholder="1Gi"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                      />
+                      <InputGroup>
+                        <InputGroupInput
+                          id="size"
+                          type="number"
+                          min={1}
+                          placeholder="1"
+                          value={field.state.value}
+                          onChange={(e) =>
+                            field.handleChange(
+                              parseInt(e.target.value, 10) || 0,
+                            )
+                          }
+                          onBlur={field.handleBlur}
+                        />
+                        <InputGroupAddon align="inline-end">GB</InputGroupAddon>
+                      </InputGroup>
                       {field.state.meta.errors.length > 0 && (
                         <p className="text-sm text-destructive">
                           {field.state.meta.errors.join(', ')}
@@ -253,34 +337,34 @@ function RouteComponent() {
                       )}
                     </Field>
                   )}
-                </form.Field>
+                </createForm.Field>
 
-                <form.Field name="storageClass">
+                <createForm.Field name="mountPath">
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="storageClass">
-                        Storage Class (optional)
+                      <FieldLabel htmlFor="mountPath">
+                        Mount Path (optional)
                       </FieldLabel>
                       <Input
-                        id="storageClass"
-                        placeholder="standard"
+                        id="mountPath"
+                        placeholder="/data"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}
                       />
                     </Field>
                   )}
-                </form.Field>
+                </createForm.Field>
               </div>
               <DialogFooter>
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => handleOpenChange(false)}
+                  onClick={() => handleCreateOpenChange(false)}
                 >
                   Cancel
                 </Button>
-                <form.Subscribe
+                <createForm.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                 >
                   {([canSubmit, isSubmitting]) => (
@@ -288,7 +372,7 @@ function RouteComponent() {
                       {isSubmitting ? 'Adding...' : 'Add Volume'}
                     </Button>
                   )}
-                </form.Subscribe>
+                </createForm.Subscribe>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -304,12 +388,15 @@ function RouteComponent() {
           {
             accessorKey: 'size',
             header: 'Size',
+            cell: ({ row }) => {
+              return `${row.original.size} GB`
+            },
           },
           {
-            accessorKey: 'storageClass',
-            header: 'Storage Class',
+            accessorKey: 'mountPath',
+            header: 'Mount Path',
             cell: ({ row }) => {
-              return row.original.storageClass || '-'
+              return row.original.mountPath || '-'
             },
           },
           {
@@ -324,43 +411,174 @@ function RouteComponent() {
             header: '',
             cell: ({ row }) => {
               return (
-                <AlertDialog
-                  open={deletingVolumeId === row.original.id}
-                  onOpenChange={(open) =>
-                    setDeletingVolumeId(open ? row.original.id : null)
-                  }
-                >
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <Trash2 className="h-4 w-4" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-muted-foreground hover:bg-transparent"
+                    >
+                      <MoreVertical className="text-muted-foreground" />
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Volume</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete the volume{' '}
-                        <strong>{row.original.name}</strong>? This action cannot
-                        be undone and all data in the volume will be lost.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        disabled={removing}
-                        onClick={() => handleDelete(row.original.id)}
-                      >
-                        {removing ? 'Deleting...' : 'Delete'}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => handleEdit(row.original)}>
+                      <Pencil className="mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setDeletingVolume(row.original)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )
             },
           },
         ]}
         data={volumes}
       />
+
+      {/* Edit Dialog */}
+      <Dialog open={editingVolume !== null} onOpenChange={handleEditOpenChange}>
+        <DialogContent>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              editForm.handleSubmit()
+            }}
+          >
+            <DialogHeader>
+              <DialogTitle>Edit Volume</DialogTitle>
+              <DialogDescription>
+                Update the volume configuration.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <editForm.Field
+                name="name"
+                validators={{
+                  onChange: ({ value }) =>
+                    !value.trim() ? 'Name is required' : undefined,
+                }}
+              >
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="edit-name">Name</FieldLabel>
+                    <Input
+                      id="edit-name"
+                      placeholder="my-volume"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <p className="text-sm text-destructive">
+                        {field.state.meta.errors.join(', ')}
+                      </p>
+                    )}
+                  </Field>
+                )}
+              </editForm.Field>
+
+              <editForm.Field
+                name="size"
+                validators={{
+                  onChange: ({ value }) =>
+                    value <= 0 ? 'Size must be greater than 0' : undefined,
+                }}
+              >
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="edit-size">Size</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        id="edit-size"
+                        type="number"
+                        min={1}
+                        placeholder="1"
+                        value={field.state.value}
+                        onChange={(e) =>
+                          field.handleChange(parseInt(e.target.value, 10) || 0)
+                        }
+                        onBlur={field.handleBlur}
+                      />
+                      <InputGroupAddon align="inline-end">GB</InputGroupAddon>
+                    </InputGroup>
+                    {field.state.meta.errors.length > 0 && (
+                      <p className="text-sm text-destructive">
+                        {field.state.meta.errors.join(', ')}
+                      </p>
+                    )}
+                  </Field>
+                )}
+              </editForm.Field>
+
+              <editForm.Field name="mountPath">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="edit-mountPath">
+                      Mount Path (optional)
+                    </FieldLabel>
+                    <Input
+                      id="edit-mountPath"
+                      placeholder="/data"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </Field>
+                )}
+              </editForm.Field>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleEditOpenChange(false)}
+              >
+                Cancel
+              </Button>
+              <editForm.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+              >
+                {([canSubmit, isSubmitting]) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                )}
+              </editForm.Subscribe>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={deletingVolume !== null}
+        onOpenChange={(open) => !open && setDeletingVolume(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Volume</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the volume{' '}
+              <strong>{deletingVolume?.name}</strong>? This action cannot be
+              undone and all data in the volume will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={removing} onClick={handleDelete}>
+              {removing ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Page>
   )
 }

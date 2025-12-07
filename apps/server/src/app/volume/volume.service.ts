@@ -111,7 +111,6 @@ export class VolumeService extends EntityService<Volume> {
       },
       spec: {
         accessModes: ['ReadWriteOnce'],
-        storageClassName: volume.storageClass,
         resources: {
           requests: {
             storage: `${volume.size}Gi`,

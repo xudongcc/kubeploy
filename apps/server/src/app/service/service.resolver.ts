@@ -59,6 +59,14 @@ export class ServiceResolver {
 
   @Can(PermissionAction.UPDATE, Service)
   @Mutation(() => Service)
+  async deployService(
+    @Args({ name: 'id', type: () => ID }) id: string,
+  ): Promise<Service> {
+    return await this.serviceService.apply(id);
+  }
+
+  @Can(PermissionAction.UPDATE, Service)
+  @Mutation(() => Service)
   async updateService(
     @Args({ name: 'id', type: () => ID }) id: string,
     @Args('input') input: UpdateServiceInput,

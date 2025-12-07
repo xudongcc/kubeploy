@@ -9,5 +9,5 @@ export class UpdateVolumeInput {
   size?: number;
 
   @Field(() => String, { nullable: true })
-  storageClass?: string;
+  mountPath?: string;
 }

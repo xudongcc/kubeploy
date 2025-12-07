@@ -29,29 +29,23 @@ export class ServiceService extends EntityService<Service> {
   ): Promise<Service> {
     const project = await this.projectService.findOneOrFail(data.project);
 
-    const service = await super.create({
+    return await super.create({
       ...data,
       project: project,
       workspace: project.workspace,
     });
-
-    await this.sync(service);
-
-    return service;
   }
 
   async update(
     idOrEntity: IdOrEntity<Service>,
     data: Omit<EntityData<Service>, 'workspace'>,
   ): Promise<Service> {
-    const service = await super.update(idOrEntity, data);
-
-    await this.sync(service);
-
-    return service;
+    return await super.update(idOrEntity, data);
   }
 
-  async sync(service: Service): Promise<void> {
+  async apply(idOrEntity: IdOrEntity<Service>): Promise<Service> {
+    const service = await this.findOneOrFail(idOrEntity);
+
     const project = await service.project.loadOrFail();
     const cluster = await project.cluster.loadOrFail();
     const namespace = project.kubeNamespaceName;
@@ -100,6 +94,8 @@ export class ServiceService extends EntityService<Service> {
         }
       }
     }
+
+    return service;
   }
 
   async remove(idOrEntity: IdOrEntity<Service>): Promise<Service> {

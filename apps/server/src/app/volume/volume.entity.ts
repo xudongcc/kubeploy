@@ -34,7 +34,7 @@ export class Volume {
 
   @Field(() => String, { nullable: true })
   @Property({ type: t.string, nullable: true })
-  storageClass?: string;
+  mountPath: Opt<string> | null = null;
 
   @Field(() => Date)
   @Property({ type: t.datetime, defaultRaw: 'now()' })

@@ -127,10 +127,10 @@ export type CreateServiceInput = {
 }
 
 export type CreateVolumeInput = {
+  mountPath?: InputMaybe<Scalars['String']['input']>
   name: Scalars['String']['input']
   serviceId: Scalars['ID']['input']
   size: Scalars['Int']['input']
-  storageClass?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateWorkspaceInput = {
@@ -208,6 +208,7 @@ export type Mutation = {
   createVolume: Volume
   createWorkspace: Workspace
   createWorkspaceInvite: WorkspaceMember
+  deployService: Service
   removeCluster: Cluster
   removeDomain: Domain
   removeProject: Project
@@ -259,6 +260,10 @@ export type MutationCreateWorkspaceArgs = {
 
 export type MutationCreateWorkspaceInviteArgs = {
   input: CreateWorkspaceInviteInput
+}
+
+export type MutationDeployServiceArgs = {
+  id: Scalars['ID']['input']
 }
 
 export type MutationRemoveClusterArgs = {
@@ -566,9 +571,9 @@ export type UpdateServiceInput = {
 }
 
 export type UpdateVolumeInput = {
+  mountPath?: InputMaybe<Scalars['String']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   size?: InputMaybe<Scalars['Int']['input']>
-  storageClass?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateWorkspaceInput = {
@@ -595,10 +600,10 @@ export type Volume = {
   __typename?: 'Volume'
   createdAt: Scalars['DateTime']['output']
   id: Scalars['ID']['output']
+  mountPath?: Maybe<Scalars['String']['output']>
   name: Scalars['String']['output']
   service: Service
   size: Scalars['Int']['output']
-  storageClass?: Maybe<Scalars['String']['output']>
   updatedAt: Scalars['DateTime']['output']
 }
 
@@ -1093,7 +1098,7 @@ export type GetVolumesQuery = {
           id: string
           name: string
           size: number
-          storageClass?: string | null
+          mountPath?: string | null
           createdAt: any
         }
       }>
@@ -1113,7 +1118,7 @@ export type VolumeItemFragment = {
   id: string
   name: string
   size: number
-  storageClass?: string | null
+  mountPath?: string | null
   createdAt: any
 } & { ' $fragmentName'?: 'VolumeItemFragment' }
 
@@ -1124,6 +1129,18 @@ export type CreateVolumeMutationVariables = Exact<{
 export type CreateVolumeMutation = {
   __typename?: 'Mutation'
   createVolume: { __typename?: 'Volume'; id: string } & {
+    ' $fragmentRefs'?: { VolumeItemFragment: VolumeItemFragment }
+  }
+}
+
+export type UpdateVolumeMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  input: UpdateVolumeInput
+}>
+
+export type UpdateVolumeMutation = {
+  __typename?: 'Mutation'
+  updateVolume: { __typename?: 'Volume'; id: string } & {
     ' $fragmentRefs'?: { VolumeItemFragment: VolumeItemFragment }
   }
 }
@@ -1483,7 +1500,7 @@ export const VolumeItemFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'id' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'size' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'storageClass' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'mountPath' } },
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
         ],
       },
@@ -3214,7 +3231,7 @@ export const GetVolumesDocument = {
           { kind: 'Field', name: { kind: 'Name', value: 'id' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'size' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'storageClass' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'mountPath' } },
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
         ],
       },
@@ -3287,7 +3304,7 @@ export const CreateVolumeDocument = {
           { kind: 'Field', name: { kind: 'Name', value: 'id' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'size' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'storageClass' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'mountPath' } },
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
         ],
       },
@@ -3296,6 +3313,98 @@ export const CreateVolumeDocument = {
 } as unknown as DocumentNode<
   CreateVolumeMutation,
   CreateVolumeMutationVariables
+>
+export const UpdateVolumeDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'UpdateVolume' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'input' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'UpdateVolumeInput' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'updateVolume' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'input' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'input' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'VolumeItem' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'VolumeItem' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Volume' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'size' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'mountPath' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateVolumeMutation,
+  UpdateVolumeMutationVariables
 >
 export const RemoveVolumeDocument = {
   kind: 'Document',

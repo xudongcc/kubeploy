@@ -113,10 +113,10 @@ input CreateServiceInput {
 }
 
 input CreateVolumeInput {
+  mountPath: String
   name: String!
   serviceId: ID!
   size: Int!
-  storageClass: String
 }
 
 input CreateWorkspaceInput {
@@ -200,6 +200,7 @@ type Mutation {
   createVolume(input: CreateVolumeInput!): Volume!
   createWorkspace(input: CreateWorkspaceInput!): Workspace!
   createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
+  deployService(id: ID!): Service!
   removeCluster(id: ID!): Cluster!
   removeDomain(id: ID!): Domain!
   removeProject(id: ID!): Project!
@@ -530,9 +531,9 @@ input UpdateServiceInput {
 }
 
 input UpdateVolumeInput {
+  mountPath: String
   name: String
   size: Int
-  storageClass: String
 }
 
 input UpdateWorkspaceInput {
@@ -557,10 +558,10 @@ type User {
 type Volume {
   createdAt: DateTime!
   id: ID!
+  mountPath: String
   name: String!
   service: Service!
   size: Int!
-  storageClass: String
   updatedAt: DateTime!
 }
 
