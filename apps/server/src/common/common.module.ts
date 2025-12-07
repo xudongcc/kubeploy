@@ -13,10 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from '@/common/modules/auth.module';
 import { AuthRlsModule } from '@/common/modules/auth-rls.module';
 import { ConfigModule } from '@/common/modules/config.module';
-import { EventEmitterModule } from '@/common/modules/event-emitter.module';
-import { FileUploadModule } from '@/common/modules/file-upload.module';
 import { PermissionModule } from '@/common/modules/permission.module';
-import { S3Module } from '@/common/modules/s3.module';
 
 @Global()
 @Module({
@@ -26,12 +23,9 @@ import { S3Module } from '@/common/modules/s3.module';
     AuthModule,
     AuthRlsModule,
     ConfigModule,
-    EventEmitterModule,
     MikroOrmModule,
     GraphQLModule,
     GraphQLConnectionModule,
-    S3Module,
-    FileUploadModule,
     BullModule,
     RedisModule,
     LoggerModule,
