@@ -19,11 +19,11 @@ const GET_CURRENT_USER_QUERY = graphql(`
 export const Route = createFileRoute('/_authenticated')({
   component: RouteComponent,
   beforeLoad: async ({ context: { apolloClient } }) => {
-    const { data } = await apolloClient.query({
+    const { data, error } = await apolloClient.query({
       query: GET_CURRENT_USER_QUERY,
     })
 
-    if (!data?.currentUser) {
+    if (error || !data?.currentUser) {
       throw redirect({
         to: '/auth/login',
         search: { redirect: location.href },
