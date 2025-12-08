@@ -1,27 +1,27 @@
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { useSearch } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Field, FieldDescription, FieldGroup } from '@/components/ui/field'
-import { authClient } from '@/lib/auth-client'
-import { useSearch } from '@tanstack/react-router'
+} from "@/components/ui/card";
+import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
+import { authClient } from "@/lib/auth-client";
 
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<'div'>) {
+}: React.ComponentProps<"div">) {
   const redirect = useSearch({
-    from: '/auth/login',
+    from: "/auth/login",
     select: (search) => search.redirect,
-  })
+  });
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
@@ -36,7 +36,7 @@ export function LoginForm({
                   type="button"
                   onClick={() =>
                     authClient.signIn.social({
-                      provider: 'github',
+                      provider: "github",
                       callbackURL: redirect,
                     })
                   }
@@ -79,9 +79,9 @@ export function LoginForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{' '}
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }

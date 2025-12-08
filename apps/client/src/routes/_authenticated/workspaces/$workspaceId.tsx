@@ -1,6 +1,6 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
-import { graphql } from '@/gql'
+import { graphql } from "@/gql";
 
 const GET_CURRENT_WORKSPACE_QUERY = graphql(`
   query GetCurrentWorkspace($id: ID!) {
@@ -14,9 +14,9 @@ const GET_CURRENT_WORKSPACE_QUERY = graphql(`
     id
     name
   }
-`)
+`);
 
-export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')(
+export const Route = createFileRoute("/_authenticated/workspaces/$workspaceId")(
   {
     component: Outlet,
     beforeLoad: async ({
@@ -27,16 +27,16 @@ export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')(
         const { data } = await apolloClient.query({
           query: GET_CURRENT_WORKSPACE_QUERY,
           variables: { id: workspaceId },
-        })
+        });
 
         if (data?.workspace) {
-          return { workspace: data.workspace }
+          return { workspace: data.workspace };
         }
       } catch {}
 
       throw redirect({
-        to: '/workspaces',
-      })
+        to: "/workspaces",
+      });
     },
   },
-)
+);

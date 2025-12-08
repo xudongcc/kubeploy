@@ -1,5 +1,7 @@
-import { FC, useMemo } from 'react'
-import { uniqBy } from 'lodash-es'
+import { useMemo } from "react";
+import { uniqBy } from "lodash-es";
+import { useRouterState } from "@tanstack/react-router";
+import type { FC} from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,20 +9,19 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
-import { useRouterState } from '@tanstack/react-router'
+} from "@/components/ui/breadcrumb";
 
-import { Link } from '@/components/link'
+import { Link } from "@/components/link";
 
 export const Breadcrumbs: FC = () => {
-  const matches = useRouterState({ select: (state) => state.matches })
+  const matches = useRouterState({ select: (state) => state.matches });
 
   const [breadcrumbs, pageTitle] = useMemo(() => {
     const uniqueMatches = uniqBy(matches, (match) =>
-      match.pathname.replace(/\/$/, ''),
-    )
+      match.pathname.replace(/\/$/, ""),
+    );
 
-    const lastMatch = uniqueMatches.pop()
+    const lastMatch = uniqueMatches.pop();
 
     const breadcrumbs = uniqueMatches
       .slice(1)
@@ -29,10 +30,10 @@ export const Breadcrumbs: FC = () => {
         id,
         title: context.title,
         path: pathname,
-      }))
+      }));
 
-    return [breadcrumbs, lastMatch?.context.title]
-  }, [matches])
+    return [breadcrumbs, lastMatch?.context.title];
+  }, [matches]);
 
   return (
     <Breadcrumb>
@@ -56,5 +57,5 @@ export const Breadcrumbs: FC = () => {
         )}
       </BreadcrumbList>
     </Breadcrumb>
-  )
-}
+  );
+};

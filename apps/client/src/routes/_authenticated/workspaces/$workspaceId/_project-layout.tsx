@@ -1,27 +1,27 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { ProjectSidebar } from '@/components/project-sidebar'
+import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { ProjectSidebar } from "@/components/project-sidebar";
 
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar'
-import { Separator } from '@/components/ui/separator'
-import { Breadcrumbs } from '@/components/breadcrumbs'
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_project-layout',
+  "/_authenticated/workspaces/$workspaceId/_project-layout",
 )({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
     <SidebarProvider>
       <ProjectSidebar />
 
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+      <SidebarInset className="pt-16 group-has-data-[collapsible=icon]/sidebar-wrapper:pt-12">
+        <header className="bg-background fixed top-0 right-0 left-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b transition-[left,right,width,height] transition-[width,height] duration-200 ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:left-(--sidebar-width) md:group-has-data-[collapsible=icon]/sidebar-wrapper:left-(--sidebar-width-icon)">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -36,5 +36,5 @@ function RouteComponent() {
         <Outlet />
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

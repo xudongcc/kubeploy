@@ -1,22 +1,22 @@
-import { useState, useMemo } from 'react'
-import { useMutation } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
-import { Plus, Trash2 } from 'lucide-react'
+import { useMemo, useState } from "react";
+import { useMutation } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
+import { Plus, Trash2 } from "lucide-react";
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
-import { graphql } from '@/gql'
-import { Page } from '@/components/page'
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { graphql } from "@/gql";
+import { Page } from "@/components/page";
 
 const UPDATE_SERVICE_MUTATION = graphql(`
   mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {
@@ -25,59 +25,59 @@ const UPDATE_SERVICE_MUTATION = graphql(`
       ...ServiceDetail
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/environment',
+  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/environment",
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: 'Environment' }
+    return { title: "Environment" };
   },
-})
+});
 
 interface EnvironmentVariable {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
-function parseRawEnv(raw: string): EnvironmentVariable[] {
+function parseRawEnv(raw: string): Array<EnvironmentVariable> {
   return raw
-    .split('\n')
+    .split("\n")
     .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith('#'))
+    .filter((line) => line && !line.startsWith("#"))
     .map((line) => {
-      const eqIndex = line.indexOf('=')
+      const eqIndex = line.indexOf("=");
       if (eqIndex === -1) {
-        return { key: line, value: '' }
+        return { key: line, value: "" };
       }
       return {
         key: line.slice(0, eqIndex),
         value: line.slice(eqIndex + 1),
-      }
+      };
     })
-    .filter((env) => env.key)
+    .filter((env) => env.key);
 }
 
-function serializeToRaw(envVars: EnvironmentVariable[]): string {
-  return envVars.map((env) => `${env.key}=${env.value}`).join('\n')
+function serializeToRaw(envVars: Array<EnvironmentVariable>): string {
+  return envVars.map((env) => `${env.key}=${env.value}`).join("\n");
 }
 
 function RouteComponent() {
-  const { serviceId } = Route.useParams()
-  const { service } = Route.useRouteContext()
+  const { serviceId } = Route.useParams();
+  const { service } = Route.useRouteContext();
 
-  const [activeTab, setActiveTab] = useState<string>('form')
+  const [activeTab, setActiveTab] = useState<string>("form");
   const [rawValue, setRawValue] = useState(() =>
     serializeToRaw(service?.environmentVariables ?? []),
-  )
+  );
 
-  const [updateService] = useMutation(UPDATE_SERVICE_MUTATION)
+  const [updateService] = useMutation(UPDATE_SERVICE_MUTATION);
 
   const form = useForm({
     defaultValues: {
       environmentVariables: (service?.environmentVariables ??
-        []) as EnvironmentVariable[],
+        []) as Array<EnvironmentVariable>,
     },
     onSubmit: async ({ value }) => {
       await updateService({
@@ -85,28 +85,28 @@ function RouteComponent() {
           id: serviceId,
           input: {
             environmentVariables: value.environmentVariables.filter(
-              (env) => env.key.trim() !== '',
+              (env) => env.key.trim() !== "",
             ),
           },
         },
-      })
+      });
     },
-  })
+  });
 
   const handleTabChange = (tab: string) => {
-    if (tab === 'raw' && activeTab === 'form') {
+    if (tab === "raw" && activeTab === "form") {
       // Switching to raw: serialize form data
-      setRawValue(serializeToRaw(form.state.values.environmentVariables))
-    } else if (tab === 'form' && activeTab === 'raw') {
+      setRawValue(serializeToRaw(form.state.values.environmentVariables));
+    } else if (tab === "form" && activeTab === "raw") {
       // Switching to form: parse raw data
-      const parsed = parseRawEnv(rawValue)
-      form.setFieldValue('environmentVariables', parsed)
+      const parsed = parseRawEnv(rawValue);
+      form.setFieldValue("environmentVariables", parsed);
     }
-    setActiveTab(tab)
-  }
+    setActiveTab(tab);
+  };
 
   const handleRawSubmit = async () => {
-    const parsed = parseRawEnv(rawValue)
+    const parsed = parseRawEnv(rawValue);
     await updateService({
       variables: {
         id: serviceId,
@@ -114,13 +114,13 @@ function RouteComponent() {
           environmentVariables: parsed,
         },
       },
-    })
-  }
+    });
+  };
 
   const rawLineCount = useMemo(() => {
-    const lines = rawValue.split('\n').length
-    return Math.max(lines, 10)
-  }, [rawValue])
+    const lines = rawValue.split("\n").length;
+    return Math.max(lines, 10);
+  }, [rawValue]);
 
   return (
     <Page
@@ -146,21 +146,21 @@ function RouteComponent() {
             <TabsContent value="form" className="mt-4">
               <form
                 onSubmit={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  form.handleSubmit()
+                  e.preventDefault();
+                  e.stopPropagation();
+                  form.handleSubmit();
                 }}
               >
                 <form.Field name="environmentVariables" mode="array">
                   {(field) => (
                     <div className="flex flex-col gap-3">
                       {field.state.value.length === 0 ? (
-                        <p className="text-sm text-muted-foreground py-4 text-center">
+                        <p className="text-muted-foreground py-4 text-center text-sm">
                           No environment variables configured.
                         </p>
                       ) : (
                         <>
-                          <div className="grid grid-cols-[1fr_1fr_auto] gap-2 text-sm font-medium text-muted-foreground">
+                          <div className="text-muted-foreground grid grid-cols-[1fr_1fr_auto] gap-2 text-sm font-medium">
                             <span>Key</span>
                             <span>Value</span>
                             <span className="w-9" />
@@ -213,9 +213,9 @@ function RouteComponent() {
                         type="button"
                         variant="outline"
                         className="w-fit"
-                        onClick={() => field.pushValue({ key: '', value: '' })}
+                        onClick={() => field.pushValue({ key: "", value: "" })}
                       >
-                        <Plus className="h-4 w-4 mr-2" />
+                        <Plus className="mr-2 h-4 w-4" />
                         Add Variable
                       </Button>
                     </div>
@@ -231,7 +231,7 @@ function RouteComponent() {
                         type="submit"
                         disabled={!canSubmit || isSubmitting}
                       >
-                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                        {isSubmitting ? "Saving..." : "Save Changes"}
                       </Button>
                     )}
                   </form.Subscribe>
@@ -241,12 +241,12 @@ function RouteComponent() {
 
             <TabsContent value="raw" className="mt-4">
               <div className="flex flex-col gap-4">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Enter environment variables in KEY=VALUE format, one per line.
                   Lines starting with # are ignored.
                 </p>
                 <Textarea
-                  className="min-h-[200px] field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
+                  className="field-sizing-fixed min-h-[200px] overflow-x-auto font-mono whitespace-pre"
                   placeholder={`# Example:\nDATABASE_URL=postgres://localhost:5432/db\nAPI_KEY=your-api-key`}
                   value={rawValue}
                   onChange={(e) => setRawValue(e.target.value)}
@@ -265,5 +265,5 @@ function RouteComponent() {
         </CardContent>
       </Card>
     </Page>
-  )
+  );
 }

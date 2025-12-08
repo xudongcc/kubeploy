@@ -1,16 +1,16 @@
-import { LoginForm } from '@/components/login-form'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-adapter'
-import z from 'zod'
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import z from "zod";
+import { LoginForm } from "@/components/login-form";
 
-export const Route = createFileRoute('/auth/login')({
+export const Route = createFileRoute("/auth/login")({
   component: RouteComponent,
   validateSearch: zodValidator(
     z.object({
       redirect: z.url().optional(),
     }),
   ),
-})
+});
 
 function RouteComponent() {
   return (
@@ -30,5 +30,5 @@ function RouteComponent() {
         <LoginForm />
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,9 @@
-import { EllipsisVertical, LogOut } from 'lucide-react'
-import md5 from 'md5'
+import { EllipsisVertical, LogOut } from "lucide-react";
+import md5 from "md5";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useMemo } from "react";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,31 +11,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { useMemo } from 'react'
-import { useNavigate, useRouteContext } from '@tanstack/react-router'
-import { authClient } from '@/lib/auth-client'
+} from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
 
 export function SidebarUser() {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const user = useRouteContext({
-    from: '/_authenticated/workspaces/$workspaceId',
+    from: "/_authenticated/workspaces/$workspaceId",
     select: (context) => context.user,
-  })
+  });
 
   const userAvatar = useMemo(
     () => `https://www.gravatar.com/avatar/${md5(user.email)}?s=32&d=identicon`,
     [user.email],
-  )
+  );
 
   return (
     <SidebarMenu>
@@ -52,7 +52,7 @@ export function SidebarUser() {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs text-muted-foreground">
+                <span className="text-muted-foreground truncate text-xs">
                   {user.email}
                 </span>
               </div>
@@ -61,7 +61,7 @@ export function SidebarUser() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
@@ -75,7 +75,7 @@ export function SidebarUser() {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs text-muted-foreground">
+                  <span className="text-muted-foreground truncate text-xs">
                     {user.email}
                   </span>
                 </div>
@@ -87,10 +87,10 @@ export function SidebarUser() {
                 authClient.signOut({
                   fetchOptions: {
                     onSuccess: () => {
-                      navigate({ to: '/auth/login' })
+                      navigate({ to: "/auth/login" });
                     },
                   },
-                })
+                });
               }}
             >
               <LogOut />
@@ -100,5 +100,5 @@ export function SidebarUser() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

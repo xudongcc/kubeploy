@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-adapter'
-import dayjs from 'dayjs'
+import { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import dayjs from "dayjs";
 
-import { ClusterSelect } from '@/components/cluster-select'
-import { Link } from '@/components/link'
-import { Page } from '@/components/page'
-import { DataTable } from '@/components/turboost-ui/data-table'
-import { Button } from '@/components/ui/button'
+import { ClusterSelect } from "@/components/cluster-select";
+import { Link } from "@/components/link";
+import { Page } from "@/components/page";
+import { DataTable } from "@/components/turboost-ui/data-table";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -18,12 +18,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { graphql } from '@/gql'
-import { OrderDirection, ProjectOrderField } from '@/gql/graphql'
-import { createConnectionSchema } from '@/utils/create-connection-schema'
+} from "@/components/ui/dialog";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { graphql } from "@/gql";
+import { OrderDirection, ProjectOrderField } from "@/gql/graphql";
+import { createConnectionSchema } from "@/utils/create-connection-schema";
 
 const GET_PROJECTS_QUERY = graphql(`
   query GetProjects(
@@ -66,7 +66,7 @@ const GET_PROJECTS_QUERY = graphql(`
     }
     createdAt
   }
-`)
+`);
 
 const CREATE_PROJECT_MUTATION = graphql(`
   mutation CreateProject($input: CreateProjectInput!) {
@@ -74,10 +74,10 @@ const CREATE_PROJECT_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_workspace-layout/projects/',
+  "/_authenticated/workspaces/$workspaceId/_workspace-layout/projects/",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
@@ -89,25 +89,25 @@ export const Route = createFileRoute(
     }),
   ),
   beforeLoad: () => {
-    return { title: 'Projects' }
+    return { title: "Projects" };
   },
-})
+});
 
 function RouteComponent() {
-  const { workspaceId } = Route.useParams()
-  const navigate = Route.useNavigate()
-  const search = Route.useSearch()
+  const { workspaceId } = Route.useParams();
+  const navigate = Route.useNavigate();
+  const search = Route.useSearch();
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  const { data } = useQuery(GET_PROJECTS_QUERY, { variables: search })
+  const { data } = useQuery(GET_PROJECTS_QUERY, { variables: search });
 
-  const [createProject] = useMutation(CREATE_PROJECT_MUTATION)
+  const [createProject] = useMutation(CREATE_PROJECT_MUTATION);
 
   const form = useForm({
     defaultValues: {
-      name: '',
-      clusterId: '',
+      name: "",
+      clusterId: "",
     },
     onSubmit: async ({ value }) => {
       const { data } = await createProject({
@@ -117,25 +117,25 @@ function RouteComponent() {
             clusterId: value.clusterId,
           },
         },
-      })
+      });
 
       if (data?.createProject.id) {
-        setOpen(false)
-        form.reset()
+        setOpen(false);
+        form.reset();
         navigate({
-          to: '/workspaces/$workspaceId/projects/$projectId',
+          to: "/workspaces/$workspaceId/projects/$projectId",
           params: { workspaceId, projectId: data.createProject.id },
-        })
+        });
       }
     },
-  })
+  });
 
   const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen)
+    setOpen(isOpen);
     if (!isOpen) {
-      form.reset()
+      form.reset();
     }
-  }
+  };
 
   return (
     <Page
@@ -149,9 +149,9 @@ function RouteComponent() {
           <DialogContent>
             <form
               onSubmit={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                form.handleSubmit()
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
               }}
             >
               <DialogHeader>
@@ -166,7 +166,7 @@ function RouteComponent() {
                   name="clusterId"
                   validators={{
                     onChange: ({ value }) =>
-                      !value ? 'Cluster is required' : undefined,
+                      !value ? "Cluster is required" : undefined,
                   }}
                 >
                   {(field) => (
@@ -177,8 +177,8 @@ function RouteComponent() {
                         onChange={field.handleChange}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -189,7 +189,7 @@ function RouteComponent() {
                   name="name"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? 'Project name is required' : undefined,
+                      !value.trim() ? "Project name is required" : undefined,
                   }}
                 >
                   {(field) => (
@@ -203,8 +203,8 @@ function RouteComponent() {
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -224,7 +224,7 @@ function RouteComponent() {
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? 'Creating...' : 'Create'}
+                      {isSubmitting ? "Creating..." : "Create"}
                     </Button>
                   )}
                 </form.Subscribe>
@@ -237,8 +237,8 @@ function RouteComponent() {
       <DataTable
         columns={[
           {
-            accessorKey: 'name',
-            header: 'Name',
+            accessorKey: "name",
+            header: "Name",
             cell: ({ row }) => {
               return (
                 <Link
@@ -247,12 +247,12 @@ function RouteComponent() {
                 >
                   {row.original.name}
                 </Link>
-              )
+              );
             },
           },
           {
-            accessorKey: 'cluster',
-            header: 'Cluster',
+            accessorKey: "cluster",
+            header: "Cluster",
             cell: ({ row }) => {
               return (
                 <Link
@@ -261,19 +261,21 @@ function RouteComponent() {
                 >
                   {row.original.cluster.name}
                 </Link>
-              )
+              );
             },
           },
           {
-            accessorKey: 'createdAt',
-            header: 'Created Date',
+            accessorKey: "createdAt",
+            header: "Created Date",
             cell: ({ row }) => {
-              return dayjs(row.original.createdAt).format('YYYY-MM-DD HH:mm:ss')
+              return dayjs(row.original.createdAt).format(
+                "YYYY-MM-DD HH:mm:ss",
+              );
             },
           },
         ]}
         data={data?.projects.edges.map((edge) => edge.node) || []}
       />
     </Page>
-  )
+  );
 }

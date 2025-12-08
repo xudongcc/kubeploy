@@ -1,1 +1,1 @@
-export { useLocalStorage } from 'usehooks-ts'
+export { useLocalStorage } from "usehooks-ts";

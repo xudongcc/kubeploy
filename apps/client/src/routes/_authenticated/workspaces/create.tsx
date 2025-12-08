@@ -1,5 +1,7 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@apollo/client/react";
+import { Button } from "@/components/ui/button";
 
 import {
   Field,
@@ -8,11 +10,9 @@ import {
   FieldLabel,
   FieldLegend,
   FieldSet,
-} from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { useForm } from '@tanstack/react-form'
-import { useMutation } from '@apollo/client/react'
-import { graphql } from '@/gql'
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { graphql } from "@/gql";
 
 const CREATE_WORKSPACE_MUTATION = graphql(`
   mutation CreateWorkspace($input: CreateWorkspaceInput!) {
@@ -20,21 +20,21 @@ const CREATE_WORKSPACE_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
-export const Route = createFileRoute('/_authenticated/workspaces/create')({
+export const Route = createFileRoute("/_authenticated/workspaces/create")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const router = useRouter()
-  const navigate = Route.useNavigate()
+  const router = useRouter();
+  const navigate = Route.useNavigate();
 
-  const [createWorkspace, { loading }] = useMutation(CREATE_WORKSPACE_MUTATION)
+  const [createWorkspace, { loading }] = useMutation(CREATE_WORKSPACE_MUTATION);
 
   const form = useForm({
     defaultValues: {
-      name: '',
+      name: "",
     },
     onSubmit: async ({ value }) => {
       const { data } = await createWorkspace({
@@ -43,23 +43,23 @@ function RouteComponent() {
             name: value.name,
           },
         },
-      })
+      });
 
       if (data?.createWorkspace.id) {
-        localStorage.setItem('workspaceId', data.createWorkspace.id)
-        navigate({ to: '/' })
+        localStorage.setItem("workspaceId", data.createWorkspace.id);
+        navigate({ to: "/" });
       }
     },
-  })
+  });
 
   return (
-    <div className="w-full h-full flex items-center justify-center mx-auto">
+    <div className="mx-auto flex h-full w-full items-center justify-center">
       <div className="w-full max-w-md">
         <form
           onSubmit={(event) => {
-            event.preventDefault()
-            event.stopPropagation()
-            form.handleSubmit()
+            event.preventDefault();
+            event.stopPropagation();
+            form.handleSubmit();
           }}
         >
           <FieldGroup>
@@ -89,7 +89,7 @@ function RouteComponent() {
 
             <Field orientation="horizontal">
               <Button type="submit" disabled={loading}>
-                {loading ? 'Creating...' : 'Create'}
+                {loading ? "Creating..." : "Create"}
               </Button>
               <Button
                 variant="outline"
@@ -103,5 +103,5 @@ function RouteComponent() {
         </form>
       </div>
     </div>
-  )
+  );
 }

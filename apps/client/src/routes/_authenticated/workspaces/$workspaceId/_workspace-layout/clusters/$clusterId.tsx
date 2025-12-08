@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { useMutation } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { useState } from "react";
+import { useMutation } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { Page } from '@/components/page'
+import { Page } from "@/components/page";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,8 +14,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,11 +23,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { graphql } from '@/gql'
+} from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { graphql } from "@/gql";
 
 const GET_CLUSTER_QUERY = graphql(`
   query GetCluster($id: ID!) {
@@ -43,7 +43,7 @@ const GET_CLUSTER_QUERY = graphql(`
     server
     createdAt
   }
-`)
+`);
 
 const UPDATE_CLUSTER_MUTATION = graphql(`
   mutation UpdateCluster($id: ID!, $input: UpdateClusterInput!) {
@@ -52,7 +52,7 @@ const UPDATE_CLUSTER_MUTATION = graphql(`
       ...ClusterDetail
     }
   }
-`)
+`);
 
 const REMOVE_CLUSTER_MUTATION = graphql(`
   mutation RemoveCluster($id: ID!) {
@@ -60,10 +60,10 @@ const REMOVE_CLUSTER_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/$clusterId',
+  "/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/$clusterId",
 )({
   component: RouteComponent,
   beforeLoad: async ({
@@ -74,65 +74,65 @@ export const Route = createFileRoute(
       const { data } = await apolloClient.query({
         query: GET_CLUSTER_QUERY,
         variables: { id: clusterId },
-      })
+      });
 
       if (data?.cluster) {
-        return { title: data.cluster.name, cluster: data.cluster }
+        return { title: data.cluster.name, cluster: data.cluster };
       }
     } catch {}
 
     throw redirect({
-      to: '/workspaces/$workspaceId/clusters',
+      to: "/workspaces/$workspaceId/clusters",
       params: { workspaceId },
-    })
+    });
   },
-})
+});
 
 function RouteComponent() {
-  const { workspaceId, clusterId } = Route.useParams()
-  const navigate = Route.useNavigate()
+  const { workspaceId, clusterId } = Route.useParams();
+  const navigate = Route.useNavigate();
 
-  const { cluster } = Route.useRouteContext()
+  const { cluster } = Route.useRouteContext();
 
-  const [deleteConfirmName, setDeleteConfirmName] = useState('')
+  const [deleteConfirmName, setDeleteConfirmName] = useState("");
 
-  const [updateCluster] = useMutation(UPDATE_CLUSTER_MUTATION)
+  const [updateCluster] = useMutation(UPDATE_CLUSTER_MUTATION);
   const [removeCluster, { loading: removing }] = useMutation(
     REMOVE_CLUSTER_MUTATION,
     {
       update(cache, result) {
         if (result.data?.removeCluster) {
-          cache.evict({ id: cache.identify(result.data.removeCluster) })
-          cache.gc()
+          cache.evict({ id: cache.identify(result.data.removeCluster) });
+          cache.gc();
         }
       },
     },
-  )
+  );
 
   const form = useForm({
     defaultValues: {
-      name: cluster?.name ?? '',
-      server: cluster?.server ?? '',
-      certificateAuthorityData: '',
-      token: '',
+      name: cluster?.name ?? "",
+      server: cluster?.server ?? "",
+      certificateAuthorityData: "",
+      token: "",
     },
     onSubmit: async ({ value }) => {
       const input: {
-        name?: string
-        server?: string
-        certificateAuthorityData?: string
-        token?: string
+        name?: string;
+        server?: string;
+        certificateAuthorityData?: string;
+        token?: string;
       } = {
         name: value.name.trim(),
         server: value.server.trim(),
-      }
+      };
 
       if (value.certificateAuthorityData.trim()) {
-        input.certificateAuthorityData = value.certificateAuthorityData.trim()
+        input.certificateAuthorityData = value.certificateAuthorityData.trim();
       }
 
       if (value.token.trim()) {
-        input.token = value.token.trim()
+        input.token = value.token.trim();
       }
 
       await updateCluster({
@@ -140,25 +140,25 @@ function RouteComponent() {
           id: clusterId,
           input,
         },
-      })
+      });
     },
-  })
+  });
 
   const handleDelete = async () => {
     await removeCluster({
       variables: { id: clusterId },
-    })
+    });
     navigate({
-      to: '/workspaces/$workspaceId/clusters',
+      to: "/workspaces/$workspaceId/clusters",
       params: { workspaceId },
-    })
-  }
+    });
+  };
 
   if (!cluster) {
-    return <div>Cluster not found</div>
+    return <div>Cluster not found</div>;
   }
 
-  const canDelete = deleteConfirmName === cluster.name
+  const canDelete = deleteConfirmName === cluster.name;
 
   return (
     <Page
@@ -168,9 +168,9 @@ function RouteComponent() {
       <div className="flex flex-col gap-6">
         <form
           onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            form.handleSubmit()
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
           }}
         >
           <Card>
@@ -186,7 +186,7 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? 'Cluster name is required' : undefined,
+                    !value.trim() ? "Cluster name is required" : undefined,
                 }}
               >
                 {(field) => (
@@ -200,8 +200,8 @@ function RouteComponent() {
                       onBlur={field.handleBlur}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -212,7 +212,7 @@ function RouteComponent() {
                 name="server"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? 'Server URL is required' : undefined,
+                    !value.trim() ? "Server URL is required" : undefined,
                 }}
               >
                 {(field) => (
@@ -226,8 +226,8 @@ function RouteComponent() {
                       onBlur={field.handleBlur}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -243,7 +243,7 @@ function RouteComponent() {
                     <Textarea
                       id="certificateAuthorityData"
                       placeholder="Base64 encoded CA certificate"
-                      className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
+                      className="field-sizing-fixed overflow-x-auto font-mono whitespace-pre"
                       rows={4}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
@@ -262,7 +262,7 @@ function RouteComponent() {
                     <Textarea
                       id="token"
                       placeholder="Service account token for authentication"
-                      className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
+                      className="field-sizing-fixed overflow-x-auto font-mono whitespace-pre"
                       rows={4}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
@@ -278,7 +278,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    {isSubmitting ? "Saving..." : "Save Changes"}
                   </Button>
                 )}
               </form.Subscribe>
@@ -310,7 +310,7 @@ function RouteComponent() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="py-4">
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-muted-foreground mb-2 text-sm">
                     Please type <strong>{cluster.name}</strong> to confirm.
                   </p>
                   <Input
@@ -320,7 +320,7 @@ function RouteComponent() {
                   />
                 </div>
                 <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setDeleteConfirmName('')}>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmName("")}>
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
@@ -328,7 +328,7 @@ function RouteComponent() {
                     onClick={handleDelete}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    {removing ? 'Deleting...' : 'Delete Cluster'}
+                    {removing ? "Deleting..." : "Delete Cluster"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -337,5 +337,5 @@ function RouteComponent() {
         </Card>
       </div>
     </Page>
-  )
+  );
 }

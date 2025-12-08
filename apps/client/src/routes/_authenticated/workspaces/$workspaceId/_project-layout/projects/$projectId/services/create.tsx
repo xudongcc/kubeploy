@@ -1,20 +1,20 @@
-import { useMutation } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
-import { Plus, Trash2 } from 'lucide-react'
+import { useMutation } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
+import { Plus, Trash2 } from "lucide-react";
 
-import { Page } from '@/components/page'
-import { Button } from '@/components/ui/button'
+import { Page } from "@/components/page";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { graphql } from '@/gql'
+} from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { graphql } from "@/gql";
 
 const CREATE_SERVICE_MUTATION = graphql(`
   mutation CreateService($input: CreateServiceInput!) {
@@ -22,30 +22,30 @@ const CREATE_SERVICE_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/create',
+  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/create",
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: 'Create Service' }
+    return { title: "Create Service" };
   },
-})
+});
 
 function RouteComponent() {
-  const { workspaceId, projectId } = Route.useParams()
-  const navigate = Route.useNavigate()
+  const { workspaceId, projectId } = Route.useParams();
+  const navigate = Route.useNavigate();
 
-  const [createService] = useMutation(CREATE_SERVICE_MUTATION)
+  const [createService] = useMutation(CREATE_SERVICE_MUTATION);
 
   const form = useForm({
     defaultValues: {
-      name: '',
-      image: '',
+      name: "",
+      image: "",
       replicas: 1,
-      ports: [] as number[],
-      environmentVariables: [] as { key: string; value: string }[],
+      ports: [] as Array<number>,
+      environmentVariables: [] as Array<{ key: string; value: string }>,
     },
     onSubmit: async ({ value }) => {
       const { data } = await createService({
@@ -62,16 +62,16 @@ function RouteComponent() {
             projectId,
           },
         },
-      })
+      });
 
       if (data?.createService.id) {
         navigate({
-          to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId',
+          to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId",
           params: { workspaceId, projectId, serviceId: data.createService.id },
-        })
+        });
       }
     },
-  })
+  });
 
   return (
     <Page
@@ -80,9 +80,9 @@ function RouteComponent() {
     >
       <form
         onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
         }}
         className="space-y-4"
       >
@@ -98,7 +98,7 @@ function RouteComponent() {
               name="name"
               validators={{
                 onChange: ({ value }) =>
-                  !value.trim() ? 'Service name is required' : undefined,
+                  !value.trim() ? "Service name is required" : undefined,
               }}
             >
               {(field) => (
@@ -112,8 +112,8 @@ function RouteComponent() {
                     onBlur={field.handleBlur}
                   />
                   {field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-destructive">
-                      {field.state.meta.errors.join(', ')}
+                    <p className="text-destructive text-sm">
+                      {field.state.meta.errors.join(", ")}
                     </p>
                   )}
                 </Field>
@@ -124,7 +124,7 @@ function RouteComponent() {
               name="image"
               validators={{
                 onChange: ({ value }) =>
-                  !value.trim() ? 'Image is required' : undefined,
+                  !value.trim() ? "Image is required" : undefined,
               }}
             >
               {(field) => (
@@ -138,8 +138,8 @@ function RouteComponent() {
                     onBlur={field.handleBlur}
                   />
                   {field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-destructive">
-                      {field.state.meta.errors.join(', ')}
+                    <p className="text-destructive text-sm">
+                      {field.state.meta.errors.join(", ")}
                     </p>
                   )}
                 </Field>
@@ -267,7 +267,7 @@ function RouteComponent() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => field.pushValue({ key: '', value: '' })}
+                    onClick={() => field.pushValue({ key: "", value: "" })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Add Environment Variable
@@ -284,7 +284,7 @@ function RouteComponent() {
             variant="outline"
             onClick={() =>
               navigate({
-                to: '/workspaces/$workspaceId/projects/$projectId/services',
+                to: "/workspaces/$workspaceId/projects/$projectId/services",
                 params: { workspaceId, projectId },
               })
             }
@@ -296,12 +296,12 @@ function RouteComponent() {
           >
             {([canSubmit, isSubmitting]) => (
               <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                {isSubmitting ? 'Creating...' : 'Create Service'}
+                {isSubmitting ? "Creating..." : "Create Service"}
               </Button>
             )}
           </form.Subscribe>
         </div>
       </form>
     </Page>
-  )
+  );
 }

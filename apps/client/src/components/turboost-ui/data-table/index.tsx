@@ -1,16 +1,20 @@
 "use client";
 
 import {
-  Column,
-  ColumnDef,
   flexRender,
   getCoreRowModel,
-  RowData,
-  RowSelectionState,
-  TableOptions,
   useReactTable,
 } from "@tanstack/react-table";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronDownIcon } from "lucide-react";
+import type {
+  Column,
+  ColumnDef,
+  RowData,
+  RowSelectionState,
+  TableOptions} from "@tanstack/react-table";
 
+import type { CSSProperties, ReactNode} from "react";
 import {
   Table,
   TableBody,
@@ -19,10 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CSSProperties, ReactNode, useEffect, useMemo, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { ChevronDownIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,10 +57,10 @@ export type DataTableColumnProps<
 };
 
 export interface DataTableProps<TData extends RowData, TValue = unknown> {
-  columns: DataTableColumnProps<TData, TValue>[];
-  data: TData[];
+  columns: Array<DataTableColumnProps<TData, TValue>>;
+  data: Array<TData>;
 
-  onRowSelectionChange?: (rows: TData[]) => void;
+  onRowSelectionChange?: (rows: Array<TData>) => void;
   onAllRowsSelectedChange?: (selected: boolean) => void;
 
   bulkActions?: ReactNode;
@@ -115,7 +117,7 @@ export function DataTable<TData extends RowData, TValue = unknown>({
     ];
   }, [columns]);
 
-  const tableColumns: ColumnDef<TData, TValue>[] = useMemo(() => {
+  const tableColumns: Array<ColumnDef<TData, TValue>> = useMemo(() => {
     return columnsWithSelection.map((column) => ({
       accessorKey: column.id,
       ...column,

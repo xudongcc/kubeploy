@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { useMutation } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
+import { useState } from "react";
+import { useMutation } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
 
 import {
   AlertDialog,
@@ -13,8 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -22,11 +22,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { graphql } from '@/gql'
-import { Page } from '@/components/page'
+} from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { graphql } from "@/gql";
+import { Page } from "@/components/page";
 
 const UPDATE_SERVICE_MUTATION = graphql(`
   mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {
@@ -35,7 +35,7 @@ const UPDATE_SERVICE_MUTATION = graphql(`
       ...ServiceDetail
     }
   }
-`)
+`);
 
 const REMOVE_SERVICE_MUTATION = graphql(`
   mutation RemoveService($id: ID!) {
@@ -43,41 +43,41 @@ const REMOVE_SERVICE_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/settings',
+  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/settings",
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: 'Settings' }
+    return { title: "Settings" };
   },
-})
+});
 
 function RouteComponent() {
-  const { workspaceId, projectId, serviceId } = Route.useParams()
-  const { service } = Route.useRouteContext()
-  const navigate = Route.useNavigate()
+  const { workspaceId, projectId, serviceId } = Route.useParams();
+  const { service } = Route.useRouteContext();
+  const navigate = Route.useNavigate();
 
-  const [deleteConfirmName, setDeleteConfirmName] = useState('')
+  const [deleteConfirmName, setDeleteConfirmName] = useState("");
 
-  const [updateService] = useMutation(UPDATE_SERVICE_MUTATION)
+  const [updateService] = useMutation(UPDATE_SERVICE_MUTATION);
   const [removeService, { loading: removing }] = useMutation(
     REMOVE_SERVICE_MUTATION,
     {
       update(cache, result) {
         if (result.data?.removeService) {
-          cache.evict({ id: cache.identify(result.data.removeService) })
-          cache.gc()
+          cache.evict({ id: cache.identify(result.data.removeService) });
+          cache.gc();
         }
       },
     },
-  )
+  );
 
   const form = useForm({
     defaultValues: {
-      name: service?.name ?? '',
-      image: service?.image ?? '',
+      name: service?.name ?? "",
+      image: service?.image ?? "",
       replicas: service?.replicas ?? 1,
     },
     onSubmit: async ({ value }) => {
@@ -90,34 +90,34 @@ function RouteComponent() {
             replicas: value.replicas,
           },
         },
-      })
+      });
     },
-  })
+  });
 
   const handleDelete = async () => {
     await removeService({
       variables: { id: serviceId },
-    })
+    });
     navigate({
-      to: '/workspaces/$workspaceId/projects/$projectId/services',
+      to: "/workspaces/$workspaceId/projects/$projectId/services",
       params: { workspaceId, projectId },
-    })
-  }
+    });
+  };
 
   if (!service) {
-    return <div>Service not found</div>
+    return <div>Service not found</div>;
   }
 
-  const canDelete = deleteConfirmName === service.name
+  const canDelete = deleteConfirmName === service.name;
 
   return (
     <Page title="Settings" description="Update your service settings.">
       <div className="flex flex-col gap-6">
         <form
           onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            form.handleSubmit()
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
           }}
         >
           <Card>
@@ -133,7 +133,7 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? 'Service name is required' : undefined,
+                    !value.trim() ? "Service name is required" : undefined,
                 }}
               >
                 {(field) => (
@@ -147,8 +147,8 @@ function RouteComponent() {
                       onBlur={field.handleBlur}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -159,7 +159,7 @@ function RouteComponent() {
                 name="image"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? 'Image is required' : undefined,
+                    !value.trim() ? "Image is required" : undefined,
                 }}
               >
                 {(field) => (
@@ -173,8 +173,8 @@ function RouteComponent() {
                       onBlur={field.handleBlur}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -185,7 +185,7 @@ function RouteComponent() {
                 name="replicas"
                 validators={{
                   onChange: ({ value }) =>
-                    value < 0 ? 'Replicas must be at least 0' : undefined,
+                    value < 0 ? "Replicas must be at least 0" : undefined,
                 }}
               >
                 {(field) => (
@@ -202,8 +202,8 @@ function RouteComponent() {
                       onBlur={field.handleBlur}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -216,7 +216,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    {isSubmitting ? "Saving..." : "Save Changes"}
                   </Button>
                 )}
               </form.Subscribe>
@@ -248,7 +248,7 @@ function RouteComponent() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="py-4">
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-muted-foreground mb-2 text-sm">
                     Please type <strong>{service.name}</strong> to confirm.
                   </p>
                   <Input
@@ -258,14 +258,14 @@ function RouteComponent() {
                   />
                 </div>
                 <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setDeleteConfirmName('')}>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmName("")}>
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
                     disabled={!canDelete || removing}
                     onClick={handleDelete}
                   >
-                    {removing ? 'Deleting...' : 'Delete Service'}
+                    {removing ? "Deleting..." : "Delete Service"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -274,5 +274,5 @@ function RouteComponent() {
         </Card>
       </div>
     </Page>
-  )
+  );
 }

@@ -1,18 +1,22 @@
 import {
-  Folder,
-  Users,
-  Settings,
-  Server,
-  HardDrive,
-  Globe,
-  LayoutDashboard,
+  ChartLine,
   Code,
   FileText,
-  ChartLine,
-} from 'lucide-react'
+  Folder,
+  Globe,
+  HardDrive,
+  LayoutDashboard,
+  Server,
+  Settings,
+  Users,
+} from "lucide-react";
 
-import { SidebarUser } from '@/components/sidebar-user'
-import { WorkspaceSwitcher } from '@/components/workspace-switcher'
+import { linkOptions, useRouteContext } from "@tanstack/react-router";
+import { SidebarLogo } from "./sidebar-logo";
+import type { LinkProps } from "@tanstack/react-router";
+import type { ComponentProps, ComponentType, FC } from "react";
+import { SidebarUser } from "@/components/sidebar-user";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -25,48 +29,46 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from '@/components/ui/sidebar'
-import { linkOptions, LinkProps, useRouteContext } from '@tanstack/react-router'
+} from "@/components/ui/sidebar";
 
-import { Link } from '@/components/link'
-import { ComponentProps, ComponentType, FC } from 'react'
+import { Link } from "@/components/link";
 
 type SidebarItem = {
-  title: string
-  icon: ComponentType<{ className?: string }>
-  link: LinkProps
-}
+  title: string;
+  icon: ComponentType<{ className?: string }>;
+  link: LinkProps;
+};
 
 export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
   ...props
 }) => {
   const workspace = useRouteContext({
-    from: '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId',
+    from: "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId",
     select: (context) => context.workspace,
-  })
+  });
 
   const project = useRouteContext({
-    from: '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId',
+    from: "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId",
     select: (context) => context.project,
-  })
+  });
 
   const service = useRouteContext({
-    from: '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId',
+    from: "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId",
     select: (context) => context.service,
-  })
+  });
 
   const sidebarGroups: Array<{
-    title: string
-    items: SidebarItem[]
+    title: string;
+    items: Array<SidebarItem>;
   }> = [
     {
-      title: 'Service',
+      title: "Service",
       items: [
         {
-          title: 'Overview',
+          title: "Overview",
           icon: LayoutDashboard,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId',
+            to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId",
             params: {
               workspaceId: workspace.id,
               projectId: project.id,
@@ -76,10 +78,10 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: 'Environment',
+          title: "Environment",
           icon: Code,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment',
+            to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment",
             params: {
               workspaceId: workspace.id,
               projectId: project.id,
@@ -88,10 +90,10 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: 'Domains',
+          title: "Domains",
           icon: Globe,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains',
+            to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains",
             params: {
               workspaceId: workspace.id,
               projectId: project.id,
@@ -100,10 +102,10 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: 'Volumes',
+          title: "Volumes",
           icon: HardDrive,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes',
+            to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes",
             params: {
               workspaceId: workspace.id,
               projectId: project.id,
@@ -112,10 +114,10 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: 'Logs',
+          title: "Logs",
           icon: FileText,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs',
+            to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs",
             params: {
               workspaceId: workspace.id,
               projectId: project.id,
@@ -124,10 +126,10 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: 'Metrics',
+          title: "Metrics",
           icon: ChartLine,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics',
+            to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics",
             params: {
               workspaceId: workspace.id,
               projectId: project.id,
@@ -136,10 +138,10 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: 'Settings',
+          title: "Settings",
           icon: Settings,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings',
+            to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings",
             params: {
               workspaceId: workspace.id,
               projectId: project.id,
@@ -150,77 +152,80 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
       ],
     },
     {
-      title: 'Project',
+      title: "Project",
       items: [
         {
-          title: 'Services',
+          title: "Services",
           icon: Server,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/services',
+            to: "/workspaces/$workspaceId/projects/$projectId/services",
             params: { workspaceId: workspace.id, projectId: project.id },
             activeOptions: { exact: true },
           }),
         },
         {
-          title: 'Settings',
+          title: "Settings",
           icon: Settings,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects/$projectId/settings',
+            to: "/workspaces/$workspaceId/projects/$projectId/settings",
             params: { workspaceId: workspace.id, projectId: project.id },
           }),
         },
       ],
     },
     {
-      title: 'Platform',
+      title: "Platform",
       items: [
         {
-          title: 'Projects',
+          title: "Projects",
           icon: Folder,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/projects',
+            to: "/workspaces/$workspaceId/projects",
             params: { workspaceId: workspace.id },
             activeOptions: { exact: true },
           }),
         },
         {
-          title: 'Clusters',
+          title: "Clusters",
           icon: Server,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/clusters',
+            to: "/workspaces/$workspaceId/clusters",
             params: { workspaceId: workspace.id },
           }),
         },
       ],
     },
     {
-      title: 'Settings',
+      title: "Settings",
       items: [
         {
-          title: 'Members',
+          title: "Members",
           icon: Users,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/members',
+            to: "/workspaces/$workspaceId/members",
             params: { workspaceId: workspace.id },
           }),
         },
         {
-          title: 'Settings',
+          title: "Settings",
           icon: Settings,
           link: linkOptions({
-            to: '/workspaces/$workspaceId/settings',
+            to: "/workspaces/$workspaceId/settings",
             params: { workspaceId: workspace.id },
           }),
         },
       ],
     },
-  ]
+  ];
 
   return (
     <Sidebar collapsible="icon" {...props}>
+      <SidebarLogo />
+
       <SidebarHeader>
         <WorkspaceSwitcher />
       </SidebarHeader>
+
       <SidebarContent>
         {sidebarGroups.map((group) => (
           <SidebarGroup key={group.title}>
@@ -242,10 +247,12 @@ export const ServiceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           </SidebarGroup>
         ))}
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarUser />
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
-  )
-}
+  );
+};

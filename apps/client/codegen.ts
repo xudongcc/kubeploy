@@ -1,11 +1,11 @@
-import type { CodegenConfig } from '@graphql-codegen/cli'
+import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   schema: `../server/schema.gql`,
-  documents: ['./src/**/*.{ts,tsx,gql,graphql}'],
+  documents: ["./src/**/*.{ts,tsx,gql,graphql}"],
   generates: {
-    './src/gql/': {
-      preset: 'client',
+    "./src/gql/": {
+      preset: "client",
       presetConfig: {
         /**
          * https://www.apollographql.com/docs/react/data/fragments#with-the-client-preset
@@ -18,13 +18,13 @@ const config: CodegenConfig = {
           apolloUnmask: true,
         },
         namingConvention: {
-          enumValues: 'keep',
+          enumValues: "keep",
         },
-        inlineFragmentTypes: 'mask',
+        inlineFragmentTypes: "mask",
       },
     },
   },
-  hooks: { afterAllFileWrite: ['prettier --write'] },
-}
+  hooks: { afterAllFileWrite: ["prettier --write"] },
+};
 
-export default config
+export default config;

@@ -1,42 +1,42 @@
-import type { ApolloClientIntegration } from '@apollo/client-integration-tanstack-start'
 import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
-} from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+} from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import appCss from '../styles.css?url'
-import { NotFoundPageTemplate } from '@/components/not-found-page-template'
+import appCss from "../styles.css?url";
+import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
+import { NotFoundPageTemplate } from "@/components/not-found-page-template";
 
 export const Route = createRootRouteWithContext<
   ApolloClientIntegration.RouterContext & {
-    title?: string
+    title?: string;
   }
 >()({
   head: () => ({
     meta: [
       {
-        charSet: 'utf-8',
+        charSet: "utf-8",
       },
       {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
       },
       {
-        title: 'Kubeploy',
+        title: "Kubeploy",
       },
     ],
     links: [
       {
-        rel: 'icon',
-        href: '/logo.png',
-        type: 'image/png',
-        sizes: '100x100',
+        rel: "icon",
+        href: "/logo.png",
+        type: "image/png",
+        sizes: "100x100",
       },
       {
-        rel: 'stylesheet',
+        rel: "stylesheet",
         href: appCss,
       },
     ],
@@ -45,7 +45,7 @@ export const Route = createRootRouteWithContext<
   shellComponent: RootDocument,
 
   notFoundComponent: NotFoundPageTemplate,
-})
+});
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -57,11 +57,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {children}
         <TanStackDevtools
           config={{
-            position: 'bottom-right',
+            position: "bottom-right",
           }}
           plugins={[
             {
-              name: 'Tanstack Router',
+              name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />,
             },
           ]}
@@ -69,5 +69,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
-  )
+  );
 }

@@ -1,16 +1,16 @@
 import {
   Empty,
+  EmptyContent,
+  EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-  EmptyDescription,
-  EmptyContent,
-} from '@/components/ui/empty'
-import { Button } from '@/components/ui/button'
-import { Link } from '@/components/link'
+} from "@/components/ui/empty";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/components/link";
 
 export const NotFoundPageTemplate = () => {
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center">
       <Empty>
         <EmptyHeader>
           <EmptyTitle>Not Found</EmptyTitle>
@@ -27,5 +27,5 @@ export const NotFoundPageTemplate = () => {
         </EmptyContent>
       </Empty>
     </div>
-  )
-}
+  );
+};

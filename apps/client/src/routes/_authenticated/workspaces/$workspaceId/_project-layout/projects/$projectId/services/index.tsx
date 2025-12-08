@@ -1,16 +1,17 @@
-import { useQuery } from '@apollo/client/react'
-import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from "@apollo/client/react";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { Link } from '@/components/link'
-import { zodValidator } from '@tanstack/zod-adapter'
-import dayjs from 'dayjs'
-import { EnumLike, z } from 'zod'
+import { zodValidator } from "@tanstack/zod-adapter";
+import dayjs from "dayjs";
+import { z } from "zod";
+import type { EnumLike} from "zod";
+import { Link } from "@/components/link";
 
-import { Page } from '@/components/page'
-import { DataTable } from '@/components/turboost-ui/data-table'
-import { Button } from '@/components/ui/button'
-import { graphql } from '@/gql'
-import { OrderDirection, ServiceOrderField } from '@/gql/graphql'
+import { Page } from "@/components/page";
+import { DataTable } from "@/components/turboost-ui/data-table";
+import { Button } from "@/components/ui/button";
+import { graphql } from "@/gql";
+import { OrderDirection, ServiceOrderField } from "@/gql/graphql";
 
 const GET_SERVICES_QUERY = graphql(`
   query GetServices(
@@ -55,13 +56,13 @@ const GET_SERVICES_QUERY = graphql(`
     ports
     createdAt
   }
-`)
+`);
 
 interface CreateConnectionSchemaOptions<OrderField extends EnumLike> {
-  pageSize: number
-  orderField: OrderField
-  defaultOrderField: OrderField[keyof OrderField]
-  defaultOrderDirection: OrderDirection
+  pageSize: number;
+  orderField: OrderField;
+  defaultOrderField: OrderField[keyof OrderField];
+  defaultOrderDirection: OrderDirection;
 }
 
 function createConnectionSchema<OrderField extends EnumLike>(
@@ -86,14 +87,14 @@ function createConnectionSchema<OrderField extends EnumLike>(
         .optional(),
     })
     .transform((data) => {
-      const { first, last, after, before, ...rest } = data
+      const { first, last, after, before, ...rest } = data;
 
       if (first !== undefined || after !== undefined) {
         return {
           ...rest,
           first: first ?? options.pageSize,
           after,
-        }
+        };
       }
 
       if (last !== undefined || before !== undefined) {
@@ -101,18 +102,18 @@ function createConnectionSchema<OrderField extends EnumLike>(
           ...rest,
           last: last ?? options.pageSize,
           before,
-        }
+        };
       }
 
       return {
         ...rest,
         first: options.pageSize,
-      }
-    })
+      };
+    });
 }
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/',
+  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
@@ -123,15 +124,15 @@ export const Route = createFileRoute(
       defaultOrderDirection: OrderDirection.DESC,
     }),
   ),
-})
+});
 
 function RouteComponent() {
-  const { workspaceId, projectId } = Route.useParams()
-  const search = Route.useSearch()
+  const { workspaceId, projectId } = Route.useParams();
+  const search = Route.useSearch();
 
   const { data } = useQuery(GET_SERVICES_QUERY, {
     variables: { projectId, ...search },
-  })
+  });
 
   return (
     <Page
@@ -151,8 +152,8 @@ function RouteComponent() {
       <DataTable
         columns={[
           {
-            accessorKey: 'name',
-            header: 'Name',
+            accessorKey: "name",
+            header: "Name",
             cell: ({ row }) => {
               return (
                 <Link
@@ -165,34 +166,36 @@ function RouteComponent() {
                 >
                   {row.original.name}
                 </Link>
-              )
+              );
             },
           },
           {
-            accessorKey: 'image',
-            header: 'Image',
+            accessorKey: "image",
+            header: "Image",
           },
           {
-            accessorKey: 'replicas',
-            header: 'Replicas',
+            accessorKey: "replicas",
+            header: "Replicas",
           },
           {
-            accessorKey: 'ports',
-            header: 'Ports',
+            accessorKey: "ports",
+            header: "Ports",
             cell: ({ row }) => {
-              return row.original.ports?.join(', ') || '-'
+              return row.original.ports?.join(", ") || "-";
             },
           },
           {
-            accessorKey: 'createdAt',
-            header: 'Created Date',
+            accessorKey: "createdAt",
+            header: "Created Date",
             cell: ({ row }) => {
-              return dayjs(row.original.createdAt).format('YYYY-MM-DD HH:mm:ss')
+              return dayjs(row.original.createdAt).format(
+                "YYYY-MM-DD HH:mm:ss",
+              );
             },
           },
         ]}
         data={data?.project?.services.edges.map((edge) => edge.node) || []}
       />
     </Page>
-  )
+  );
 }

@@ -1,6 +1,7 @@
-import { FC, PropsWithChildren } from 'react'
-import { SidebarTrigger } from '@/components/ui/sidebar'
-import { Separator } from '@/components/ui/separator'
+import type { LinkComponentProps } from "@tanstack/react-router";
+import type { FC, PropsWithChildren } from "react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,15 +9,14 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
-import { LinkComponentProps } from '@tanstack/react-router'
+} from "@/components/ui/breadcrumb";
 
-import { Link } from '@/components/link'
+import { Link } from "@/components/link";
 
 export const Main: FC<PropsWithChildren> = ({ children }) => {
   return (
     <div>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b">
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator
@@ -29,7 +29,7 @@ export const Main: FC<PropsWithChildren> = ({ children }) => {
                 <>
                   <BreadcrumbItem className="hidden md:block">
                     <BreadcrumbLink asChild key={index}>
-                      <Link {...(breadcrumb.link as LinkComponentProps<'a'>)}>
+                      <Link {...(breadcrumb.link as LinkComponentProps<"a">)}>
                         {breadcrumb.label}
                       </Link>
                     </BreadcrumbLink>
@@ -49,5 +49,5 @@ export const Main: FC<PropsWithChildren> = ({ children }) => {
 
       {children}
     </div>
-  )
-}
+  );
+};

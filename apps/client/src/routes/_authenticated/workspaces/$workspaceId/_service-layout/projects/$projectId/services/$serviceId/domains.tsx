@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-adapter'
-import dayjs from 'dayjs'
-import { Trash2 } from 'lucide-react'
+import { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import dayjs from "dayjs";
+import { Trash2 } from "lucide-react";
 
-import { Page } from '@/components/page'
-import { DataTable } from '@/components/turboost-ui/data-table'
+import { Page } from "@/components/page";
+import { DataTable } from "@/components/turboost-ui/data-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,8 +18,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -28,19 +28,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/dialog";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { graphql } from '@/gql'
-import { DomainOrderField, OrderDirection } from '@/gql/graphql'
-import { createConnectionSchema } from '@/utils/create-connection-schema'
+} from "@/components/ui/select";
+import { graphql } from "@/gql";
+import { DomainOrderField, OrderDirection } from "@/gql/graphql";
+import { createConnectionSchema } from "@/utils/create-connection-schema";
 
 const GET_DOMAINS_QUERY = graphql(`
   query GetDomains(
@@ -82,14 +82,14 @@ const GET_DOMAINS_QUERY = graphql(`
     servicePort
     createdAt
   }
-`)
+`);
 
 const domainConnectionSchema = createConnectionSchema({
   pageSize: 20,
   orderField: DomainOrderField,
   defaultOrderField: DomainOrderField.CREATED_AT,
   defaultOrderDirection: OrderDirection.DESC,
-})
+});
 
 const CREATE_DOMAIN_MUTATION = graphql(`
   mutation CreateDomain($input: CreateDomainInput!) {
@@ -98,7 +98,7 @@ const CREATE_DOMAIN_MUTATION = graphql(`
       ...DomainItem
     }
   }
-`)
+`);
 
 const REMOVE_DOMAIN_MUTATION = graphql(`
   mutation RemoveDomain($id: ID!) {
@@ -106,53 +106,53 @@ const REMOVE_DOMAIN_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/domains',
+  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/domains",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(domainConnectionSchema),
   beforeLoad: () => {
-    return { title: 'Domains' }
+    return { title: "Domains" };
   },
-})
+});
 
 function RouteComponent() {
-  const { serviceId } = Route.useParams()
-  const { service } = Route.useRouteContext()
-  const search = Route.useSearch()
+  const { serviceId } = Route.useParams();
+  const { service } = Route.useRouteContext();
+  const search = Route.useSearch();
 
-  const [open, setOpen] = useState(false)
-  const [deletingDomainId, setDeletingDomainId] = useState<string | null>(null)
+  const [open, setOpen] = useState(false);
+  const [deletingDomainId, setDeletingDomainId] = useState<string | null>(null);
 
   const { data, refetch } = useQuery(GET_DOMAINS_QUERY, {
     variables: { serviceId, ...search },
-  })
+  });
 
   const [createDomain] = useMutation(CREATE_DOMAIN_MUTATION, {
     onCompleted: () => {
-      refetch()
+      refetch();
     },
-  })
+  });
 
   const [removeDomain, { loading: removing }] = useMutation(
     REMOVE_DOMAIN_MUTATION,
     {
       update(cache, result) {
         if (result.data?.removeDomain) {
-          cache.evict({ id: cache.identify(result.data.removeDomain) })
-          cache.gc()
+          cache.evict({ id: cache.identify(result.data.removeDomain) });
+          cache.gc();
         }
       },
     },
-  )
+  );
 
   const form = useForm({
     defaultValues: {
-      host: '',
-      path: '/',
-      servicePort: service?.ports?.[0]?.toString() ?? '',
+      host: "",
+      path: "/",
+      servicePort: service?.ports?.[0]?.toString() ?? "",
     },
     onSubmit: async ({ value }) => {
       await createDomain({
@@ -160,33 +160,33 @@ function RouteComponent() {
           input: {
             serviceId,
             host: value.host.trim(),
-            path: value.path.trim() || '/',
+            path: value.path.trim() || "/",
             servicePort: parseInt(value.servicePort, 10),
           },
         },
-      })
+      });
 
-      setOpen(false)
-      form.reset()
+      setOpen(false);
+      form.reset();
     },
-  })
+  });
 
   const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen)
+    setOpen(isOpen);
     if (!isOpen) {
-      form.reset()
+      form.reset();
     }
-  }
+  };
 
   const handleDelete = async (domainId: string) => {
     await removeDomain({
       variables: { id: domainId },
-    })
-    setDeletingDomainId(null)
-  }
+    });
+    setDeletingDomainId(null);
+  };
 
-  const domains = data?.service?.domains?.edges.map((edge) => edge.node) || []
-  const ports = service?.ports ?? []
+  const domains = data?.service?.domains?.edges.map((edge) => edge.node) || [];
+  const ports = service?.ports ?? [];
 
   return (
     <Page
@@ -200,9 +200,9 @@ function RouteComponent() {
           <DialogContent>
             <form
               onSubmit={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                form.handleSubmit()
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
               }}
             >
               <DialogHeader>
@@ -216,7 +216,7 @@ function RouteComponent() {
                   name="host"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? 'Host is required' : undefined,
+                      !value.trim() ? "Host is required" : undefined,
                   }}
                 >
                   {(field) => (
@@ -230,8 +230,8 @@ function RouteComponent() {
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -257,7 +257,7 @@ function RouteComponent() {
                   name="servicePort"
                   validators={{
                     onChange: ({ value }) =>
-                      !value ? 'Port is required' : undefined,
+                      !value ? "Port is required" : undefined,
                   }}
                 >
                   {(field) => (
@@ -279,8 +279,8 @@ function RouteComponent() {
                         </SelectContent>
                       </Select>
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -300,7 +300,7 @@ function RouteComponent() {
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? 'Adding...' : 'Add Domain'}
+                      {isSubmitting ? "Adding..." : "Add Domain"}
                     </Button>
                   )}
                 </form.Subscribe>
@@ -311,7 +311,7 @@ function RouteComponent() {
       }
     >
       {ports.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-muted-foreground py-8 text-center">
           No ports configured for this service. Please add a port in the service
           settings first.
         </div>
@@ -319,10 +319,10 @@ function RouteComponent() {
         <DataTable
           columns={[
             {
-              accessorKey: 'host',
-              header: 'Host',
+              accessorKey: "host",
+              header: "Host",
               cell: ({ row }) => {
-                const url = `https://${row.original.host}${row.original.path}`
+                const url = `https://${row.original.host}${row.original.path}`;
                 return (
                   <a
                     href={url}
@@ -332,29 +332,29 @@ function RouteComponent() {
                   >
                     {row.original.host}
                   </a>
-                )
+                );
               },
             },
             {
-              accessorKey: 'path',
-              header: 'Path',
+              accessorKey: "path",
+              header: "Path",
             },
             {
-              accessorKey: 'servicePort',
-              header: 'Port',
+              accessorKey: "servicePort",
+              header: "Port",
             },
             {
-              accessorKey: 'createdAt',
-              header: 'Created Date',
+              accessorKey: "createdAt",
+              header: "Created Date",
               cell: ({ row }) => {
                 return dayjs(row.original.createdAt).format(
-                  'YYYY-MM-DD HH:mm:ss',
-                )
+                  "YYYY-MM-DD HH:mm:ss",
+                );
               },
             },
             {
-              id: 'actions',
-              header: '',
+              id: "actions",
+              header: "",
               cell: ({ row }) => {
                 return (
                   <AlertDialog
@@ -372,7 +372,7 @@ function RouteComponent() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete Domain</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete the domain{' '}
+                          Are you sure you want to delete the domain{" "}
                           <strong>{row.original.host}</strong>? This action
                           cannot be undone.
                         </AlertDialogDescription>
@@ -383,12 +383,12 @@ function RouteComponent() {
                           disabled={removing}
                           onClick={() => handleDelete(row.original.id)}
                         >
-                          {removing ? 'Deleting...' : 'Delete'}
+                          {removing ? "Deleting..." : "Delete"}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                )
+                );
               },
             },
           ]}
@@ -396,5 +396,5 @@ function RouteComponent() {
         />
       )}
     </Page>
-  )
+  );
 }

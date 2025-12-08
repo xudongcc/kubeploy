@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-adapter'
-import dayjs from 'dayjs'
-import { HelpCircle } from 'lucide-react'
+import { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import dayjs from "dayjs";
+import { HelpCircle } from "lucide-react";
 
-import { Link } from '@/components/link'
-import { Page } from '@/components/page'
-import { DataTable } from '@/components/turboost-ui/data-table'
-import { Button } from '@/components/ui/button'
+import { Link } from "@/components/link";
+import { Page } from "@/components/page";
+import { DataTable } from "@/components/turboost-ui/data-table";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -18,18 +18,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/dialog";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { Textarea } from '@/components/ui/textarea'
-import { graphql } from '@/gql'
-import { ClusterOrderField, OrderDirection } from '@/gql/graphql'
-import { createConnectionSchema } from '@/utils/create-connection-schema'
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { graphql } from "@/gql";
+import { ClusterOrderField, OrderDirection } from "@/gql/graphql";
+import { createConnectionSchema } from "@/utils/create-connection-schema";
 
 const GET_CLUSTERS_QUERY = graphql(`
   query GetClusters(
@@ -69,7 +69,7 @@ const GET_CLUSTERS_QUERY = graphql(`
     server
     createdAt
   }
-`)
+`);
 
 const CREATE_CLUSTER_MUTATION = graphql(`
   mutation CreateCluster($input: CreateClusterInput!) {
@@ -77,10 +77,10 @@ const CREATE_CLUSTER_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/',
+  "/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
@@ -92,27 +92,27 @@ export const Route = createFileRoute(
     }),
   ),
   beforeLoad: () => {
-    return { title: 'Clusters' }
+    return { title: "Clusters" };
   },
-})
+});
 
 function RouteComponent() {
-  const { workspaceId } = Route.useParams()
-  const navigate = Route.useNavigate()
-  const search = Route.useSearch()
+  const { workspaceId } = Route.useParams();
+  const navigate = Route.useNavigate();
+  const search = Route.useSearch();
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  const { data } = useQuery(GET_CLUSTERS_QUERY, { variables: search })
+  const { data } = useQuery(GET_CLUSTERS_QUERY, { variables: search });
 
-  const [createCluster] = useMutation(CREATE_CLUSTER_MUTATION)
+  const [createCluster] = useMutation(CREATE_CLUSTER_MUTATION);
 
   const form = useForm({
     defaultValues: {
-      name: '',
-      server: '',
-      certificateAuthorityData: '',
-      token: '',
+      name: "",
+      server: "",
+      certificateAuthorityData: "",
+      token: "",
     },
     onSubmit: async ({ value }) => {
       const { data } = await createCluster({
@@ -125,25 +125,25 @@ function RouteComponent() {
             token: value.token.trim(),
           },
         },
-      })
+      });
 
       if (data?.createCluster.id) {
-        setOpen(false)
-        form.reset()
+        setOpen(false);
+        form.reset();
         navigate({
-          to: '/workspaces/$workspaceId/clusters/$clusterId',
+          to: "/workspaces/$workspaceId/clusters/$clusterId",
           params: { workspaceId, clusterId: data.createCluster.id },
-        })
+        });
       }
     },
-  })
+  });
 
   const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen)
+    setOpen(isOpen);
     if (!isOpen) {
-      form.reset()
+      form.reset();
     }
-  }
+  };
 
   return (
     <Page
@@ -157,9 +157,9 @@ function RouteComponent() {
           <DialogContent className="max-w-2xl">
             <form
               onSubmit={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                form.handleSubmit()
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
               }}
             >
               <DialogHeader>
@@ -173,7 +173,7 @@ function RouteComponent() {
                   name="name"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? 'Cluster name is required' : undefined,
+                      !value.trim() ? "Cluster name is required" : undefined,
                   }}
                 >
                   {(field) => (
@@ -187,8 +187,8 @@ function RouteComponent() {
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -199,7 +199,7 @@ function RouteComponent() {
                   name="server"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? 'Server URL is required' : undefined,
+                      !value.trim() ? "Server URL is required" : undefined,
                   }}
                 >
                   {(field) => (
@@ -213,8 +213,8 @@ function RouteComponent() {
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -226,7 +226,7 @@ function RouteComponent() {
                   validators={{
                     onChange: ({ value }) =>
                       !value.trim()
-                        ? 'Certificate Authority Data is required'
+                        ? "Certificate Authority Data is required"
                         : undefined,
                   }}
                 >
@@ -238,15 +238,15 @@ function RouteComponent() {
                       <Textarea
                         id="certificateAuthorityData"
                         placeholder="Base64 encoded CA certificate"
-                        className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
+                        className="field-sizing-fixed overflow-x-auto font-mono whitespace-pre"
                         rows={4}
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -258,7 +258,7 @@ function RouteComponent() {
                   validators={{
                     onChange: ({ value }) =>
                       !value.trim()
-                        ? 'Service Account Token is required'
+                        ? "Service Account Token is required"
                         : undefined,
                   }}
                 >
@@ -282,11 +282,11 @@ function RouteComponent() {
                               <h4 className="font-medium">
                                 How to create a Service Account Token
                               </h4>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-muted-foreground text-sm">
                                 Run the following commands to create a service
                                 account with cluster-admin privileges:
                               </p>
-                              <pre className="bg-muted p-3 rounded-md text-xs overflow-x-auto">
+                              <pre className="bg-muted overflow-x-auto rounded-md p-3 text-xs">
                                 {`# Create service account
 kubectl create serviceaccount kubeploy -n kube-system
 
@@ -305,15 +305,15 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
                       <Textarea
                         id="token"
                         placeholder="Service account token for authentication"
-                        className="field-sizing-fixed overflow-x-auto whitespace-pre font-mono"
+                        className="field-sizing-fixed overflow-x-auto font-mono whitespace-pre"
                         rows={4}
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -333,7 +333,7 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? 'Creating...' : 'Create'}
+                      {isSubmitting ? "Creating..." : "Create"}
                     </Button>
                   )}
                 </form.Subscribe>
@@ -346,8 +346,8 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
       <DataTable
         columns={[
           {
-            accessorKey: 'name',
-            header: 'Name',
+            accessorKey: "name",
+            header: "Name",
             cell: ({ row }) => {
               return (
                 <Link
@@ -356,23 +356,25 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
                 >
                   {row.original.name}
                 </Link>
-              )
+              );
             },
           },
           {
-            accessorKey: 'server',
-            header: 'Server',
+            accessorKey: "server",
+            header: "Server",
           },
           {
-            accessorKey: 'createdAt',
-            header: 'Created Date',
+            accessorKey: "createdAt",
+            header: "Created Date",
             cell: ({ row }) => {
-              return dayjs(row.original.createdAt).format('YYYY-MM-DD HH:mm:ss')
+              return dayjs(row.original.createdAt).format(
+                "YYYY-MM-DD HH:mm:ss",
+              );
             },
           },
         ]}
         data={data?.clusters.edges.map((edge) => edge.node) || []}
       />
     </Page>
-  )
+  );
 }

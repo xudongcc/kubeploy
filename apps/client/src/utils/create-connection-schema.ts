@@ -1,12 +1,13 @@
-import { EnumLike, z } from 'zod'
+import { z } from "zod";
+import type { EnumLike } from "zod";
 
-import { OrderDirection } from '@/gql/graphql'
+import { OrderDirection } from "@/gql/graphql";
 
 export interface CreateConnectionSchemaOptions<OrderField extends EnumLike> {
-  pageSize: number
-  orderField: OrderField
-  defaultOrderField: OrderField[keyof OrderField]
-  defaultOrderDirection: OrderDirection
+  pageSize: number;
+  orderField: OrderField;
+  defaultOrderField: OrderField[keyof OrderField];
+  defaultOrderDirection: OrderDirection;
 }
 
 export function createConnectionSchema<OrderField extends EnumLike>(
@@ -31,14 +32,14 @@ export function createConnectionSchema<OrderField extends EnumLike>(
         .optional(),
     })
     .transform((data) => {
-      const { first, last, after, before, ...rest } = data
+      const { first, last, after, before, ...rest } = data;
 
       if (first !== undefined || after !== undefined) {
         return {
           ...rest,
           first: first ?? options.pageSize,
           after,
-        }
+        };
       }
 
       if (last !== undefined || before !== undefined) {
@@ -46,12 +47,12 @@ export function createConnectionSchema<OrderField extends EnumLike>(
           ...rest,
           last: last ?? options.pageSize,
           before,
-        }
+        };
       }
 
       return {
         ...rest,
         first: options.pageSize,
-      }
-    })
+      };
+    });
 }

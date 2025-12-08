@@ -1,13 +1,13 @@
-import { cn } from '@/lib/utils'
-import { Link } from '@/components/link'
+import type { Link } from "@/components/link";
+import { cn } from "@/lib/utils";
 
 export interface PageProps {
-  children: React.ReactNode
-  title: string
-  description?: string
-  actions?: React.ReactNode
-  fullWidth?: boolean
-  breadcrumbs?: React.ReactElement<typeof Link>[]
+  children: React.ReactNode;
+  title: string;
+  description?: string;
+  actions?: React.ReactNode;
+  fullWidth?: boolean;
+  breadcrumbs?: Array<React.ReactElement<typeof Link>>;
 }
 
 export function Page({
@@ -20,8 +20,8 @@ export function Page({
   return (
     <div
       className={cn(
-        'mx-auto flex min-h-min w-full max-w-screen-lg flex-1 flex-col p-4',
-        fullWidth && 'max-w-full',
+        "mx-auto flex min-h-min w-full max-w-screen-lg flex-1 flex-col p-4",
+        fullWidth && "max-w-full",
       )}
     >
       <header className="mb-4 flex items-center justify-between gap-2">
@@ -37,5 +37,5 @@ export function Page({
 
       <div className="flex-1">{children}</div>
     </div>
-  )
+  );
 }

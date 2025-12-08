@@ -1,5 +1,5 @@
-import { graphql } from '@/gql'
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { graphql } from "@/gql";
 
 const GET_CURRENT_USER_QUERY = graphql(`
   query GetCurrentUser {
@@ -14,24 +14,24 @@ const GET_CURRENT_USER_QUERY = graphql(`
     name
     email
   }
-`)
+`);
 
-export const Route = createFileRoute('/_authenticated')({
+export const Route = createFileRoute("/_authenticated")({
   component: Outlet,
   beforeLoad: async ({ context: { apolloClient } }) => {
     try {
       const { data } = await apolloClient.query({
         query: GET_CURRENT_USER_QUERY,
-      })
+      });
 
       if (data?.currentUser) {
-        return { user: data.currentUser }
+        return { user: data.currentUser };
       }
     } catch {}
 
     throw redirect({
-      to: '/auth/login',
+      to: "/auth/login",
       search: { redirect: location.href },
-    })
+    });
   },
-})
+});

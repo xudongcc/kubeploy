@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { useQuery } from '@apollo/client/react'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { useState } from "react";
+import { useQuery } from "@apollo/client/react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -10,14 +10,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { graphql } from '@/gql'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/popover";
+import { graphql } from "@/gql";
+import { cn } from "@/lib/utils";
 
 const GET_CLUSTERS_QUERY = graphql(`
   query GetClustersForSelect {
@@ -30,25 +30,25 @@ const GET_CLUSTERS_QUERY = graphql(`
       }
     }
   }
-`)
+`);
 
 interface ClusterSelectProps {
-  value?: string
-  onChange?: (value: string) => void
-  placeholder?: string
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
 }
 
 export function ClusterSelect({
   value,
   onChange,
-  placeholder = 'Select cluster...',
+  placeholder = "Select cluster...",
 }: ClusterSelectProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  const { data } = useQuery(GET_CLUSTERS_QUERY)
+  const { data } = useQuery(GET_CLUSTERS_QUERY);
 
-  const clusters = data?.clusters.edges.map((edge) => edge.node) || []
-  const selectedCluster = clusters.find((cluster) => cluster.id === value)
+  const clusters = data?.clusters.edges.map((edge) => edge.node) || [];
+  const selectedCluster = clusters.find((cluster) => cluster.id === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -74,16 +74,16 @@ export function ClusterSelect({
                   key={cluster.id}
                   value={cluster.name}
                   onSelect={() => {
-                    onChange?.(cluster.id)
-                    setOpen(false)
+                    onChange?.(cluster.id);
+                    setOpen(false);
                   }}
-                  className="w-full flex items-center justify-between gap-2"
+                  className="flex w-full items-center justify-between gap-2"
                 >
                   <span className="truncate">{cluster.name}</span>
                   <Check
                     className={cn(
-                      'h-4 w-4',
-                      value === cluster.id ? 'opacity-100' : 'opacity-0',
+                      "h-4 w-4",
+                      value === cluster.id ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>
@@ -93,5 +93,5 @@ export function ClusterSelect({
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

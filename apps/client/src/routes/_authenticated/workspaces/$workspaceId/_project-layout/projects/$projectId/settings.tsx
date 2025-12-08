@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { useMutation } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
+import { useState } from "react";
+import { useMutation } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { Page } from '@/components/page'
+import { Page } from "@/components/page";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,8 +14,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,10 +23,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { graphql } from '@/gql'
+} from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { graphql } from "@/gql";
 
 const UPDATE_PROJECT_MUTATION = graphql(`
   mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
@@ -35,7 +35,7 @@ const UPDATE_PROJECT_MUTATION = graphql(`
       ...ProjectDetail
     }
   }
-`)
+`);
 
 const REMOVE_PROJECT_MUTATION = graphql(`
   mutation RemoveProject($id: ID!) {
@@ -43,41 +43,41 @@ const REMOVE_PROJECT_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/settings',
+  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/settings",
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: 'Settings' }
+    return { title: "Settings" };
   },
-})
+});
 
 function RouteComponent() {
-  const { workspaceId, projectId } = Route.useParams()
-  const navigate = Route.useNavigate()
+  const { workspaceId, projectId } = Route.useParams();
+  const navigate = Route.useNavigate();
 
-  const [deleteConfirmName, setDeleteConfirmName] = useState('')
+  const [deleteConfirmName, setDeleteConfirmName] = useState("");
 
-  const { project } = Route.useRouteContext()
+  const { project } = Route.useRouteContext();
 
-  const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION)
+  const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION);
   const [removeProject, { loading: removing }] = useMutation(
     REMOVE_PROJECT_MUTATION,
     {
       update(cache, result) {
         if (result.data?.removeProject) {
-          cache.evict({ id: cache.identify(result.data.removeProject) })
-          cache.gc()
+          cache.evict({ id: cache.identify(result.data.removeProject) });
+          cache.gc();
         }
       },
     },
-  )
+  );
 
   const form = useForm({
     defaultValues: {
-      name: project?.name ?? '',
+      name: project?.name ?? "",
     },
     onSubmit: async ({ value }) => {
       await updateProject({
@@ -87,25 +87,25 @@ function RouteComponent() {
             name: value.name.trim(),
           },
         },
-      })
+      });
     },
-  })
+  });
 
   const handleDelete = async () => {
     await removeProject({
       variables: { id: projectId },
-    })
+    });
     navigate({
-      to: '/workspaces/$workspaceId/projects',
+      to: "/workspaces/$workspaceId/projects",
       params: { workspaceId },
-    })
-  }
+    });
+  };
 
   if (!project) {
-    return <div>Project not found</div>
+    return <div>Project not found</div>;
   }
 
-  const canDelete = deleteConfirmName === project.name
+  const canDelete = deleteConfirmName === project.name;
 
   return (
     <Page
@@ -115,9 +115,9 @@ function RouteComponent() {
       <div className="flex flex-col gap-6">
         <form
           onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            form.handleSubmit()
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
           }}
         >
           <Card>
@@ -133,7 +133,7 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? 'Project name is required' : undefined,
+                    !value.trim() ? "Project name is required" : undefined,
                 }}
               >
                 {(field) => (
@@ -147,8 +147,8 @@ function RouteComponent() {
                       onBlur={field.handleBlur}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -161,7 +161,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    {isSubmitting ? "Saving..." : "Save Changes"}
                   </Button>
                 )}
               </form.Subscribe>
@@ -193,7 +193,7 @@ function RouteComponent() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="py-4">
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-muted-foreground mb-2 text-sm">
                     Please type <strong>{project.name}</strong> to confirm.
                   </p>
                   <Input
@@ -203,14 +203,14 @@ function RouteComponent() {
                   />
                 </div>
                 <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setDeleteConfirmName('')}>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmName("")}>
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
                     disabled={!canDelete || removing}
                     onClick={handleDelete}
                   >
-                    {removing ? 'Deleting...' : 'Delete Project'}
+                    {removing ? "Deleting..." : "Delete Project"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -219,5 +219,5 @@ function RouteComponent() {
         </Card>
       </div>
     </Page>
-  )
+  );
 }

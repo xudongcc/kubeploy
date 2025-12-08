@@ -1,19 +1,19 @@
-import { useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client/react'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-adapter'
-import dayjs from 'dayjs'
-import { Pencil, Trash2, MoreVertical, CircleX } from 'lucide-react'
+import { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { useForm } from "@tanstack/react-form";
+import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import dayjs from "dayjs";
+import { CircleX, MoreVertical, Pencil, Trash2 } from "lucide-react";
 
-import { Page } from '@/components/page'
-import { DataTable } from '@/components/turboost-ui/data-table'
+import { Page } from "@/components/page";
+import { DataTable } from "@/components/turboost-ui/data-table";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from '@/components/ui/input-group'
+} from "@/components/ui/input-group";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,8 +23,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -33,18 +33,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { graphql } from '@/gql'
-import { OrderDirection, VolumeOrderField } from '@/gql/graphql'
-import { createConnectionSchema } from '@/utils/create-connection-schema'
+} from "@/components/ui/dropdown-menu";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { graphql } from "@/gql";
+import { OrderDirection, VolumeOrderField } from "@/gql/graphql";
+import { createConnectionSchema } from "@/utils/create-connection-schema";
 
 const GET_VOLUMES_QUERY = graphql(`
   query GetVolumes(
@@ -86,14 +86,14 @@ const GET_VOLUMES_QUERY = graphql(`
     mountPath
     createdAt
   }
-`)
+`);
 
 const volumeConnectionSchema = createConnectionSchema({
   pageSize: 20,
   orderField: VolumeOrderField,
   defaultOrderField: VolumeOrderField.CREATED_AT,
   defaultOrderDirection: OrderDirection.DESC,
-})
+});
 
 const CREATE_VOLUME_MUTATION = graphql(`
   mutation CreateVolume($input: CreateVolumeInput!) {
@@ -102,7 +102,7 @@ const CREATE_VOLUME_MUTATION = graphql(`
       ...VolumeItem
     }
   }
-`)
+`);
 
 const UPDATE_VOLUME_MUTATION = graphql(`
   mutation UpdateVolume($id: ID!, $input: UpdateVolumeInput!) {
@@ -111,7 +111,7 @@ const UPDATE_VOLUME_MUTATION = graphql(`
       ...VolumeItem
     }
   }
-`)
+`);
 
 const REMOVE_VOLUME_MUTATION = graphql(`
   mutation RemoveVolume($id: ID!) {
@@ -119,67 +119,67 @@ const REMOVE_VOLUME_MUTATION = graphql(`
       id
     }
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/volumes',
+  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/volumes",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(volumeConnectionSchema),
   beforeLoad: () => {
-    return { title: 'Volumes' }
+    return { title: "Volumes" };
   },
-})
+});
 
 type VolumeItem = {
-  id: string
-  name: string
-  size: number
-  mountPath?: string | null
-  createdAt: string
-}
+  id: string;
+  name: string;
+  size: number;
+  mountPath?: string | null;
+  createdAt: string;
+};
 
 function RouteComponent() {
-  const { serviceId } = Route.useParams()
-  const search = Route.useSearch()
+  const { serviceId } = Route.useParams();
+  const search = Route.useSearch();
 
-  const [createOpen, setCreateOpen] = useState(false)
-  const [editingVolume, setEditingVolume] = useState<VolumeItem | null>(null)
-  const [deletingVolume, setDeletingVolume] = useState<VolumeItem | null>(null)
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editingVolume, setEditingVolume] = useState<VolumeItem | null>(null);
+  const [deletingVolume, setDeletingVolume] = useState<VolumeItem | null>(null);
 
   const { data, refetch } = useQuery(GET_VOLUMES_QUERY, {
     variables: { serviceId, ...search },
-  })
+  });
 
   const [createVolume] = useMutation(CREATE_VOLUME_MUTATION, {
     onCompleted: () => {
-      refetch()
+      refetch();
     },
-  })
+  });
 
   const [updateVolume] = useMutation(UPDATE_VOLUME_MUTATION, {
     onCompleted: () => {
-      refetch()
+      refetch();
     },
-  })
+  });
 
   const [removeVolume, { loading: removing }] = useMutation(
     REMOVE_VOLUME_MUTATION,
     {
       update(cache, result) {
         if (result.data?.removeVolume) {
-          cache.evict({ id: cache.identify(result.data.removeVolume) })
-          cache.gc()
+          cache.evict({ id: cache.identify(result.data.removeVolume) });
+          cache.gc();
         }
       },
     },
-  )
+  );
 
   const createForm = useForm({
     defaultValues: {
-      name: '',
+      name: "",
       size: 1,
-      mountPath: '',
+      mountPath: "",
     },
     onSubmit: async ({ value }) => {
       await createVolume({
@@ -191,21 +191,21 @@ function RouteComponent() {
             mountPath: value.mountPath.trim() || undefined,
           },
         },
-      })
+      });
 
-      setCreateOpen(false)
-      createForm.reset()
+      setCreateOpen(false);
+      createForm.reset();
     },
-  })
+  });
 
   const editForm = useForm({
     defaultValues: {
-      name: '',
+      name: "",
       size: 1,
-      mountPath: '',
+      mountPath: "",
     },
     onSubmit: async ({ value }) => {
-      if (!editingVolume) return
+      if (!editingVolume) return;
 
       await updateVolume({
         variables: {
@@ -216,44 +216,44 @@ function RouteComponent() {
             mountPath: value.mountPath.trim() || null,
           },
         },
-      })
+      });
 
-      setEditingVolume(null)
-      editForm.reset()
+      setEditingVolume(null);
+      editForm.reset();
     },
-  })
+  });
 
   const handleCreateOpenChange = (isOpen: boolean) => {
-    setCreateOpen(isOpen)
+    setCreateOpen(isOpen);
     if (!isOpen) {
-      createForm.reset()
+      createForm.reset();
     }
-  }
+  };
 
   const handleEditOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      setEditingVolume(null)
-      editForm.reset()
+      setEditingVolume(null);
+      editForm.reset();
     }
-  }
+  };
 
   const handleEdit = (volume: VolumeItem) => {
-    setEditingVolume(volume)
-    editForm.setFieldValue('name', volume.name)
-    editForm.setFieldValue('size', volume.size)
-    editForm.setFieldValue('mountPath', volume.mountPath || '')
-  }
+    setEditingVolume(volume);
+    editForm.setFieldValue("name", volume.name);
+    editForm.setFieldValue("size", volume.size);
+    editForm.setFieldValue("mountPath", volume.mountPath || "");
+  };
 
   const handleDelete = async () => {
-    if (!deletingVolume) return
+    if (!deletingVolume) return;
 
     await removeVolume({
       variables: { id: deletingVolume.id },
-    })
-    setDeletingVolume(null)
-  }
+    });
+    setDeletingVolume(null);
+  };
 
-  const volumes = data?.service?.volumes?.edges.map((edge) => edge.node) || []
+  const volumes = data?.service?.volumes?.edges.map((edge) => edge.node) || [];
 
   return (
     <Page
@@ -267,9 +267,9 @@ function RouteComponent() {
           <DialogContent>
             <form
               onSubmit={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                createForm.handleSubmit()
+                e.preventDefault();
+                e.stopPropagation();
+                createForm.handleSubmit();
               }}
             >
               <DialogHeader>
@@ -283,7 +283,7 @@ function RouteComponent() {
                   name="name"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? 'Name is required' : undefined,
+                      !value.trim() ? "Name is required" : undefined,
                   }}
                 >
                   {(field) => (
@@ -297,8 +297,8 @@ function RouteComponent() {
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -309,7 +309,7 @@ function RouteComponent() {
                   name="size"
                   validators={{
                     onChange: ({ value }) =>
-                      value <= 0 ? 'Size must be greater than 0' : undefined,
+                      value <= 0 ? "Size must be greater than 0" : undefined,
                   }}
                 >
                   {(field) => (
@@ -332,8 +332,8 @@ function RouteComponent() {
                         <InputGroupAddon align="inline-end">GB</InputGroupAddon>
                       </InputGroup>
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
-                          {field.state.meta.errors.join(', ')}
+                        <p className="text-destructive text-sm">
+                          {field.state.meta.errors.join(", ")}
                         </p>
                       )}
                     </Field>
@@ -368,7 +368,7 @@ function RouteComponent() {
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? 'Adding...' : 'Add Volume'}
+                      {isSubmitting ? "Adding..." : "Add Volume"}
                     </Button>
                   )}
                 </createForm.Subscribe>
@@ -381,33 +381,35 @@ function RouteComponent() {
       <DataTable
         columns={[
           {
-            accessorKey: 'name',
-            header: 'Name',
+            accessorKey: "name",
+            header: "Name",
           },
           {
-            accessorKey: 'size',
-            header: 'Size',
+            accessorKey: "size",
+            header: "Size",
             cell: ({ row }) => {
-              return `${row.original.size} GB`
+              return `${row.original.size} GB`;
             },
           },
           {
-            accessorKey: 'mountPath',
-            header: 'Mount Path',
+            accessorKey: "mountPath",
+            header: "Mount Path",
             cell: ({ row }) => {
-              return row.original.mountPath || '-'
+              return row.original.mountPath || "-";
             },
           },
           {
-            accessorKey: 'createdAt',
-            header: 'Created Date',
+            accessorKey: "createdAt",
+            header: "Created Date",
             cell: ({ row }) => {
-              return dayjs(row.original.createdAt).format('YYYY-MM-DD HH:mm:ss')
+              return dayjs(row.original.createdAt).format(
+                "YYYY-MM-DD HH:mm:ss",
+              );
             },
           },
           {
-            id: 'actions',
-            header: '',
+            id: "actions",
+            header: "",
             cell: ({ row }) => {
               return (
                 <DropdownMenu>
@@ -434,7 +436,7 @@ function RouteComponent() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              )
+              );
             },
           },
         ]}
@@ -446,9 +448,9 @@ function RouteComponent() {
         <DialogContent>
           <form
             onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              editForm.handleSubmit()
+              e.preventDefault();
+              e.stopPropagation();
+              editForm.handleSubmit();
             }}
           >
             <DialogHeader>
@@ -462,7 +464,7 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? 'Name is required' : undefined,
+                    !value.trim() ? "Name is required" : undefined,
                 }}
               >
                 {(field) => (
@@ -476,8 +478,8 @@ function RouteComponent() {
                       onBlur={field.handleBlur}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -488,7 +490,7 @@ function RouteComponent() {
                 name="size"
                 validators={{
                   onChange: ({ value }) =>
-                    value <= 0 ? 'Size must be greater than 0' : undefined,
+                    value <= 0 ? "Size must be greater than 0" : undefined,
                 }}
               >
                 {(field) => (
@@ -509,8 +511,8 @@ function RouteComponent() {
                       <InputGroupAddon align="inline-end">GB</InputGroupAddon>
                     </InputGroup>
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors.join(', ')}
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -535,7 +537,7 @@ function RouteComponent() {
                             variant="ghost"
                             size="icon-xs"
                             aria-label="Clear"
-                            onClick={() => field.handleChange('')}
+                            onClick={() => field.handleChange("")}
                           >
                             <CircleX />
                           </InputGroupButton>
@@ -559,7 +561,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    {isSubmitting ? "Saving..." : "Save Changes"}
                   </Button>
                 )}
               </editForm.Subscribe>
@@ -577,7 +579,7 @@ function RouteComponent() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Volume</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete the volume{' '}
+              Are you sure you want to delete the volume{" "}
               <strong>{deletingVolume?.name}</strong>? This action cannot be
               undone and all data in the volume will be lost.
             </AlertDialogDescription>
@@ -585,11 +587,11 @@ function RouteComponent() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction disabled={removing} onClick={handleDelete}>
-              {removing ? 'Deleting...' : 'Delete'}
+              {removing ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </Page>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import { graphql } from '@/gql'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { graphql } from "@/gql";
 
 const GET_PROJECT_QUERY = graphql(`
   query GetProject($id: ID!) {
@@ -14,10 +14,10 @@ const GET_PROJECT_QUERY = graphql(`
     name
     createdAt
   }
-`)
+`);
 
 export const Route = createFileRoute(
-  '/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId',
+  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId",
 )({
   beforeLoad: async ({
     context: { apolloClient },
@@ -27,16 +27,16 @@ export const Route = createFileRoute(
       const { data } = await apolloClient.query({
         query: GET_PROJECT_QUERY,
         variables: { id: projectId },
-      })
+      });
 
       if (data?.project) {
-        return { title: data.project.name, project: data.project }
+        return { title: data.project.name, project: data.project };
       }
     } catch {}
 
     throw redirect({
-      to: '/workspaces/$workspaceId/projects',
+      to: "/workspaces/$workspaceId/projects",
       params: { workspaceId },
-    })
+    });
   },
-})
+});

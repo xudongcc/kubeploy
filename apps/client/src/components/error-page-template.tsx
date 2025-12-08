@@ -1,15 +1,15 @@
 import {
   Empty,
+  EmptyContent,
+  EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-  EmptyDescription,
-  EmptyContent,
-} from '@/components/ui/empty'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/empty";
+import { Button } from "@/components/ui/button";
 
 export const ErrorPageTemplate = () => {
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center">
       <Empty>
         <EmptyHeader>
           <EmptyTitle>Error</EmptyTitle>
@@ -24,5 +24,5 @@ export const ErrorPageTemplate = () => {
         </EmptyContent>
       </Empty>
     </div>
-  )
-}
+  );
+};
