@@ -15,6 +15,9 @@
     "create": "创建",
     "createdAt": "创建时间",
     "creating": "创建中...",
+    "delete": "删除",
+    "deleting": "删除中...",
+    "edit": "编辑",
     "name": "名称",
     "save": "保存",
     "saving": "保存中...",
@@ -67,6 +70,39 @@
     "platform": "平台",
     "projects": "项目",
     "settings": "设置"
+  },
+  "volume": {
+    "createVolume": {
+      "description": "为您的服务添加一个新的持久化硬盘。",
+      "title": "创建硬盘"
+    },
+    "deleteVolume": {
+      "confirmHint": "请输入 {{name}} 以确认。",
+      "confirmLabel": "硬盘名称",
+      "description": "您确定要删除硬盘 {{name}} 吗？此操作无法撤销，硬盘中的所有数据将会丢失。",
+      "title": "删除硬盘"
+    },
+    "description": "管理您的服务硬盘。",
+    "form": {
+      "mountPath": {
+        "label": "挂载路径",
+        "placeholder": "/data"
+      },
+      "name": {
+        "label": "名称",
+        "placeholder": "data",
+        "required": "名称是必填的"
+      },
+      "size": {
+        "label": "大小",
+        "required": "大小必须大于 0"
+      }
+    },
+    "title": "硬盘",
+    "updateVolume": {
+      "description": "更新硬盘配置。",
+      "title": "更新硬盘"
+    }
   },
   "workspaceSwitcher": {
     "createWorkspace": "创建工作空间",

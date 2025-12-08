@@ -15,6 +15,9 @@
     "create": "Create",
     "createdAt": "Created Date",
     "creating": "Creating...",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "edit": "Edit",
     "name": "Name",
     "save": "Save",
     "saving": "Saving...",
@@ -55,7 +58,7 @@
       "environment": "Environment",
       "logs": "Logs",
       "metrics": "Metrics",
-      "overview": "service.tabs.overview",
+      "overview": "Overview",
       "settings": "Settings",
       "volumes": "Volumes"
     },
@@ -67,6 +70,39 @@
     "platform": "Platform",
     "projects": "Projects",
     "settings": "Settings"
+  },
+  "volume": {
+    "createVolume": {
+      "description": "Add a new persistent volume to your service.",
+      "title": "Create Volume"
+    },
+    "deleteVolume": {
+      "confirmHint": "Please type {{name}} to confirm.",
+      "confirmLabel": "Volume Name",
+      "description": "Are you sure you want to delete the volume {{name}}? This action cannot be undone and all data in the volume will be lost.",
+      "title": "Delete Volume"
+    },
+    "description": "Manage your service volumes.",
+    "form": {
+      "mountPath": {
+        "label": "Mount Path",
+        "placeholder": "/data"
+      },
+      "name": {
+        "label": "Name",
+        "placeholder": "data",
+        "required": "Name is required"
+      },
+      "size": {
+        "label": "Size",
+        "required": "Size must be greater than 0"
+      }
+    },
+    "title": "Volumes",
+    "updateVolume": {
+      "description": "Update the volume configuration.",
+      "title": "Update Volume"
+    }
   },
   "workspaceSwitcher": {
     "createWorkspace": "Create workspace",
