@@ -15,6 +15,7 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
+import { t } from "i18next";
 
 const CREATE_SERVICE_MUTATION = graphql(`
   mutation CreateService($input: CreateServiceInput!) {
@@ -29,7 +30,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: "Create Service" };
+    return { title: t("createService.title") };
   },
 });
 
@@ -75,8 +76,8 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Create Service"
-      description="Deploy a new service to your project"
+      title={t("createService.title")}
+      description={t("createService.description")}
     >
       <form
         onSubmit={(e) => {

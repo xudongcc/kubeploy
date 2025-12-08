@@ -27,6 +27,7 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
+import { t } from "i18next";
 
 const UPDATE_PROJECT_MUTATION = graphql(`
   mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
@@ -109,8 +110,8 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Settings"
-      description="Update your project name and other settings."
+      title={t("project.settings.title")}
+      description={t("project.settings.description")}
     >
       <div className="flex flex-col gap-6">
         <form
@@ -122,9 +123,9 @@ function RouteComponent() {
         >
           <Card>
             <CardHeader>
-              <CardTitle>Project Settings</CardTitle>
+              <CardTitle>{t("project.updateForm.title")}</CardTitle>
               <CardDescription>
-                Update your project name and other settings.
+                {t("project.updateForm.description")}
               </CardDescription>
             </CardHeader>
 
@@ -133,15 +134,19 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? "Project name is required" : undefined,
+                    !value.trim()
+                      ? t("project.updateForm.name.required")
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <FieldLabel htmlFor="name">
+                      {t("project.updateForm.name.label")}
+                    </FieldLabel>
                     <Input
                       id="name"
-                      placeholder="My Project"
+                      placeholder={t("project.updateForm.name.placeholder")}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -161,7 +166,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? "Saving..." : "Save Changes"}
+                    {isSubmitting ? t("common.saving") : t("common.save")}
                   </Button>
                 )}
               </form.Subscribe>

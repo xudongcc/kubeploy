@@ -1,4 +1,5 @@
 import { useSearch } from "@tanstack/react-router";
+import { t } from "i18next";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
-import { useTranslation } from "react-i18next";
 
 export function LoginForm({
   className,
@@ -20,8 +20,6 @@ export function LoginForm({
     from: "/auth/login",
     select: (search) => search.redirect,
   });
-
-  const { t } = useTranslation();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

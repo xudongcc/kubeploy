@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
 import { OrderDirection, ProjectOrderField } from "@/gql/graphql";
 import { createConnectionSchema } from "@/utils/create-connection-schema";
-import { useTranslation } from "react-i18next";
+import { t } from "i18next";
 
 const GET_PROJECTS_QUERY = graphql(`
   query GetProjects(
@@ -92,8 +92,12 @@ export const Route = createFileRoute(
       defaultOrderDirection: OrderDirection.DESC,
     }),
   ),
-  beforeLoad: () => {
-    return { title: "Projects" };
+  beforeLoad: ({
+    context: {
+      i18n: { t },
+    },
+  }) => {
+    return { title: t("project.title") };
   },
 });
 
@@ -101,8 +105,6 @@ function RouteComponent() {
   const { workspaceId } = Route.useParams();
   const navigate = Route.useNavigate();
   const search = Route.useSearch();
-
-  const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
 

@@ -15,6 +15,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { WorkspaceSidebar } from "@/components/workspace-sidebar";
 import { graphql } from "@/gql";
 import { NavTabs } from "@/components/nav-tabs";
+import { t } from "i18next";
 import { useMemo } from "react";
 
 const GET_PROJECT_QUERY = graphql(`
@@ -62,12 +63,11 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { workspaceId, projectId } = Route.useParams();
-  const { project } = Route.useRouteContext();
 
   const tabs = useMemo(
     () => [
       {
-        title: "Services",
+        title: t("project.tabs.services"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services",
           params: {
@@ -77,7 +77,7 @@ function RouteComponent() {
         }),
       },
       {
-        title: "Settings",
+        title: t("project.tabs.settings"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/settings",
           params: {
@@ -106,7 +106,7 @@ function RouteComponent() {
             <Breadcrumbs
               baseItems={[
                 {
-                  title: "Projects",
+                  title: t("project.title"),
                   link: linkOptions({
                     to: "/workspaces/$workspaceId/projects",
                     params: { workspaceId },

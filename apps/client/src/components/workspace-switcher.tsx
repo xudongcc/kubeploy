@@ -20,7 +20,7 @@ import {
 import { Link } from "@/components/link";
 import { graphql } from "@/gql";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useTranslation } from "react-i18next";
+import { t } from "i18next";
 
 const WORKSPACE_SWITCHER_WORKSPACES_QUERY = graphql(`
   query WorkspaceSwitcherWorkspaces {
@@ -42,8 +42,6 @@ const WORKSPACE_SWITCHER_WORKSPACES_QUERY = graphql(`
 
 export function WorkspaceSwitcher() {
   const { isMobile } = useSidebar();
-
-  const { t } = useTranslation();
 
   const workspace = useRouteContext({
     from: "/_authenticated/workspaces/$workspaceId",

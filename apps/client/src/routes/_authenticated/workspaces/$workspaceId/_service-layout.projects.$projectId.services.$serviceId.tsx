@@ -15,6 +15,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { WorkspaceSidebar } from "@/components/workspace-sidebar";
 import { graphql } from "@/gql";
 import { NavTabs } from "@/components/nav-tabs";
+import { t } from "i18next";
 import { useMemo } from "react";
 
 const GET_SERVICE_QUERY = graphql(`
@@ -82,7 +83,7 @@ function RouteComponent() {
   const tabs = useMemo(
     () => [
       {
-        title: "Overview",
+        title: t("service.tabs.overview"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId",
           params: {
@@ -94,7 +95,7 @@ function RouteComponent() {
         }),
       },
       {
-        title: "Environment",
+        title: t("service.tabs.environment"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment",
           params: {
@@ -105,7 +106,7 @@ function RouteComponent() {
         }),
       },
       {
-        title: "Domains",
+        title: t("service.tabs.domains"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains",
           params: {
@@ -116,7 +117,7 @@ function RouteComponent() {
         }),
       },
       {
-        title: "Volumes",
+        title: t("service.tabs.volumes"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes",
           params: {
@@ -127,7 +128,7 @@ function RouteComponent() {
         }),
       },
       {
-        title: "Logs",
+        title: t("service.tabs.logs"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs",
           params: {
@@ -138,7 +139,7 @@ function RouteComponent() {
         }),
       },
       {
-        title: "Metrics",
+        title: t("service.tabs.metrics"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics",
           params: {
@@ -149,7 +150,7 @@ function RouteComponent() {
         }),
       },
       {
-        title: "Settings",
+        title: t("service.tabs.settings"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings",
           params: {
@@ -179,7 +180,7 @@ function RouteComponent() {
             <Breadcrumbs
               baseItems={[
                 {
-                  title: "Projects",
+                  title: t("project.title"),
                   link: linkOptions({
                     to: "/workspaces/$workspaceId/projects",
                     params: { workspaceId },
@@ -193,7 +194,7 @@ function RouteComponent() {
                   }),
                 },
                 {
-                  title: "Services",
+                  title: t("service.title"),
                   link: linkOptions({
                     to: "/workspaces/$workspaceId/projects/$projectId/services",
                     params: { workspaceId, projectId },

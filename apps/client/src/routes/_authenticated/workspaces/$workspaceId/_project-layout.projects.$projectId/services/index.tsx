@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { graphql } from "@/gql";
 import { OrderDirection, ServiceOrderField } from "@/gql/graphql";
 import { createConnectionSchema } from "@/utils/create-connection-schema";
+import { t } from "i18next";
 
 const GET_SERVICES_QUERY = graphql(`
   query GetServices(
@@ -83,15 +84,15 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Services"
-      description="Create and manage your services."
+      title={t("service.title")}
+      description={t("service.description")}
       actions={
         <Button asChild>
           <Link
             to="/workspaces/$workspaceId/projects/$projectId/services/create"
             params={{ workspaceId, projectId }}
           >
-            Create Service
+            {t("service.createService")}
           </Link>
         </Button>
       }
@@ -100,7 +101,7 @@ function RouteComponent() {
         columns={[
           {
             accessorKey: "name",
-            header: "Name",
+            header: t("common.name"),
             cell: ({ row }) => {
               return (
                 <Link
@@ -118,14 +119,14 @@ function RouteComponent() {
           },
           {
             accessorKey: "status",
-            header: "Status",
+            header: t("common.status"),
             cell: ({ row }) => (
               <ServiceStatusBadge status={row.original.status} />
             ),
           },
           {
             accessorKey: "createdAt",
-            header: "Created Date",
+            header: t("common.createdAt"),
             cell: ({ row }) => {
               return dayjs(row.original.createdAt).format(
                 "YYYY-MM-DD HH:mm:ss",

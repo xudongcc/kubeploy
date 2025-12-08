@@ -15,13 +15,51 @@
     "create": "Create",
     "createdAt": "Created Date",
     "creating": "Creating...",
-    "name": "Name"
+    "name": "Name",
+    "save": "Save",
+    "saving": "Saving...",
+    "status": "Status"
+  },
+  "createService": {
+    "description": "Deploy a new service to your project.",
+    "title": "Create Service"
   },
   "project": {
     "createProject": "Create Project",
     "createProjectDescription": "Create a new project to deploy your services.",
     "description": "Create and manage your projects.",
-    "title": "Projects"
+    "settings": {
+      "description": "Update your project name and other settings.",
+      "title": "Project Settings"
+    },
+    "tabs": {
+      "services": "Services",
+      "settings": "Settings"
+    },
+    "title": "Projects",
+    "updateForm": {
+      "description": "Update your project name and other settings.",
+      "name": {
+        "label": "Name",
+        "placeholder": "My Project",
+        "required": "Project name is required"
+      },
+      "title": "Project Settings"
+    }
+  },
+  "service": {
+    "createService": "Create Service",
+    "description": "Create and manage your services.",
+    "tabs": {
+      "domains": "Domains",
+      "environment": "Environment",
+      "logs": "Logs",
+      "metrics": "Metrics",
+      "overview": "service.tabs.overview",
+      "settings": "Settings",
+      "volumes": "Volumes"
+    },
+    "title": "Services"
   },
   "sidebar": {
     "clusters": "Clusters",

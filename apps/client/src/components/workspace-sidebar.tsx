@@ -21,7 +21,7 @@ import {
 
 import { Link } from "@/components/link";
 import { SidebarLogo } from "./sidebar-logo";
-import { useTranslation } from "react-i18next";
+import { t } from "i18next";
 
 type SidebarItem = {
   title: string;
@@ -32,8 +32,6 @@ type SidebarItem = {
 export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
   ...props
 }) => {
-  const { t } = useTranslation();
-
   const workspace = useRouteContext({
     from: "/_authenticated/workspaces/$workspaceId",
     select: (context) => context.workspace,
