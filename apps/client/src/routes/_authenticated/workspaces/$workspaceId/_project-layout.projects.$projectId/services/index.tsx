@@ -69,6 +69,9 @@ export const Route = createFileRoute(
       defaultOrderDirection: OrderDirection.DESC,
     }),
   ),
+  beforeLoad: () => {
+    return { title: null };
+  },
 });
 
 function RouteComponent() {

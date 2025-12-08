@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/$serviceId/metrics",
+  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/metrics",
 )({
   component: RouteComponent,
+  beforeLoad: () => {
+    return { title: null };
+  },
 });
 
 function RouteComponent() {

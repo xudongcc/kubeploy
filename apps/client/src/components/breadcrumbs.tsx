@@ -1,7 +1,10 @@
 import { Fragment, useMemo } from "react";
-import { useRouterState } from "@tanstack/react-router";
+import {
+  LinkComponentProps,
+  linkOptions,
+  useRouterState,
+} from "@tanstack/react-router";
 import type { FC } from "react";
-import { uniqBy } from "lodash-es";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,26 +16,36 @@ import {
 
 import { Link } from "@/components/link";
 
-export const Breadcrumbs: FC = () => {
+export interface BreadcrumbsItemProps {
+  title: string;
+  link: LinkComponentProps<"a">;
+}
+
+export interface BreadcrumbsProps {
+  baseItems?: BreadcrumbsItemProps[];
+}
+
+export const Breadcrumbs: FC<BreadcrumbsProps> = ({ baseItems = [] }) => {
   const matches = useRouterState({ select: (state) => state.matches });
 
   const [breadcrumbs, lastBreadcrumb] = useMemo(() => {
-    const breadcrumbs = uniqBy(
-      matches
-        .map(({ id, pathname, context }) => {
+    const breadcrumbs = [
+      ...baseItems,
+      ...matches
+        .map(({ pathname, context }) => {
           if (!context.title) {
             return null;
           }
 
           return {
-            id,
             title: context.title,
-            to: pathname,
+            link: linkOptions({
+              to: pathname,
+            }),
           };
         })
         .filter((item) => item !== null),
-      (item) => item.to.replace(/\/$/, ""),
-    );
+    ];
 
     const lastBreadcrumb = breadcrumbs.pop();
 
@@ -43,10 +56,12 @@ export const Breadcrumbs: FC = () => {
     <Breadcrumb>
       <BreadcrumbList>
         {breadcrumbs?.map((breadcrumb) => (
-          <Fragment key={breadcrumb.id}>
+          <Fragment key={breadcrumb.title}>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink asChild>
-                <Link to={breadcrumb.to}>{breadcrumb.title}</Link>
+                <Link {...(breadcrumb.link as LinkComponentProps<"a">)}>
+                  {breadcrumb.title}
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
 

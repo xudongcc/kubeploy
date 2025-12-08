@@ -46,9 +46,12 @@ const REMOVE_SERVICE_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/$serviceId/settings",
+  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/settings",
 )({
   component: RouteComponent,
+  beforeLoad: () => {
+    return { title: null };
+  },
 });
 
 function RouteComponent() {

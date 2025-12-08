@@ -50,7 +50,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: "Settings" };
+    return { title: null };
   },
 });
 
