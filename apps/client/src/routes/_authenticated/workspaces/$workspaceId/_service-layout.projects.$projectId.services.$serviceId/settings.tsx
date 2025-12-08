@@ -2,18 +2,13 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
+import { t } from "i18next";
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  DeleteServiceDialog,
+  type DeleteServiceItem,
+} from "@/components/delete-service-dialog";
+import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,7 +21,6 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
-import { Page } from "@/components/page";
 
 const UPDATE_SERVICE_MUTATION = graphql(`
   mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {
@@ -59,7 +53,8 @@ function RouteComponent() {
   const { service } = Route.useRouteContext();
   const navigate = Route.useNavigate();
 
-  const [deleteConfirmName, setDeleteConfirmName] = useState("");
+  const [deletingService, setDeletingService] =
+    useState<DeleteServiceItem | null>(null);
 
   const [updateService] = useMutation(UPDATE_SERVICE_MUTATION);
   const [removeService, { loading: removing }] = useMutation(
@@ -94,9 +89,9 @@ function RouteComponent() {
     },
   });
 
-  const handleDelete = async () => {
+  const handleDelete = async (id: string) => {
     await removeService({
-      variables: { id: serviceId },
+      variables: { id },
     });
     navigate({
       to: "/workspaces/$workspaceId/projects/$projectId/services",
@@ -105,13 +100,14 @@ function RouteComponent() {
   };
 
   if (!service) {
-    return <div>Service not found</div>;
+    return <div>{t("service.notFound")}</div>;
   }
 
-  const canDelete = deleteConfirmName === service.name;
-
   return (
-    <Page title="Settings" description="Update your service settings.">
+    <Page
+      title={t("service.tabs.settings")}
+      description={t("service.settings.description")}
+    >
       <div className="flex flex-col gap-6">
         <form
           onSubmit={(e) => {
@@ -122,9 +118,9 @@ function RouteComponent() {
         >
           <Card>
             <CardHeader>
-              <CardTitle>Service Settings</CardTitle>
+              <CardTitle>{t("service.settings.title")}</CardTitle>
               <CardDescription>
-                Update your service name and other settings.
+                {t("service.settings.description")}
               </CardDescription>
             </CardHeader>
 
@@ -133,15 +129,19 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? "Service name is required" : undefined,
+                    !value.trim()
+                      ? t("service.settings.form.name.required")
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <FieldLabel htmlFor="name">
+                      {t("service.settings.form.name.label")}
+                    </FieldLabel>
                     <Input
                       id="name"
-                      placeholder="my-service"
+                      placeholder={t("service.settings.form.name.placeholder")}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -159,15 +159,19 @@ function RouteComponent() {
                 name="image"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? "Image is required" : undefined,
+                    !value.trim()
+                      ? t("service.settings.form.image.required")
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="image">Image</FieldLabel>
+                    <FieldLabel htmlFor="image">
+                      {t("service.settings.form.image.label")}
+                    </FieldLabel>
                     <Input
                       id="image"
-                      placeholder="nginx:latest"
+                      placeholder={t("service.settings.form.image.placeholder")}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -185,12 +189,16 @@ function RouteComponent() {
                 name="replicas"
                 validators={{
                   onChange: ({ value }) =>
-                    value < 0 ? "Replicas must be at least 0" : undefined,
+                    value < 0
+                      ? t("service.settings.form.replicas.required")
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="replicas">Replicas</FieldLabel>
+                    <FieldLabel htmlFor="replicas">
+                      {t("service.settings.form.replicas.label")}
+                    </FieldLabel>
                     <Input
                       id="replicas"
                       type="number"
@@ -216,7 +224,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? "Saving..." : "Save Changes"}
+                    {isSubmitting ? t("common.saving") : t("common.save")}
                   </Button>
                 )}
               </form.Subscribe>
@@ -226,53 +234,30 @@ function RouteComponent() {
 
         <Card className="border-destructive">
           <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <CardTitle className="text-destructive">
+              {t("service.settings.dangerZone.title")}
+            </CardTitle>
             <CardDescription>
-              Once you delete a service, there is no going back. This will
-              permanently delete the service and its associated Kubernetes
-              resources.
+              {t("service.settings.dangerZone.description")}
             </CardDescription>
           </CardHeader>
           <CardFooter>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Service</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Service</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the service <strong>{service.name}</strong> and its
-                    associated Kubernetes Deployment and Service.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="py-4">
-                  <p className="text-muted-foreground mb-2 text-sm">
-                    Please type <strong>{service.name}</strong> to confirm.
-                  </p>
-                  <Input
-                    placeholder={service.name}
-                    value={deleteConfirmName}
-                    onChange={(e) => setDeleteConfirmName(e.target.value)}
-                  />
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setDeleteConfirmName("")}>
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={!canDelete || removing}
-                    onClick={handleDelete}
-                  >
-                    {removing ? "Deleting..." : "Delete Service"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button
+              variant="destructive"
+              onClick={() => setDeletingService(service)}
+            >
+              {t("service.settings.dangerZone.deleteButton")}
+            </Button>
           </CardFooter>
         </Card>
       </div>
+
+      <DeleteServiceDialog
+        service={deletingService}
+        deleting={removing}
+        onOpenChange={() => setDeletingService(null)}
+        onConfirm={handleDelete}
+      />
     </Page>
   );
 }

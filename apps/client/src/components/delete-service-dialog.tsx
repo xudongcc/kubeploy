@@ -14,42 +14,42 @@ import {
 import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 
-export interface DeleteClusterItem {
+export interface DeleteServiceItem {
   id: string;
   name: string;
 }
 
-interface DeleteClusterDialogProps {
-  cluster: DeleteClusterItem | null;
+interface DeleteServiceDialogProps {
+  service: DeleteServiceItem | null;
   deleting?: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (id: string) => Promise<void>;
 }
 
-export function DeleteClusterDialog({
-  cluster,
+export function DeleteServiceDialog({
+  service,
   deleting = false,
   onOpenChange,
   onConfirm,
-}: DeleteClusterDialogProps) {
+}: DeleteServiceDialogProps) {
   const [confirmName, setConfirmName] = useState("");
 
   useEffect(() => {
-    if (!cluster) {
+    if (!service) {
       setConfirmName("");
     }
-  }, [cluster]);
+  }, [service]);
 
   const handleConfirm = async () => {
-    if (!cluster) return;
-    await onConfirm(cluster.id);
+    if (!service) return;
+    await onConfirm(service.id);
   };
 
-  const isConfirmDisabled = deleting || confirmName !== cluster?.name;
+  const isConfirmDisabled = deleting || confirmName !== service?.name;
 
   return (
     <AlertDialog
-      open={cluster !== null}
+      open={service !== null}
       onOpenChange={(open) => {
         if (!open) {
           setConfirmName("");
@@ -60,24 +60,24 @@ export function DeleteClusterDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {t("cluster.deleteCluster.title")}
+            {t("service.deleteService.title")}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {t("cluster.deleteCluster.description", {
-              name: cluster?.name,
+            {t("service.deleteService.description", {
+              name: service?.name,
             })}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <Field>
-          <FieldLabel>{t("cluster.deleteCluster.confirmLabel")}</FieldLabel>
+          <FieldLabel>{t("service.deleteService.confirmLabel")}</FieldLabel>
           <Input
             value={confirmName}
             onChange={(e) => setConfirmName(e.target.value)}
-            placeholder={cluster?.name}
+            placeholder={service?.name}
           />
           <FieldDescription>
-            {t("cluster.deleteCluster.confirmHint", { name: cluster?.name })}
+            {t("service.deleteService.confirmHint", { name: service?.name })}
           </FieldDescription>
         </Field>
 

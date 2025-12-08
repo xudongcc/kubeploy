@@ -2,19 +2,13 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { t } from "i18next";
 
-import { Page } from "@/components/page";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  DeleteWorkspaceDialog,
+  type DeleteWorkspaceItem,
+} from "@/components/delete-workspace-dialog";
+import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -50,17 +44,19 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: "Settings" };
+    return { title: t("workspace.title") };
   },
 });
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const [deleteConfirmName, setDeleteConfirmName] = useState("");
 
   const workspace = Route.useRouteContext({
     select: (context) => context.workspace,
   });
+
+  const [deletingWorkspace, setDeletingWorkspace] =
+    useState<DeleteWorkspaceItem | null>(null);
 
   const [updateWorkspace] = useMutation(UPDATE_WORKSPACE_MUTATION);
   const [removeWorkspace, { loading: removing }] = useMutation(
@@ -97,12 +93,10 @@ function RouteComponent() {
     });
   };
 
-  const canDelete = deleteConfirmName === workspace.name;
-
   return (
     <Page
-      title="Settings"
-      description="Update your workspace name and other settings."
+      title={t("workspace.title")}
+      description={t("workspace.settings.description")}
     >
       <div className="flex flex-col gap-6">
         <form
@@ -114,9 +108,9 @@ function RouteComponent() {
         >
           <Card>
             <CardHeader>
-              <CardTitle>Workspace Settings</CardTitle>
+              <CardTitle>{t("workspace.settings.title")}</CardTitle>
               <CardDescription>
-                Update your workspace name and other settings.
+                {t("workspace.settings.description")}
               </CardDescription>
             </CardHeader>
 
@@ -125,15 +119,19 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? "Workspace name is required" : undefined,
+                    !value.trim()
+                      ? t("workspace.settings.form.name.required")
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <FieldLabel htmlFor="name">
+                      {t("workspace.settings.form.name.label")}
+                    </FieldLabel>
                     <Input
                       id="name"
-                      placeholder="My Workspace"
+                      placeholder={t("workspace.settings.form.name.placeholder")}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -153,7 +151,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? "Saving..." : "Save Changes"}
+                    {isSubmitting ? t("common.saving") : t("common.save")}
                   </Button>
                 )}
               </form.Subscribe>
@@ -163,53 +161,30 @@ function RouteComponent() {
 
         <Card className="border-destructive">
           <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <CardTitle className="text-destructive">
+              {t("workspace.settings.dangerZone.title")}
+            </CardTitle>
             <CardDescription>
-              Once you delete a workspace, there is no going back. This will
-              permanently delete the workspace and all associated data including
-              projects, services, and clusters.
+              {t("workspace.settings.dangerZone.description")}
             </CardDescription>
           </CardHeader>
           <CardFooter>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Workspace</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Workspace</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the workspace <strong>{workspace.name}</strong> and all
-                    associated data.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="py-4">
-                  <p className="text-muted-foreground mb-2 text-sm">
-                    Please type <strong>{workspace.name}</strong> to confirm.
-                  </p>
-                  <Input
-                    placeholder={workspace.name}
-                    value={deleteConfirmName}
-                    onChange={(e) => setDeleteConfirmName(e.target.value)}
-                  />
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setDeleteConfirmName("")}>
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={!canDelete || removing}
-                    onClick={handleDelete}
-                  >
-                    {removing ? "Deleting..." : "Delete Workspace"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button
+              variant="destructive"
+              onClick={() => setDeletingWorkspace(workspace)}
+            >
+              {t("workspace.settings.dangerZone.deleteButton")}
+            </Button>
           </CardFooter>
         </Card>
       </div>
+
+      <DeleteWorkspaceDialog
+        workspace={deletingWorkspace}
+        deleting={removing}
+        onOpenChange={() => setDeletingWorkspace(null)}
+        onConfirm={handleDelete}
+      />
     </Page>
   );
 }

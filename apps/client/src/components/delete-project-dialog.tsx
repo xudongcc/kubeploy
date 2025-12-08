@@ -14,42 +14,42 @@ import {
 import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 
-export interface DeleteClusterItem {
+export interface DeleteProjectItem {
   id: string;
   name: string;
 }
 
-interface DeleteClusterDialogProps {
-  cluster: DeleteClusterItem | null;
+interface DeleteProjectDialogProps {
+  project: DeleteProjectItem | null;
   deleting?: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (id: string) => Promise<void>;
 }
 
-export function DeleteClusterDialog({
-  cluster,
+export function DeleteProjectDialog({
+  project,
   deleting = false,
   onOpenChange,
   onConfirm,
-}: DeleteClusterDialogProps) {
+}: DeleteProjectDialogProps) {
   const [confirmName, setConfirmName] = useState("");
 
   useEffect(() => {
-    if (!cluster) {
+    if (!project) {
       setConfirmName("");
     }
-  }, [cluster]);
+  }, [project]);
 
   const handleConfirm = async () => {
-    if (!cluster) return;
-    await onConfirm(cluster.id);
+    if (!project) return;
+    await onConfirm(project.id);
   };
 
-  const isConfirmDisabled = deleting || confirmName !== cluster?.name;
+  const isConfirmDisabled = deleting || confirmName !== project?.name;
 
   return (
     <AlertDialog
-      open={cluster !== null}
+      open={project !== null}
       onOpenChange={(open) => {
         if (!open) {
           setConfirmName("");
@@ -60,24 +60,24 @@ export function DeleteClusterDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {t("cluster.deleteCluster.title")}
+            {t("project.deleteProject.title")}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {t("cluster.deleteCluster.description", {
-              name: cluster?.name,
+            {t("project.deleteProject.description", {
+              name: project?.name,
             })}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <Field>
-          <FieldLabel>{t("cluster.deleteCluster.confirmLabel")}</FieldLabel>
+          <FieldLabel>{t("project.deleteProject.confirmLabel")}</FieldLabel>
           <Input
             value={confirmName}
             onChange={(e) => setConfirmName(e.target.value)}
-            placeholder={cluster?.name}
+            placeholder={project?.name}
           />
           <FieldDescription>
-            {t("cluster.deleteCluster.confirmHint", { name: cluster?.name })}
+            {t("project.deleteProject.confirmHint", { name: project?.name })}
           </FieldDescription>
         </Field>
 

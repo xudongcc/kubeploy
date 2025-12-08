@@ -2,19 +2,13 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
+import { t } from "i18next";
 
-import { Page } from "@/components/page";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  DeleteProjectDialog,
+  type DeleteProjectItem,
+} from "@/components/delete-project-dialog";
+import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,7 +21,6 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
-import { t } from "i18next";
 
 const UPDATE_PROJECT_MUTATION = graphql(`
   mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
@@ -59,9 +52,10 @@ function RouteComponent() {
   const { workspaceId, projectId } = Route.useParams();
   const navigate = Route.useNavigate();
 
-  const [deleteConfirmName, setDeleteConfirmName] = useState("");
-
   const { project } = Route.useRouteContext();
+
+  const [deletingProject, setDeletingProject] =
+    useState<DeleteProjectItem | null>(null);
 
   const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION);
   const [removeProject, { loading: removing }] = useMutation(
@@ -92,9 +86,9 @@ function RouteComponent() {
     },
   });
 
-  const handleDelete = async () => {
+  const handleDelete = async (id: string) => {
     await removeProject({
-      variables: { id: projectId },
+      variables: { id },
     });
     navigate({
       to: "/workspaces/$workspaceId/projects",
@@ -103,10 +97,8 @@ function RouteComponent() {
   };
 
   if (!project) {
-    return <div>Project not found</div>;
+    return <div>{t("project.notFound")}</div>;
   }
-
-  const canDelete = deleteConfirmName === project.name;
 
   return (
     <Page
@@ -176,53 +168,30 @@ function RouteComponent() {
 
         <Card className="border-destructive">
           <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <CardTitle className="text-destructive">
+              {t("project.settings.dangerZone.title")}
+            </CardTitle>
             <CardDescription>
-              Once you delete a project, there is no going back. This will
-              permanently delete the project and its associated Kubernetes
-              namespace.
+              {t("project.settings.dangerZone.description")}
             </CardDescription>
           </CardHeader>
           <CardFooter>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Project</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the project <strong>{project.name}</strong> and its
-                    associated Kubernetes namespace.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="py-4">
-                  <p className="text-muted-foreground mb-2 text-sm">
-                    Please type <strong>{project.name}</strong> to confirm.
-                  </p>
-                  <Input
-                    placeholder={project.name}
-                    value={deleteConfirmName}
-                    onChange={(e) => setDeleteConfirmName(e.target.value)}
-                  />
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setDeleteConfirmName("")}>
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={!canDelete || removing}
-                    onClick={handleDelete}
-                  >
-                    {removing ? "Deleting..." : "Delete Project"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button
+              variant="destructive"
+              onClick={() => setDeletingProject(project)}
+            >
+              {t("project.settings.dangerZone.deleteButton")}
+            </Button>
           </CardFooter>
         </Card>
       </div>
+
+      <DeleteProjectDialog
+        project={deletingProject}
+        deleting={removing}
+        onOpenChange={() => setDeletingProject(null)}
+        onConfirm={handleDelete}
+      />
     </Page>
   );
 }

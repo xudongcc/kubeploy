@@ -120,8 +120,20 @@
   "project": {
     "createProject": "创建项目",
     "createProjectDescription": "创建新项目以部署您的服务。",
+    "deleteProject": {
+      "confirmHint": "请输入 {{name}} 以确认。",
+      "confirmLabel": "项目名称",
+      "description": "您确定要删除项目 {{name}} 吗？此操作无法撤销，关联的 Kubernetes 命名空间将被删除。",
+      "title": "删除项目"
+    },
     "description": "创建和管理您的项目。",
+    "notFound": "项目未找到",
     "settings": {
+      "dangerZone": {
+        "deleteButton": "删除项目",
+        "description": "一旦删除项目，将无法恢复。这将永久删除项目及其关联的 Kubernetes 命名空间。",
+        "title": "危险区域"
+      },
       "description": "更新您的项目名称和其他设置。",
       "title": "项目设置"
     },
@@ -142,7 +154,39 @@
   },
   "service": {
     "createService": "创建服务",
+    "deleteService": {
+      "confirmHint": "请输入 {{name}} 以确认。",
+      "confirmLabel": "服务名称",
+      "description": "您确定要删除服务 {{name}} 吗？此操作无法撤销，关联的 Kubernetes Deployment 和 Service 将被删除。",
+      "title": "删除服务"
+    },
     "description": "创建和管理您的服务。",
+    "notFound": "服务未找到",
+    "settings": {
+      "dangerZone": {
+        "deleteButton": "删除服务",
+        "description": "一旦删除服务，将无法恢复。这将永久删除服务及其关联的 Kubernetes 资源。",
+        "title": "危险区域"
+      },
+      "description": "更新您的服务设置。",
+      "form": {
+        "image": {
+          "label": "镜像",
+          "placeholder": "nginx:latest",
+          "required": "镜像是必填的"
+        },
+        "name": {
+          "label": "名称",
+          "placeholder": "my-service",
+          "required": "服务名称是必填的"
+        },
+        "replicas": {
+          "label": "副本数",
+          "required": "副本数必须大于等于 0"
+        }
+      },
+      "title": "服务设置"
+    },
     "tabs": {
       "domains": "域名",
       "environment": "环境变量",
@@ -193,6 +237,31 @@
       "description": "更新硬盘配置。",
       "title": "更新硬盘"
     }
+  },
+  "workspace": {
+    "deleteWorkspace": {
+      "confirmHint": "请输入 {{name}} 以确认。",
+      "confirmLabel": "工作空间名称",
+      "description": "您确定要删除工作空间 {{name}} 吗？此操作无法撤销，所有关联的数据（包括项目、服务和集群）都将被删除。",
+      "title": "删除工作空间"
+    },
+    "settings": {
+      "dangerZone": {
+        "deleteButton": "删除工作空间",
+        "description": "一旦删除工作空间，将无法恢复。这将永久删除工作空间及其所有关联数据（包括项目、服务和集群）。",
+        "title": "危险区域"
+      },
+      "description": "更新您的工作空间名称和其他设置。",
+      "form": {
+        "name": {
+          "label": "名称",
+          "placeholder": "我的工作空间",
+          "required": "工作空间名称是必填的"
+        }
+      },
+      "title": "工作空间设置"
+    },
+    "title": "设置"
   },
   "workspaceSwitcher": {
     "createWorkspace": "创建工作空间",

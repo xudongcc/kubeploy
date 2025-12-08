@@ -120,8 +120,20 @@
   "project": {
     "createProject": "Create Project",
     "createProjectDescription": "Create a new project to deploy your services.",
+    "deleteProject": {
+      "confirmHint": "Please type {{name}} to confirm.",
+      "confirmLabel": "Project Name",
+      "description": "Are you sure you want to delete the project {{name}}? This action cannot be undone and the associated Kubernetes namespace will be removed.",
+      "title": "Delete Project"
+    },
     "description": "Create and manage your projects.",
+    "notFound": "Project not found",
     "settings": {
+      "dangerZone": {
+        "deleteButton": "Delete Project",
+        "description": "Once you delete a project, there is no going back. This will permanently delete the project and its associated Kubernetes namespace.",
+        "title": "Danger Zone"
+      },
       "description": "Update your project name and other settings.",
       "title": "Project Settings"
     },
@@ -142,7 +154,39 @@
   },
   "service": {
     "createService": "Create Service",
+    "deleteService": {
+      "confirmHint": "Please type {{name}} to confirm.",
+      "confirmLabel": "Service Name",
+      "description": "Are you sure you want to delete the service {{name}}? This action cannot be undone and the associated Kubernetes Deployment and Service will be removed.",
+      "title": "Delete Service"
+    },
     "description": "Create and manage your services.",
+    "notFound": "Service not found",
+    "settings": {
+      "dangerZone": {
+        "deleteButton": "Delete Service",
+        "description": "Once you delete a service, there is no going back. This will permanently delete the service and its associated Kubernetes resources.",
+        "title": "Danger Zone"
+      },
+      "description": "Update your service settings.",
+      "form": {
+        "image": {
+          "label": "Image",
+          "placeholder": "nginx:latest",
+          "required": "Image is required"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "my-service",
+          "required": "Service name is required"
+        },
+        "replicas": {
+          "label": "Replicas",
+          "required": "Replicas must be at least 0"
+        }
+      },
+      "title": "Service Settings"
+    },
     "tabs": {
       "domains": "Domains",
       "environment": "Environment",
@@ -193,6 +237,31 @@
       "description": "Update the volume configuration.",
       "title": "Update Volume"
     }
+  },
+  "workspace": {
+    "deleteWorkspace": {
+      "confirmHint": "Please type {{name}} to confirm.",
+      "confirmLabel": "Workspace Name",
+      "description": "Are you sure you want to delete the workspace {{name}}? This action cannot be undone and all associated data including projects, services, and clusters will be removed.",
+      "title": "Delete Workspace"
+    },
+    "settings": {
+      "dangerZone": {
+        "deleteButton": "Delete Workspace",
+        "description": "Once you delete a workspace, there is no going back. This will permanently delete the workspace and all associated data including projects, services, and clusters.",
+        "title": "Danger Zone"
+      },
+      "description": "Update your workspace name and other settings.",
+      "form": {
+        "name": {
+          "label": "Name",
+          "placeholder": "My Workspace",
+          "required": "Workspace name is required"
+        }
+      },
+      "title": "Workspace Settings"
+    },
+    "title": "Settings"
   },
   "workspaceSwitcher": {
     "createWorkspace": "Create workspace",
