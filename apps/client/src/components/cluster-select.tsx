@@ -18,14 +18,17 @@ import {
 } from "@/components/ui/popover";
 import { graphql } from "@/gql";
 import { cn } from "@/lib/utils";
+import { useParams } from "@tanstack/react-router";
 
 const GET_CLUSTERS_QUERY = graphql(`
-  query GetClustersForSelect {
-    clusters(first: 20) {
-      edges {
-        node {
-          id
-          name
+  query GetClustersForSelect($workspaceId: ID!) {
+    workspace(id: $workspaceId) {
+      clusters(first: 20) {
+        edges {
+          node {
+            id
+            name
+          }
         }
       }
     }
@@ -45,9 +48,19 @@ export function ClusterSelect({
 }: ClusterSelectProps) {
   const [open, setOpen] = useState(false);
 
-  const { data } = useQuery(GET_CLUSTERS_QUERY);
+  const workspaceId = useParams({
+    from: "/_authenticated/workspaces/$workspaceId",
+    select: (params) => params.workspaceId,
+  });
 
-  const clusters = data?.clusters.edges.map((edge) => edge.node) || [];
+  const { data } = useQuery(GET_CLUSTERS_QUERY, {
+    variables: {
+      workspaceId: workspaceId,
+    },
+  });
+
+  const clusters =
+    data?.workspace?.clusters?.edges.map((edge) => edge.node) || [];
   const selectedCluster = clusters.find((cluster) => cluster.id === value);
 
   return (

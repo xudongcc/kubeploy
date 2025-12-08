@@ -42,17 +42,6 @@ export class ClusterResolver {
     return await this.clusterService.findOne({ id });
   }
 
-  @Can(PermissionAction.READ, Cluster)
-  @Query(() => ClusterConnection)
-  async clusters(
-    @CurrentWorkspace() workspace: Workspace,
-    @Args() args: ClusterConnectionArgs,
-  ) {
-    return await this.cm.find(ClusterConnection, args, {
-      where: { workspace },
-    });
-  }
-
   @Can(PermissionAction.CREATE, Cluster)
   @Mutation(() => Cluster)
   async createCluster(

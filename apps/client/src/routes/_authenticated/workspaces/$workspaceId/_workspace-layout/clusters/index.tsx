@@ -33,6 +33,7 @@ import { createConnectionSchema } from "@/utils/create-connection-schema";
 
 const GET_CLUSTERS_QUERY = graphql(`
   query GetClusters(
+    $workspaceId: ID!
     $after: String
     $before: String
     $first: Int
@@ -40,25 +41,27 @@ const GET_CLUSTERS_QUERY = graphql(`
     $orderBy: ClusterOrder
     $query: String
   ) {
-    clusters(
-      after: $after
-      before: $before
-      first: $first
-      last: $last
-      orderBy: $orderBy
-      query: $query
-    ) {
-      edges {
-        node {
-          id
-          ...ClusterItem @unmask
+    workspace(id: $workspaceId) {
+      clusters(
+        after: $after
+        before: $before
+        first: $first
+        last: $last
+        orderBy: $orderBy
+        query: $query
+      ) {
+        edges {
+          node {
+            id
+            ...ClusterItem @unmask
+          }
         }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
+        pageInfo {
+          endCursor
+          hasNextPage
+          hasPreviousPage
+          startCursor
+        }
       }
     }
   }
@@ -103,7 +106,15 @@ function RouteComponent() {
 
   const [open, setOpen] = useState(false);
 
-  const { data } = useQuery(GET_CLUSTERS_QUERY, { variables: search });
+  const { data } = useQuery(GET_CLUSTERS_QUERY, {
+    variables: {
+      workspaceId,
+      ...search,
+    },
+  });
+
+  const clusters =
+    data?.workspace?.clusters?.edges.map((edge) => edge.node) || [];
 
   const [createCluster] = useMutation(CREATE_CLUSTER_MUTATION);
 
@@ -373,7 +384,7 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
             },
           },
         ]}
-        data={data?.clusters.edges.map((edge) => edge.node) || []}
+        data={clusters}
       />
     </Page>
   );

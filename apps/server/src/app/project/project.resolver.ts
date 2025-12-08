@@ -43,17 +43,6 @@ export class ProjectResolver {
     return await this.projectService.findOne({ id });
   }
 
-  @Can(PermissionAction.READ, Project)
-  @Query(() => ProjectConnection)
-  async projects(
-    @CurrentWorkspace() workspace: Workspace,
-    @Args() args: ProjectConnectionArgs,
-  ) {
-    return await this.cm.find(ProjectConnection, args, {
-      where: { workspace },
-    });
-  }
-
   @Can(PermissionAction.CREATE, Project)
   @Mutation(() => Project)
   async createProject(

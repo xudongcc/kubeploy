@@ -306,57 +306,11 @@ enum ProjectOrderField {
 
 type Query {
   cluster(id: ID!): Cluster
-  clusters(
-    """Returns the elements that come after the specified cursor."""
-    after: String
-
-    """Returns the elements that come before the specified cursor."""
-    before: String
-
-    """Returns up to the first `n` elements from the list."""
-    first: Int
-
-    """Returns up to the last `n` elements from the list."""
-    last: Int
-
-    """Ordering options for the returned topics."""
-    orderBy: ClusterOrder
-
-    """
-    Apply one or multiple filters to the query.
-    Supported filter parameters:
-    `created_at`
-    """
-    query: String
-  ): ClusterConnection!
   currentUser: User!
   currentWorkspace: Workspace!
   currentWorkspaceMember: WorkspaceMember!
   domain(id: ID!): Domain
   project(id: ID!): Project
-  projects(
-    """Returns the elements that come after the specified cursor."""
-    after: String
-
-    """Returns the elements that come before the specified cursor."""
-    before: String
-
-    """Returns up to the first `n` elements from the list."""
-    first: Int
-
-    """Returns up to the last `n` elements from the list."""
-    last: Int
-
-    """Ordering options for the returned topics."""
-    orderBy: ProjectOrder
-
-    """
-    Apply one or multiple filters to the query.
-    Supported filter parameters:
-    `created_at`
-    """
-    query: String
-  ): ProjectConnection!
   service(id: ID!): Service
   volume(id: ID!): Volume
   workspace(id: ID!): Workspace

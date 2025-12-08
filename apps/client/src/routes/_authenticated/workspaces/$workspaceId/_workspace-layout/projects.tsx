@@ -27,6 +27,7 @@ import { createConnectionSchema } from "@/utils/create-connection-schema";
 
 const GET_PROJECTS_QUERY = graphql(`
   query GetProjects(
+    $workspaceId: ID!
     $after: String
     $before: String
     $first: Int
@@ -34,25 +35,27 @@ const GET_PROJECTS_QUERY = graphql(`
     $orderBy: ProjectOrder
     $query: String
   ) {
-    projects(
-      after: $after
-      before: $before
-      first: $first
-      last: $last
-      orderBy: $orderBy
-      query: $query
-    ) {
-      edges {
-        node {
-          id
-          ...ProjectItem @unmask
+    workspace(id: $workspaceId) {
+      projects(
+        after: $after
+        before: $before
+        first: $first
+        last: $last
+        orderBy: $orderBy
+        query: $query
+      ) {
+        edges {
+          node {
+            id
+            ...ProjectItem @unmask
+          }
         }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
+        pageInfo {
+          endCursor
+          hasNextPage
+          hasPreviousPage
+          startCursor
+        }
       }
     }
   }
@@ -100,7 +103,15 @@ function RouteComponent() {
 
   const [open, setOpen] = useState(false);
 
-  const { data } = useQuery(GET_PROJECTS_QUERY, { variables: search });
+  const { data } = useQuery(GET_PROJECTS_QUERY, {
+    variables: {
+      workspaceId,
+      ...search,
+    },
+  });
+
+  const projects =
+    data?.workspace?.projects?.edges.map((edge) => edge.node) || [];
 
   const [createProject] = useMutation(CREATE_PROJECT_MUTATION);
 
@@ -274,7 +285,7 @@ function RouteComponent() {
             },
           },
         ]}
-        data={data?.projects.edges.map((edge) => edge.node) || []}
+        data={projects}
       />
     </Page>
   );

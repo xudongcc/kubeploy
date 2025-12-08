@@ -62,7 +62,7 @@ export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
       ],
     },
     {
-      title: "Workspace",
+      title: "Settings",
       items: [
         {
           title: "Members",

@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-  "\n  query GetClustersForSelect {\n    clusters(first: 20) {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n": typeof types.GetClustersForSelectDocument;
+  "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetClustersForSelectDocument;
   "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n": typeof types.WorkspaceSwitcherWorkspacesDocument;
   "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n": typeof types.GetCurrentUserDocument;
   "\n  query GetCurrentWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n  }\n": typeof types.GetCurrentWorkspaceDocument;
@@ -38,15 +38,21 @@ type Documents = {
   "\n  query GetCluster($id: ID!) {\n    cluster(id: $id) {\n      id\n      ...ClusterDetail @unmask\n    }\n  }\n\n  fragment ClusterDetail on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n": typeof types.GetClusterDocument;
   "\n  mutation UpdateCluster($id: ID!, $input: UpdateClusterInput!) {\n    updateCluster(id: $id, input: $input) {\n      id\n      ...ClusterDetail\n    }\n  }\n": typeof types.UpdateClusterDocument;
   "\n  mutation RemoveCluster($id: ID!) {\n    removeCluster(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveClusterDocument;
-  "\n  query GetClusters(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    clusters(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ClusterItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n": typeof types.GetClustersDocument;
+  "\n  query GetClusters(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      clusters(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ClusterItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n": typeof types.GetClustersDocument;
   "\n  mutation CreateCluster($input: CreateClusterInput!) {\n    createCluster(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateClusterDocument;
-  "\n  query GetProjects(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    projects(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ProjectItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n": typeof types.GetProjectsDocument;
+  "\n  query GetWorkspaceMembers(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: WorkspaceMemberOrder\n    $query: String\n  ) {\n    workspaceMembers(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...WorkspaceMemberItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment WorkspaceMemberItem on WorkspaceMember {\n    id\n    name\n    email\n    role\n    inviteStatus\n    createdAt\n    user {\n      id\n      name\n      email\n    }\n  }\n": typeof types.GetWorkspaceMembersDocument;
+  "\n  mutation CreateWorkspaceInvite($input: CreateWorkspaceInviteInput!) {\n    createWorkspaceInvite(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateWorkspaceInviteDocument;
+  "\n  mutation UpdateWorkspaceMember(\n    $id: ID!\n    $input: UpdateWorkspaceMemberInput!\n  ) {\n    updateWorkspaceMember(id: $id, input: $input) {\n      id\n      role\n    }\n  }\n": typeof types.UpdateWorkspaceMemberDocument;
+  "\n  mutation RemoveWorkspaceMember($id: ID!) {\n    removeWorkspaceMember(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveWorkspaceMemberDocument;
+  "\n  query GetProjects(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      projects(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ProjectItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n": typeof types.GetProjectsDocument;
   "\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateProjectDocument;
+  "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.UpdateWorkspaceDocument;
+  "\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n": typeof types.RemoveWorkspaceDocument;
   "\n  mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n    createWorkspace(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateWorkspaceDocument;
   "\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n": typeof types.GetFirstWorkspaceDocument;
 };
 const documents: Documents = {
-  "\n  query GetClustersForSelect {\n    clusters(first: 20) {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n":
+  "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n":
     types.GetClustersForSelectDocument,
   "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n":
     types.WorkspaceSwitcherWorkspacesDocument,
@@ -94,14 +100,26 @@ const documents: Documents = {
     types.UpdateClusterDocument,
   "\n  mutation RemoveCluster($id: ID!) {\n    removeCluster(id: $id) {\n      id\n    }\n  }\n":
     types.RemoveClusterDocument,
-  "\n  query GetClusters(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    clusters(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ClusterItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n":
+  "\n  query GetClusters(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      clusters(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ClusterItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n":
     types.GetClustersDocument,
   "\n  mutation CreateCluster($input: CreateClusterInput!) {\n    createCluster(input: $input) {\n      id\n    }\n  }\n":
     types.CreateClusterDocument,
-  "\n  query GetProjects(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    projects(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ProjectItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n":
+  "\n  query GetWorkspaceMembers(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: WorkspaceMemberOrder\n    $query: String\n  ) {\n    workspaceMembers(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...WorkspaceMemberItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment WorkspaceMemberItem on WorkspaceMember {\n    id\n    name\n    email\n    role\n    inviteStatus\n    createdAt\n    user {\n      id\n      name\n      email\n    }\n  }\n":
+    types.GetWorkspaceMembersDocument,
+  "\n  mutation CreateWorkspaceInvite($input: CreateWorkspaceInviteInput!) {\n    createWorkspaceInvite(input: $input) {\n      id\n    }\n  }\n":
+    types.CreateWorkspaceInviteDocument,
+  "\n  mutation UpdateWorkspaceMember(\n    $id: ID!\n    $input: UpdateWorkspaceMemberInput!\n  ) {\n    updateWorkspaceMember(id: $id, input: $input) {\n      id\n      role\n    }\n  }\n":
+    types.UpdateWorkspaceMemberDocument,
+  "\n  mutation RemoveWorkspaceMember($id: ID!) {\n    removeWorkspaceMember(id: $id) {\n      id\n    }\n  }\n":
+    types.RemoveWorkspaceMemberDocument,
+  "\n  query GetProjects(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      projects(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ProjectItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n":
     types.GetProjectsDocument,
   "\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n":
     types.CreateProjectDocument,
+  "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n":
+    types.UpdateWorkspaceDocument,
+  "\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n":
+    types.RemoveWorkspaceDocument,
   "\n  mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n    createWorkspace(input: $input) {\n      id\n    }\n  }\n":
     types.CreateWorkspaceDocument,
   "\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n":
@@ -126,8 +144,8 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetClustersForSelect {\n    clusters(first: 20) {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n",
-): (typeof documents)["\n  query GetClustersForSelect {\n    clusters(first: 20) {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n"];
+  source: "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n",
+): (typeof documents)["\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -270,8 +288,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetClusters(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    clusters(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ClusterItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n",
-): (typeof documents)["\n  query GetClusters(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    clusters(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ClusterItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n"];
+  source: "\n  query GetClusters(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      clusters(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ClusterItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n",
+): (typeof documents)["\n  query GetClusters(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      clusters(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ClusterItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -282,14 +300,50 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetProjects(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    projects(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ProjectItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n",
-): (typeof documents)["\n  query GetProjects(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    projects(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...ProjectItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n"];
+  source: "\n  query GetWorkspaceMembers(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: WorkspaceMemberOrder\n    $query: String\n  ) {\n    workspaceMembers(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...WorkspaceMemberItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment WorkspaceMemberItem on WorkspaceMember {\n    id\n    name\n    email\n    role\n    inviteStatus\n    createdAt\n    user {\n      id\n      name\n      email\n    }\n  }\n",
+): (typeof documents)["\n  query GetWorkspaceMembers(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: WorkspaceMemberOrder\n    $query: String\n  ) {\n    workspaceMembers(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...WorkspaceMemberItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment WorkspaceMemberItem on WorkspaceMember {\n    id\n    name\n    email\n    role\n    inviteStatus\n    createdAt\n    user {\n      id\n      name\n      email\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation CreateWorkspaceInvite($input: CreateWorkspaceInviteInput!) {\n    createWorkspaceInvite(input: $input) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation CreateWorkspaceInvite($input: CreateWorkspaceInviteInput!) {\n    createWorkspaceInvite(input: $input) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation UpdateWorkspaceMember(\n    $id: ID!\n    $input: UpdateWorkspaceMemberInput!\n  ) {\n    updateWorkspaceMember(id: $id, input: $input) {\n      id\n      role\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateWorkspaceMember(\n    $id: ID!\n    $input: UpdateWorkspaceMemberInput!\n  ) {\n    updateWorkspaceMember(id: $id, input: $input) {\n      id\n      role\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation RemoveWorkspaceMember($id: ID!) {\n    removeWorkspaceMember(id: $id) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation RemoveWorkspaceMember($id: ID!) {\n    removeWorkspaceMember(id: $id) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  query GetProjects(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      projects(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ProjectItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n",
+): (typeof documents)["\n  query GetProjects(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      projects(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ProjectItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
   source: "\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n",
 ): (typeof documents)["\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
