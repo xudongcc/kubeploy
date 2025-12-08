@@ -9,6 +9,61 @@
     "termsOfService": "服务条款",
     "welcomeBack": "欢迎回来"
   },
+  "cluster": {
+    "createCluster": {
+      "description": "输入您的 Kubernetes 集群连接详情。",
+      "title": "创建集群"
+    },
+    "deleteCluster": {
+      "confirmHint": "请输入 {{name}} 以确认。",
+      "confirmLabel": "集群名称",
+      "description": "您确定要删除集群 {{name}} 吗？此操作无法撤销，所有关联的项目都将被删除。",
+      "title": "删除集群"
+    },
+    "description": "创建和管理您的 Kubernetes 集群。",
+    "detail": {
+      "description": "更新您的集群连接设置。"
+    },
+    "form": {
+      "certificateAuthorityData": {
+        "label": "证书颁发机构数据",
+        "labelKeepCurrent": "证书颁发机构数据（留空保持当前值）",
+        "placeholder": "Base64 编码的 CA 证书",
+        "required": "证书颁发机构数据是必填的"
+      },
+      "name": {
+        "label": "集群名称",
+        "placeholder": "我的集群",
+        "required": "集群名称是必填的"
+      },
+      "server": {
+        "label": "服务器地址",
+        "placeholder": "https://kubernetes.example.com:6443",
+        "required": "服务器地址是必填的"
+      },
+      "token": {
+        "help": {
+          "description": "运行以下命令创建具有 cluster-admin 权限的服务账户：",
+          "title": "如何创建服务账户令牌"
+        },
+        "label": "服务账户令牌",
+        "labelKeepCurrent": "服务账户令牌（留空保持当前值）",
+        "placeholder": "用于身份验证的服务账户令牌",
+        "required": "服务账户令牌是必填的"
+      }
+    },
+    "notFound": "集群未找到",
+    "settings": {
+      "dangerZone": {
+        "deleteButton": "删除集群",
+        "description": "一旦删除集群，将无法恢复。这将永久删除集群配置和所有关联的项目。",
+        "title": "危险区域"
+      },
+      "description": "更新您的集群名称和连接详情。",
+      "title": "集群设置"
+    },
+    "title": "集群"
+  },
   "common": {
     "cancel": "取消",
     "cluster": "集群",
@@ -26,6 +81,41 @@
   "createService": {
     "description": "部署一个新的服务到您的项目。",
     "title": "创建服务"
+  },
+  "domain": {
+    "createDomain": {
+      "description": "为您的服务添加一个新的域名。",
+      "title": "创建域名"
+    },
+    "deleteDomain": {
+      "confirmHint": "请输入 {{host}} 以确认。",
+      "confirmLabel": "域名",
+      "description": "您确定要删除域名 {{host}} 吗？此操作无法撤销。",
+      "title": "删除域名"
+    },
+    "description": "管理您的服务域名。",
+    "form": {
+      "host": {
+        "label": "主机名",
+        "placeholder": "example.com",
+        "required": "主机名是必填的"
+      },
+      "path": {
+        "label": "路径",
+        "placeholder": "/"
+      },
+      "port": {
+        "label": "端口",
+        "placeholder": "选择端口",
+        "required": "端口是必填的"
+      }
+    },
+    "noPorts": "该服务没有配置端口。请先在服务设置中添加端口。",
+    "title": "域名",
+    "updateDomain": {
+      "description": "更新域名配置。",
+      "title": "更新域名"
+    }
   },
   "project": {
     "createProject": "创建项目",

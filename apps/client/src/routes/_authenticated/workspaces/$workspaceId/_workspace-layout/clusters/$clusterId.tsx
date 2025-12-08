@@ -2,19 +2,14 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { t } from "i18next";
+import { HelpCircle } from "lucide-react";
 
-import { Page } from "@/components/page";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  DeleteClusterDialog,
+  type DeleteClusterItem,
+} from "@/components/delete-cluster-dialog";
+import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,6 +21,11 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { graphql } from "@/gql";
 
@@ -94,7 +94,8 @@ function RouteComponent() {
 
   const { cluster } = Route.useRouteContext();
 
-  const [deleteConfirmName, setDeleteConfirmName] = useState("");
+  const [deletingCluster, setDeletingCluster] =
+    useState<DeleteClusterItem | null>(null);
 
   const [updateCluster] = useMutation(UPDATE_CLUSTER_MUTATION);
   const [removeCluster, { loading: removing }] = useMutation(
@@ -144,9 +145,9 @@ function RouteComponent() {
     },
   });
 
-  const handleDelete = async () => {
+  const handleDelete = async (id: string) => {
     await removeCluster({
-      variables: { id: clusterId },
+      variables: { id },
     });
     navigate({
       to: "/workspaces/$workspaceId/clusters",
@@ -155,16 +156,11 @@ function RouteComponent() {
   };
 
   if (!cluster) {
-    return <div>Cluster not found</div>;
+    return <div>{t("cluster.notFound")}</div>;
   }
 
-  const canDelete = deleteConfirmName === cluster.name;
-
   return (
-    <Page
-      title={cluster.name}
-      description={`Update your cluster connection settings.`}
-    >
+    <Page title={cluster.name} description={t("cluster.detail.description")}>
       <div className="flex flex-col gap-6">
         <form
           onSubmit={(e) => {
@@ -175,9 +171,9 @@ function RouteComponent() {
         >
           <Card>
             <CardHeader>
-              <CardTitle>Cluster Settings</CardTitle>
+              <CardTitle>{t("cluster.settings.title")}</CardTitle>
               <CardDescription>
-                Update your cluster name and connection details.
+                {t("cluster.settings.description")}
               </CardDescription>
             </CardHeader>
 
@@ -186,15 +182,19 @@ function RouteComponent() {
                 name="name"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? "Cluster name is required" : undefined,
+                    !value.trim()
+                      ? t("cluster.form.name.required")
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <FieldLabel htmlFor="name">
+                      {t("cluster.form.name.label")}
+                    </FieldLabel>
                     <Input
                       id="name"
-                      placeholder="My Cluster"
+                      placeholder={t("cluster.form.name.placeholder")}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -212,15 +212,19 @@ function RouteComponent() {
                 name="server"
                 validators={{
                   onChange: ({ value }) =>
-                    !value.trim() ? "Server URL is required" : undefined,
+                    !value.trim()
+                      ? t("cluster.form.server.required")
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="server">Server URL</FieldLabel>
+                    <FieldLabel htmlFor="server">
+                      {t("cluster.form.server.label")}
+                    </FieldLabel>
                     <Input
                       id="server"
-                      placeholder="https://kubernetes.example.com:6443"
+                      placeholder={t("cluster.form.server.placeholder")}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -238,11 +242,13 @@ function RouteComponent() {
                 {(field) => (
                   <Field>
                     <FieldLabel htmlFor="certificateAuthorityData">
-                      Certificate Authority Data (leave empty to keep current)
+                      {t("cluster.form.certificateAuthorityData.labelKeepCurrent")}
                     </FieldLabel>
                     <Textarea
                       id="certificateAuthorityData"
-                      placeholder="Base64 encoded CA certificate"
+                      placeholder={t(
+                        "cluster.form.certificateAuthorityData.placeholder",
+                      )}
                       className="field-sizing-fixed overflow-x-auto font-mono whitespace-pre"
                       rows={4}
                       value={field.state.value}
@@ -256,12 +262,46 @@ function RouteComponent() {
               <form.Field name="token">
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="token">
-                      Service Account Token (leave empty to keep current)
-                    </FieldLabel>
+                    <div className="flex items-center gap-1">
+                      <FieldLabel htmlFor="token">
+                        {t("cluster.form.token.labelKeepCurrent")}
+                      </FieldLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <HelpCircle className="h-4 w-4" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[520px]" side="right">
+                          <div className="space-y-3">
+                            <h4 className="font-medium">
+                              {t("cluster.form.token.help.title")}
+                            </h4>
+                            <p className="text-muted-foreground text-sm">
+                              {t("cluster.form.token.help.description")}
+                            </p>
+                            <pre className="bg-muted overflow-x-auto rounded-md p-3 text-xs">
+                              {`# Create service account
+kubectl create serviceaccount kubeploy -n kube-system
+
+# Bind cluster-admin role
+kubectl create clusterrolebinding kubeploy-admin \\
+  --clusterrole=cluster-admin \\
+  --serviceaccount=kube-system:kubeploy
+
+# Create token
+kubectl create token kubeploy -n kube-system --duration=8760h`}
+                            </pre>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                     <Textarea
                       id="token"
-                      placeholder="Service account token for authentication"
+                      placeholder={t("cluster.form.token.placeholder")}
                       className="field-sizing-fixed overflow-x-auto font-mono whitespace-pre"
                       rows={4}
                       value={field.state.value}
@@ -278,7 +318,7 @@ function RouteComponent() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? "Saving..." : "Save Changes"}
+                    {isSubmitting ? t("common.saving") : t("common.save")}
                   </Button>
                 )}
               </form.Subscribe>
@@ -288,54 +328,30 @@ function RouteComponent() {
 
         <Card className="border-destructive">
           <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <CardTitle className="text-destructive">
+              {t("cluster.settings.dangerZone.title")}
+            </CardTitle>
             <CardDescription>
-              Once you delete a cluster, there is no going back. This will
-              permanently delete the cluster configuration and all associated
-              projects.
+              {t("cluster.settings.dangerZone.description")}
             </CardDescription>
           </CardHeader>
           <CardFooter>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Cluster</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Cluster</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the cluster <strong>{cluster.name}</strong> and all
-                    associated projects.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="py-4">
-                  <p className="text-muted-foreground mb-2 text-sm">
-                    Please type <strong>{cluster.name}</strong> to confirm.
-                  </p>
-                  <Input
-                    placeholder={cluster.name}
-                    value={deleteConfirmName}
-                    onChange={(e) => setDeleteConfirmName(e.target.value)}
-                  />
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setDeleteConfirmName("")}>
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={!canDelete || removing}
-                    onClick={handleDelete}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {removing ? "Deleting..." : "Delete Cluster"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button
+              variant="destructive"
+              onClick={() => setDeletingCluster(cluster)}
+            >
+              {t("cluster.settings.dangerZone.deleteButton")}
+            </Button>
           </CardFooter>
         </Card>
       </div>
+
+      <DeleteClusterDialog
+        cluster={deletingCluster}
+        deleting={removing}
+        onOpenChange={() => setDeletingCluster(null)}
+        onConfirm={handleDelete}
+      />
     </Page>
   );
 }

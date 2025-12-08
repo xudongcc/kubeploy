@@ -1,43 +1,26 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
-import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import dayjs from "dayjs";
-import { Trash2 } from "lucide-react";
+import { t } from "i18next";
+import { MoreVertical } from "lucide-react";
 
+import { CreateDomainDialog } from "@/components/create-domain-dialog";
+import { DeleteDomainDialog } from "@/components/delete-domain-dialog";
+import {
+  UpdateDomainDialog,
+  type DomainItem,
+} from "@/components/update-domain-dialog";
 import { Page } from "@/components/page";
 import { DataTable } from "@/components/turboost-ui/data-table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { graphql } from "@/gql";
 import { DomainOrderField, OrderDirection } from "@/gql/graphql";
 import { createConnectionSchema } from "@/utils/create-connection-schema";
@@ -100,6 +83,15 @@ const CREATE_DOMAIN_MUTATION = graphql(`
   }
 `);
 
+const UPDATE_DOMAIN_MUTATION = graphql(`
+  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {
+    updateDomain(id: $id, input: $input) {
+      id
+      ...DomainItem
+    }
+  }
+`);
+
 const REMOVE_DOMAIN_MUTATION = graphql(`
   mutation RemoveDomain($id: ID!) {
     removeDomain(id: $id) {
@@ -123,14 +115,21 @@ function RouteComponent() {
   const { service } = Route.useRouteContext();
   const search = Route.useSearch();
 
-  const [open, setOpen] = useState(false);
-  const [deletingDomainId, setDeletingDomainId] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editingDomain, setEditingDomain] = useState<DomainItem | null>(null);
+  const [deletingDomain, setDeletingDomain] = useState<DomainItem | null>(null);
 
   const { data, refetch } = useQuery(GET_DOMAINS_QUERY, {
     variables: { serviceId, ...search },
   });
 
   const [createDomain] = useMutation(CREATE_DOMAIN_MUTATION, {
+    onCompleted: () => {
+      refetch();
+    },
+  });
+
+  const [updateDomain] = useMutation(UPDATE_DOMAIN_MUTATION, {
     onCompleted: () => {
       refetch();
     },
@@ -148,41 +147,46 @@ function RouteComponent() {
     },
   );
 
-  const form = useForm({
-    defaultValues: {
-      host: "",
-      path: "/",
-      servicePort: service?.ports?.[0]?.toString() ?? "",
-    },
-    onSubmit: async ({ value }) => {
-      await createDomain({
-        variables: {
-          input: {
-            serviceId,
-            host: value.host.trim(),
-            path: value.path.trim() || "/",
-            servicePort: parseInt(value.servicePort, 10),
-          },
+  const handleCreate = async (values: {
+    host: string;
+    path: string;
+    servicePort: number;
+  }) => {
+    await createDomain({
+      variables: {
+        input: {
+          serviceId,
+          host: values.host,
+          path: values.path,
+          servicePort: values.servicePort,
         },
-      });
-
-      setOpen(false);
-      form.reset();
-    },
-  });
-
-  const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen);
-    if (!isOpen) {
-      form.reset();
-    }
+      },
+    });
+    setCreateOpen(false);
   };
 
-  const handleDelete = async (domainId: string) => {
-    await removeDomain({
-      variables: { id: domainId },
+  const handleUpdate = async (
+    id: string,
+    values: {
+      host: string;
+      path: string;
+      servicePort: number;
+    },
+  ) => {
+    await updateDomain({
+      variables: {
+        id,
+        input: values,
+      },
     });
-    setDeletingDomainId(null);
+    setEditingDomain(null);
+  };
+
+  const handleDelete = async (id: string) => {
+    await removeDomain({
+      variables: { id },
+    });
+    setDeletingDomain(null);
   };
 
   const domains = data?.service?.domains?.edges.map((edge) => edge.node) || [];
@@ -190,137 +194,32 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Domains"
-      description="Manage your service domains."
+      title={t("domain.title")}
+      description={t("domain.description")}
       actions={
-        <Dialog open={open} onOpenChange={handleOpenChange}>
-          <DialogTrigger asChild>
-            <Button disabled={ports.length === 0}>Add Domain</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                form.handleSubmit();
-              }}
-            >
-              <DialogHeader>
-                <DialogTitle>Add Domain</DialogTitle>
-                <DialogDescription>
-                  Add a new domain to your service.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <form.Field
-                  name="host"
-                  validators={{
-                    onChange: ({ value }) =>
-                      !value.trim() ? "Host is required" : undefined,
-                  }}
-                >
-                  {(field) => (
-                    <Field>
-                      <FieldLabel htmlFor="host">Host</FieldLabel>
-                      <Input
-                        id="host"
-                        placeholder="example.com"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                      />
-                      {field.state.meta.errors.length > 0 && (
-                        <p className="text-destructive text-sm">
-                          {field.state.meta.errors.join(", ")}
-                        </p>
-                      )}
-                    </Field>
-                  )}
-                </form.Field>
-
-                <form.Field name="path">
-                  {(field) => (
-                    <Field>
-                      <FieldLabel htmlFor="path">Path</FieldLabel>
-                      <Input
-                        id="path"
-                        placeholder="/"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                      />
-                    </Field>
-                  )}
-                </form.Field>
-
-                <form.Field
-                  name="servicePort"
-                  validators={{
-                    onChange: ({ value }) =>
-                      !value ? "Port is required" : undefined,
-                  }}
-                >
-                  {(field) => (
-                    <Field>
-                      <FieldLabel htmlFor="servicePort">Port</FieldLabel>
-                      <Select
-                        value={field.state.value}
-                        onValueChange={field.handleChange}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a port" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ports.map((port) => (
-                            <SelectItem key={port} value={port.toString()}>
-                              {port}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {field.state.meta.errors.length > 0 && (
-                        <p className="text-destructive text-sm">
-                          {field.state.meta.errors.join(", ")}
-                        </p>
-                      )}
-                    </Field>
-                  )}
-                </form.Field>
-              </div>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleOpenChange(false)}
-                >
-                  Cancel
-                </Button>
-                <form.Subscribe
-                  selector={(state) => [state.canSubmit, state.isSubmitting]}
-                >
-                  {([canSubmit, isSubmitting]) => (
-                    <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? "Adding..." : "Add Domain"}
-                    </Button>
-                  )}
-                </form.Subscribe>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <CreateDomainDialog
+          open={createOpen}
+          onOpenChange={setCreateOpen}
+          onSubmit={handleCreate}
+          ports={ports}
+          trigger={
+            <Button disabled={ports.length === 0}>
+              {t("domain.createDomain.title")}
+            </Button>
+          }
+        />
       }
     >
       {ports.length === 0 ? (
         <div className="text-muted-foreground py-8 text-center">
-          No ports configured for this service. Please add a port in the service
-          settings first.
+          {t("domain.noPorts")}
         </div>
       ) : (
         <DataTable
           columns={[
             {
               accessorKey: "host",
-              header: "Host",
+              header: t("domain.form.host.label"),
               cell: ({ row }) => {
                 const url = `https://${row.original.host}${row.original.path}`;
                 return (
@@ -337,15 +236,15 @@ function RouteComponent() {
             },
             {
               accessorKey: "path",
-              header: "Path",
+              header: t("domain.form.path.label"),
             },
             {
               accessorKey: "servicePort",
-              header: "Port",
+              header: t("domain.form.port.label"),
             },
             {
               accessorKey: "createdAt",
-              header: "Created Date",
+              header: t("common.createdAt"),
               cell: ({ row }) => {
                 return dayjs(row.original.createdAt).format(
                   "YYYY-MM-DD HH:mm:ss",
@@ -357,37 +256,30 @@ function RouteComponent() {
               header: "",
               cell: ({ row }) => {
                 return (
-                  <AlertDialog
-                    open={deletingDomainId === row.original.id}
-                    onOpenChange={(open) =>
-                      setDeletingDomainId(open ? row.original.id : null)
-                    }
-                  >
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <Trash2 className="h-4 w-4" />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:bg-transparent"
+                      >
+                        <MoreVertical className="text-muted-foreground" />
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Domain</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete the domain{" "}
-                          <strong>{row.original.host}</strong>? This action
-                          cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          disabled={removing}
-                          onClick={() => handleDelete(row.original.id)}
-                        >
-                          {removing ? "Deleting..." : "Delete"}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => setEditingDomain(row.original)}
+                      >
+                        {t("common.edit")}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setDeletingDomain(row.original)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        {t("common.delete")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 );
               },
             },
@@ -395,6 +287,20 @@ function RouteComponent() {
           data={domains}
         />
       )}
+
+      <UpdateDomainDialog
+        domain={editingDomain}
+        ports={ports}
+        onOpenChange={(open) => !open && setEditingDomain(null)}
+        onSubmit={handleUpdate}
+      />
+
+      <DeleteDomainDialog
+        domain={deletingDomain}
+        deleting={removing}
+        onOpenChange={() => setDeletingDomain(null)}
+        onConfirm={handleDelete}
+      />
     </Page>
   );
 }

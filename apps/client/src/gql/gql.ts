@@ -26,6 +26,7 @@ type Documents = {
   "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n\n      project {\n        id\n        name\n      }\n\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n  }\n": typeof types.GetServiceDocument;
   "\n  query GetDomains(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: DomainOrder\n  ) {\n    service(id: $serviceId) {\n      domains(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...DomainItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment DomainItem on Domain {\n    id\n    host\n    path\n    servicePort\n    createdAt\n  }\n": typeof types.GetDomainsDocument;
   "\n  mutation CreateDomain($input: CreateDomainInput!) {\n    createDomain(input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n": typeof types.CreateDomainDocument;
+  "\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n": typeof types.UpdateDomainDocument;
   "\n  mutation RemoveDomain($id: ID!) {\n    removeDomain(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveDomainDocument;
   "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceEnvironmentDocument;
   "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n": typeof types.DeployServiceDocument;
@@ -76,6 +77,8 @@ const documents: Documents = {
     types.GetDomainsDocument,
   "\n  mutation CreateDomain($input: CreateDomainInput!) {\n    createDomain(input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n":
     types.CreateDomainDocument,
+  "\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n":
+    types.UpdateDomainDocument,
   "\n  mutation RemoveDomain($id: ID!) {\n    removeDomain(id: $id) {\n      id\n    }\n  }\n":
     types.RemoveDomainDocument,
   "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
@@ -212,6 +215,12 @@ export function graphql(
 export function graphql(
   source: "\n  mutation CreateDomain($input: CreateDomainInput!) {\n    createDomain(input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n",
 ): (typeof documents)["\n  mutation CreateDomain($input: CreateDomainInput!) {\n    createDomain(input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

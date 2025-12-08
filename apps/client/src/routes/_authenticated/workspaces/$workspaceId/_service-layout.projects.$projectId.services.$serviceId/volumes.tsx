@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import dayjs from "dayjs";
 import { t } from "i18next";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 
 import { CreateVolumeDialog } from "@/components/create-volume-dialog";
 import { DeleteVolumeDialog } from "@/components/delete-volume-dialog";
@@ -251,14 +251,12 @@ function RouteComponent() {
                     <DropdownMenuItem
                       onClick={() => setEditingVolume(row.original)}
                     >
-                      <Pencil className="mr-2" />
                       {t("common.edit")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setDeletingVolume(row.original)}
                       className="text-destructive focus:text-destructive"
                     >
-                      <Trash2 className="mr-2" />
                       {t("common.delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>

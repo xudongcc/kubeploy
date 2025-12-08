@@ -9,6 +9,61 @@
     "termsOfService": "Terms of Service",
     "welcomeBack": "Welcome back"
   },
+  "cluster": {
+    "createCluster": {
+      "description": "Enter the connection details for your Kubernetes cluster.",
+      "title": "Create Cluster"
+    },
+    "deleteCluster": {
+      "confirmHint": "Please type {{name}} to confirm.",
+      "confirmLabel": "Cluster Name",
+      "description": "Are you sure you want to delete the cluster {{name}}? This action cannot be undone and all associated projects will be removed.",
+      "title": "Delete Cluster"
+    },
+    "description": "Create and manage your Kubernetes clusters.",
+    "detail": {
+      "description": "Update your cluster connection settings."
+    },
+    "form": {
+      "certificateAuthorityData": {
+        "label": "Certificate Authority Data",
+        "labelKeepCurrent": "Certificate Authority Data (leave empty to keep current)",
+        "placeholder": "Base64 encoded CA certificate",
+        "required": "Certificate Authority Data is required"
+      },
+      "name": {
+        "label": "Cluster Name",
+        "placeholder": "My Cluster",
+        "required": "Cluster name is required"
+      },
+      "server": {
+        "label": "Server URL",
+        "placeholder": "https://kubernetes.example.com:6443",
+        "required": "Server URL is required"
+      },
+      "token": {
+        "help": {
+          "description": "Run the following commands to create a service account with cluster-admin privileges:",
+          "title": "How to create a Service Account Token"
+        },
+        "label": "Service Account Token",
+        "labelKeepCurrent": "Service Account Token (leave empty to keep current)",
+        "placeholder": "Service account token for authentication",
+        "required": "Service Account Token is required"
+      }
+    },
+    "notFound": "Cluster not found",
+    "settings": {
+      "dangerZone": {
+        "deleteButton": "Delete Cluster",
+        "description": "Once you delete a cluster, there is no going back. This will permanently delete the cluster configuration and all associated projects.",
+        "title": "Danger Zone"
+      },
+      "description": "Update your cluster name and connection details.",
+      "title": "Cluster Settings"
+    },
+    "title": "Clusters"
+  },
   "common": {
     "cancel": "Cancel",
     "cluster": "Cluster",
@@ -26,6 +81,41 @@
   "createService": {
     "description": "Deploy a new service to your project.",
     "title": "Create Service"
+  },
+  "domain": {
+    "createDomain": {
+      "description": "Add a new domain to your service.",
+      "title": "Create Domain"
+    },
+    "deleteDomain": {
+      "confirmHint": "Please type {{host}} to confirm.",
+      "confirmLabel": "Domain Host",
+      "description": "Are you sure you want to delete the domain {{host}}? This action cannot be undone.",
+      "title": "Delete Domain"
+    },
+    "description": "Manage your service domains.",
+    "form": {
+      "host": {
+        "label": "Host",
+        "placeholder": "example.com",
+        "required": "Host is required"
+      },
+      "path": {
+        "label": "Path",
+        "placeholder": "/"
+      },
+      "port": {
+        "label": "Port",
+        "placeholder": "Select a port",
+        "required": "Port is required"
+      }
+    },
+    "noPorts": "No ports configured for this service. Please add a port in the service settings first.",
+    "title": "Domains",
+    "updateDomain": {
+      "description": "Update the domain configuration.",
+      "title": "Update Domain"
+    }
   },
   "project": {
     "createProject": "Create Project",

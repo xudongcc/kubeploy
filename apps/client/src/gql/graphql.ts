@@ -1021,6 +1021,18 @@ export type CreateDomainMutation = {
   };
 };
 
+export type UpdateDomainMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: UpdateDomainInput;
+}>;
+
+export type UpdateDomainMutation = {
+  __typename?: "Mutation";
+  updateDomain: { __typename?: "Domain"; id: string } & {
+    " $fragmentRefs"?: { DomainItemFragment: DomainItemFragment };
+  };
+};
+
 export type RemoveDomainMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
@@ -2901,6 +2913,98 @@ export const CreateDomainDocument = {
 } as unknown as DocumentNode<
   CreateDomainMutation,
   CreateDomainMutationVariables
+>;
+export const UpdateDomainDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UpdateDomain" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "UpdateDomainInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateDomain" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "DomainItem" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "DomainItem" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Domain" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "host" } },
+          { kind: "Field", name: { kind: "Name", value: "path" } },
+          { kind: "Field", name: { kind: "Name", value: "servicePort" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateDomainMutation,
+  UpdateDomainMutationVariables
 >;
 export const RemoveDomainDocument = {
   kind: "Document",
