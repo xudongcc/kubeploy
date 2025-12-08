@@ -122,13 +122,10 @@ const REMOVE_VOLUME_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/volumes",
+  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/$serviceId/volumes",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(volumeConnectionSchema),
-  beforeLoad: () => {
-    return { title: "Volumes" };
-  },
 });
 
 type VolumeItem = {

@@ -28,12 +28,9 @@ const UPDATE_SERVICE_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/environment",
+  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/$serviceId/environment",
 )({
   component: RouteComponent,
-  beforeLoad: () => {
-    return { title: "Environment" };
-  },
 });
 
 interface EnvironmentVariable {

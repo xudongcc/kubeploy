@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { uniqBy } from "lodash-es";
+import { Fragment, useMemo } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import type { FC} from "react";
+import type { FC } from "react";
+import { uniqBy } from "lodash-es";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,43 +16,47 @@ import { Link } from "@/components/link";
 export const Breadcrumbs: FC = () => {
   const matches = useRouterState({ select: (state) => state.matches });
 
-  const [breadcrumbs, pageTitle] = useMemo(() => {
-    const uniqueMatches = uniqBy(matches, (match) =>
-      match.pathname.replace(/\/$/, ""),
+  const [breadcrumbs, lastBreadcrumb] = useMemo(() => {
+    const breadcrumbs = uniqBy(
+      matches
+        .map(({ id, pathname, context }) => {
+          if (!context.title) {
+            return null;
+          }
+
+          return {
+            id,
+            title: context.title,
+            to: pathname,
+          };
+        })
+        .filter((item) => item !== null),
+      (item) => item.to.replace(/\/$/, ""),
     );
 
-    const lastMatch = uniqueMatches.pop();
+    const lastBreadcrumb = breadcrumbs.pop();
 
-    const breadcrumbs = uniqueMatches
-      .slice(1)
-      .filter((match) => match.context.title)
-      .map(({ id, pathname, context }) => ({
-        id,
-        title: context.title,
-        path: pathname,
-      }));
-
-    return [breadcrumbs, lastMatch?.context.title];
+    return [breadcrumbs, lastBreadcrumb];
   }, [matches]);
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         {breadcrumbs?.map((breadcrumb) => (
-          <>
+          <Fragment key={breadcrumb.id}>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink asChild key={breadcrumb.id}>
-                <Link to={breadcrumb.path}>{breadcrumb.title}</Link>
+              <BreadcrumbLink asChild>
+                <Link to={breadcrumb.to}>{breadcrumb.title}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbSeparator className="hidden md:block" />
-          </>
+          </Fragment>
         ))}
 
-        {pageTitle && (
+        {lastBreadcrumb && (
           <BreadcrumbItem>
-            <BreadcrumbPage>{pageTitle}</BreadcrumbPage>
+            <BreadcrumbPage>{lastBreadcrumb.title}</BreadcrumbPage>
           </BreadcrumbItem>
         )}
       </BreadcrumbList>

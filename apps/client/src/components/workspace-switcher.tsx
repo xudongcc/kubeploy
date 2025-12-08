@@ -88,6 +88,7 @@ export function WorkspaceSwitcher() {
 
             {workspaceEdges.map(({ node }) => (
               <Link
+                key={node.id}
                 to="/workspaces/$workspaceId"
                 params={{ workspaceId: node.id }}
               >
