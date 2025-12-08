@@ -30,6 +30,12 @@ export const Route = createRootRouteWithContext<
     ],
     links: [
       {
+        rel: 'icon',
+        href: '/logo.png',
+        type: 'image/png',
+        sizes: '100x100',
+      },
+      {
         rel: 'stylesheet',
         href: appCss,
       },
