@@ -7,7 +7,7 @@ export const Route = createFileRoute("/auth/login")({
   component: RouteComponent,
   validateSearch: zodValidator(
     z.object({
-      redirect: z.url().optional(),
+      redirect: z.string().url().optional(),
     }),
   ),
 });
