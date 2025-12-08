@@ -1055,6 +1055,15 @@ export type UpdateServiceEnvironmentMutation = {
   }
 }
 
+export type DeployServiceMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type DeployServiceMutation = {
+  __typename?: 'Mutation'
+  deployService: { __typename?: 'Service'; id: string }
+}
+
 export type UpdateServiceMutationVariables = Exact<{
   id: Scalars['ID']['input']
   input: UpdateServiceInput
@@ -2872,6 +2881,54 @@ export const UpdateServiceEnvironmentDocument = {
 } as unknown as DocumentNode<
   UpdateServiceEnvironmentMutation,
   UpdateServiceEnvironmentMutationVariables
+>
+export const DeployServiceDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'DeployService' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'deployService' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DeployServiceMutation,
+  DeployServiceMutationVariables
 >
 export const UpdateServiceDocument = {
   kind: 'Document',

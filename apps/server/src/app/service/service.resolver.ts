@@ -62,7 +62,7 @@ export class ServiceResolver {
   async deployService(
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Service> {
-    return await this.serviceService.apply(id);
+    return await this.serviceService.deploy(id);
   }
 
   @Can(PermissionAction.UPDATE, Service)

@@ -4,13 +4,14 @@ import { useForm } from '@tanstack/react-form'
 import { createFileRoute } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-adapter'
 import dayjs from 'dayjs'
-import { Pencil, Trash2, MoreVertical } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical, CircleX } from 'lucide-react'
 
 import { Page } from '@/components/page'
 import { DataTable } from '@/components/turboost-ui/data-table'
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from '@/components/ui/input-group'
 import {
@@ -212,7 +213,7 @@ function RouteComponent() {
           input: {
             name: value.name.trim(),
             size: value.size,
-            mountPath: value.mountPath.trim() || undefined,
+            mountPath: value.mountPath.trim() || null,
           },
         },
       })
@@ -290,7 +291,7 @@ function RouteComponent() {
                       <FieldLabel htmlFor="name">Name</FieldLabel>
                       <Input
                         id="name"
-                        placeholder="my-volume"
+                        placeholder="data"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}
@@ -342,9 +343,7 @@ function RouteComponent() {
                 <createForm.Field name="mountPath">
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="mountPath">
-                        Mount Path (optional)
-                      </FieldLabel>
+                      <FieldLabel htmlFor="mountPath">Mount Path</FieldLabel>
                       <Input
                         id="mountPath"
                         placeholder="/data"
@@ -471,7 +470,7 @@ function RouteComponent() {
                     <FieldLabel htmlFor="edit-name">Name</FieldLabel>
                     <Input
                       id="edit-name"
-                      placeholder="my-volume"
+                      placeholder="data"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -521,16 +520,28 @@ function RouteComponent() {
               <editForm.Field name="mountPath">
                 {(field) => (
                   <Field>
-                    <FieldLabel htmlFor="edit-mountPath">
-                      Mount Path (optional)
-                    </FieldLabel>
-                    <Input
-                      id="edit-mountPath"
-                      placeholder="/data"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                    />
+                    <FieldLabel htmlFor="edit-mountPath">Mount Path</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        id="edit-mountPath"
+                        placeholder="/data"
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                      />
+                      {field.state.value && (
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupButton
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label="Clear"
+                            onClick={() => field.handleChange('')}
+                          >
+                            <CircleX />
+                          </InputGroupButton>
+                        </InputGroupAddon>
+                      )}
+                    </InputGroup>
                   </Field>
                 )}
               </editForm.Field>

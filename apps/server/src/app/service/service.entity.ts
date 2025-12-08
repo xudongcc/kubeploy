@@ -18,6 +18,7 @@ import { Sonyflake } from 'sonyflake-js';
 
 import { Domain } from '@/domain/domain.entity';
 import { Project } from '@/project/project.entity';
+import { Volume } from '@/volume/volume.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
 @ObjectType()
@@ -84,6 +85,9 @@ export class Service {
 
   @OneToMany(() => Domain, (domain) => domain.service)
   domains = new Collection<Domain>(this);
+
+  @OneToMany(() => Volume, (volume) => volume.service)
+  volumes = new Collection<Volume>(this);
 
   get kubeDeploymentName(): Opt<string> {
     return this.name;

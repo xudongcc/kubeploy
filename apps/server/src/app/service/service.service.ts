@@ -11,6 +11,7 @@ import {
   isNotFoundError,
 } from '@/kubernetes';
 import { ProjectService } from '@/project/project.service';
+import { Volume } from '@/volume/volume.entity';
 
 import { Service } from './service.entity';
 
@@ -43,7 +44,7 @@ export class ServiceService extends EntityService<Service> {
     return await super.update(idOrEntity, data);
   }
 
-  async apply(idOrEntity: IdOrEntity<Service>): Promise<Service> {
+  async deploy(idOrEntity: IdOrEntity<Service>): Promise<Service> {
     const service = await this.findOneOrFail(idOrEntity);
 
     const project = await service.project.loadOrFail();
@@ -53,7 +54,7 @@ export class ServiceService extends EntityService<Service> {
     const appsV1Api = this.clusterClientFactory.getAppsV1Api(cluster);
     const coreV1Api = this.clusterClientFactory.getCoreV1Api(cluster);
 
-    const deploymentBody = this.buildDeployment(service);
+    const deploymentBody = await this.buildDeployment(service);
     const serviceBody = this.buildService(service);
 
     // Apply Deployment using Server-Side Apply
@@ -133,7 +134,9 @@ export class ServiceService extends EntityService<Service> {
     return await super.remove(service);
   }
 
-  private buildDeployment(service: Service): V1Deployment {
+  private async buildDeployment(service: Service): Promise<V1Deployment> {
+    const volumes = await service.volumes.loadItems();
+
     return {
       apiVersion: 'apps/v1',
       kind: 'Deployment',
@@ -177,8 +180,26 @@ export class ServiceService extends EntityService<Service> {
                         value: env.value,
                       }))
                     : undefined,
+                volumeMounts: volumes
+                  .map((volume) => {
+                    if (!volume.mountPath) {
+                      return null;
+                    }
+
+                    return {
+                      name: volume.kubePersistentVolumeClaimName,
+                      mountPath: volume.mountPath,
+                    };
+                  })
+                  .filter((volume) => volume !== null),
               },
             ],
+            volumes: volumes.map((volume) => ({
+              name: volume.kubePersistentVolumeClaimName,
+              persistentVolumeClaim: {
+                claimName: volume.kubePersistentVolumeClaimName,
+              },
+            })),
           },
         },
       },
