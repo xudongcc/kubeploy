@@ -27,8 +27,8 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">{t("welcomeBack")}</CardTitle>
-          <CardDescription>{t("loginWithGitHubAccount")}</CardDescription>
+          <CardTitle className="text-xl">{t("auth.welcomeBack")}</CardTitle>
+          <CardDescription>{t("auth.loginWithGitHubAccount")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form>
@@ -44,7 +44,7 @@ export function LoginForm({
                     })
                   }
                 >
-                  {t("loginWithGitHub")}
+                  {t("auth.loginWithGitHub")}
                 </Button>
               </Field>
               {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
@@ -82,8 +82,9 @@ export function LoginForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        {t("byClickingContinue")} <a href="#">{t("termsOfService")}</a>{" "}
-        {t("and")} <a href="#">{t("privacyPolicy")}</a>.
+        {t("auth.byClickingContinue")}{" "}
+        <a href="#">{t("auth.termsOfService")}</a> {t("auth.and")}{" "}
+        <a href="#">{t("auth.privacyPolicy")}</a>.
       </FieldDescription>
     </div>
   );

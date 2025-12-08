@@ -21,6 +21,7 @@ import {
 
 import { Link } from "@/components/link";
 import { SidebarLogo } from "./sidebar-logo";
+import { useTranslation } from "react-i18next";
 
 type SidebarItem = {
   title: string;
@@ -31,6 +32,8 @@ type SidebarItem = {
 export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
   ...props
 }) => {
+  const { t } = useTranslation();
+
   const workspace = useRouteContext({
     from: "/_authenticated/workspaces/$workspaceId",
     select: (context) => context.workspace,
@@ -41,10 +44,10 @@ export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
     items: Array<SidebarItem>;
   }> = [
     {
-      title: "Platform",
+      title: t("sidebar.platform"),
       items: [
         {
-          title: "Projects",
+          title: t("sidebar.projects"),
           icon: Folder,
           link: linkOptions({
             to: "/workspaces/$workspaceId/projects",
@@ -52,7 +55,7 @@ export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: "Clusters",
+          title: t("sidebar.clusters"),
           icon: Server,
           link: linkOptions({
             to: "/workspaces/$workspaceId/clusters",
@@ -62,10 +65,10 @@ export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
       ],
     },
     {
-      title: "Settings",
+      title: t("sidebar.settings"),
       items: [
         {
-          title: "Members",
+          title: t("sidebar.members"),
           icon: Users,
           link: linkOptions({
             to: "/workspaces/$workspaceId/members",
@@ -73,7 +76,7 @@ export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
           }),
         },
         {
-          title: "Settings",
+          title: t("sidebar.settings"),
           icon: Settings,
           link: linkOptions({
             to: "/workspaces/$workspaceId/settings",

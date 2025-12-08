@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
 import { OrderDirection, ProjectOrderField } from "@/gql/graphql";
 import { createConnectionSchema } from "@/utils/create-connection-schema";
+import { useTranslation } from "react-i18next";
 
 const GET_PROJECTS_QUERY = graphql(`
   query GetProjects(
@@ -101,6 +102,8 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
   const search = Route.useSearch();
 
+  const { t } = useTranslation();
+
   const [open, setOpen] = useState(false);
 
   const { data } = useQuery(GET_PROJECTS_QUERY, {
@@ -150,8 +153,8 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Projects"
-      description="Create and manage your projects"
+      title={t("project.title")}
+      description={t("project.description")}
       actions={
         <Dialog open={open} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
@@ -166,10 +169,9 @@ function RouteComponent() {
               }}
             >
               <DialogHeader>
-                <DialogTitle>Create Project</DialogTitle>
+                <DialogTitle>{t("project.createProject")}</DialogTitle>
                 <DialogDescription>
-                  Enter a name for your new project. The project name will be
-                  used as the Kubernetes namespace.
+                  {t("project.createProjectDescription")}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -182,7 +184,7 @@ function RouteComponent() {
                 >
                   {(field) => (
                     <Field>
-                      <FieldLabel>Cluster</FieldLabel>
+                      <FieldLabel>{t("common.cluster")}</FieldLabel>
                       <ClusterSelect
                         value={field.state.value}
                         onChange={field.handleChange}
@@ -205,7 +207,7 @@ function RouteComponent() {
                 >
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="name">Project Name</FieldLabel>
+                      <FieldLabel htmlFor="name">{t("common.name")}</FieldLabel>
                       <Input
                         id="name"
                         placeholder="My Project"
@@ -228,14 +230,14 @@ function RouteComponent() {
                   variant="outline"
                   onClick={() => handleOpenChange(false)}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? "Creating..." : "Create"}
+                      {isSubmitting ? t("common.creating") : t("common.create")}
                     </Button>
                   )}
                 </form.Subscribe>
@@ -249,7 +251,7 @@ function RouteComponent() {
         columns={[
           {
             accessorKey: "name",
-            header: "Name",
+            header: t("common.name"),
             cell: ({ row }) => {
               return (
                 <Link
@@ -263,7 +265,7 @@ function RouteComponent() {
           },
           {
             accessorKey: "cluster",
-            header: "Cluster",
+            header: t("common.cluster"),
             cell: ({ row }) => {
               return (
                 <Link
@@ -277,7 +279,7 @@ function RouteComponent() {
           },
           {
             accessorKey: "createdAt",
-            header: "Created Date",
+            header: t("common.createdAt"),
             cell: ({ row }) => {
               return dayjs(row.original.createdAt).format(
                 "YYYY-MM-DD HH:mm:ss",

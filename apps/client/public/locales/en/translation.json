@@ -1,9 +1,37 @@
 {
-  "and": "and",
-  "byClickingContinue": "By clicking continue, you agree to our",
-  "loginWithGitHub": "Login with GitHub",
-  "loginWithGitHubAccount": "Login with your GitHub account",
-  "privacyPolicy": "Privacy Policy",
-  "termsOfService": "Terms of Service",
-  "welcomeBack": "Welcome back"
+  "auth": {
+    "and": "and",
+    "byClickingContinue": "By clicking continue, you agree to our",
+    "loginWithGitHub": "Login with GitHub",
+    "loginWithGitHubAccount": "Login with your GitHub account to continue",
+    "logout": "Log out",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "welcomeBack": "Welcome back"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "cluster": "Cluster",
+    "create": "Create",
+    "createdAt": "Created Date",
+    "creating": "Creating...",
+    "name": "Name"
+  },
+  "project": {
+    "createProject": "Create Project",
+    "createProjectDescription": "Create a new project to deploy your services.",
+    "description": "Create and manage your projects.",
+    "title": "Projects"
+  },
+  "sidebar": {
+    "clusters": "Clusters",
+    "members": "Members",
+    "platform": "Platform",
+    "projects": "Projects",
+    "settings": "Settings"
+  },
+  "workspaceSwitcher": {
+    "createWorkspace": "Create workspace",
+    "workspaces": "Workspaces"
+  }
 }

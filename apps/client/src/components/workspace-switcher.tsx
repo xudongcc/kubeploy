@@ -20,6 +20,7 @@ import {
 import { Link } from "@/components/link";
 import { graphql } from "@/gql";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useTranslation } from "react-i18next";
 
 const WORKSPACE_SWITCHER_WORKSPACES_QUERY = graphql(`
   query WorkspaceSwitcherWorkspaces {
@@ -41,6 +42,8 @@ const WORKSPACE_SWITCHER_WORKSPACES_QUERY = graphql(`
 
 export function WorkspaceSwitcher() {
   const { isMobile } = useSidebar();
+
+  const { t } = useTranslation();
 
   const workspace = useRouteContext({
     from: "/_authenticated/workspaces/$workspaceId",
@@ -83,7 +86,7 @@ export function WorkspaceSwitcher() {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Workspaces
+              {t("workspaceSwitcher.workspaces")}
             </DropdownMenuLabel>
 
             {workspaceEdges.map(({ node }) => (
@@ -103,7 +106,7 @@ export function WorkspaceSwitcher() {
             <Link to="/workspaces/create">
               <DropdownMenuItem className="gap-2 p-2">
                 <div className="text-muted-foreground font-medium">
-                  Create workspace
+                  {t("workspaceSwitcher.createWorkspace")}
                 </div>
               </DropdownMenuItem>
             </Link>

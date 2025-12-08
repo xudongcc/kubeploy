@@ -19,9 +19,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { useTranslation } from "react-i18next";
 
 export function SidebarUser() {
   const { isMobile } = useSidebar();
+
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -94,7 +97,7 @@ export function SidebarUser() {
               }}
             >
               <LogOut />
-              Log out
+              {t("auth.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
