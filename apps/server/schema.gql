@@ -200,13 +200,13 @@ type Mutation {
   createVolume(input: CreateVolumeInput!): Volume!
   createWorkspace(input: CreateWorkspaceInput!): Workspace!
   createWorkspaceInvite(input: CreateWorkspaceInviteInput!): WorkspaceMember!
+  deleteCluster(id: ID!): Cluster!
+  deleteDomain(id: ID!): Domain!
+  deleteProject(id: ID!): Project!
+  deleteService(id: ID!): Service!
+  deleteVolume(id: ID!): Volume!
+  deleteWorkspace: Workspace!
   deployService(id: ID!): Service!
-  removeCluster(id: ID!): Cluster!
-  removeDomain(id: ID!): Domain!
-  removeProject(id: ID!): Project!
-  removeService(id: ID!): Service!
-  removeVolume(id: ID!): Volume!
-  removeWorkspace: Workspace!
   removeWorkspaceMember(id: ID!): WorkspaceMember!
   updateCluster(id: ID!, input: UpdateClusterInput!): Cluster!
   updateDomain(id: ID!, input: UpdateDomainInput!): Domain!

@@ -31,9 +31,9 @@ const UPDATE_WORKSPACE_MUTATION = graphql(`
   }
 `);
 
-const REMOVE_WORKSPACE_MUTATION = graphql(`
-  mutation RemoveWorkspace {
-    removeWorkspace {
+const DELETE_WORKSPACE_MUTATION = graphql(`
+  mutation DeleteWorkspace {
+    deleteWorkspace {
       id
     }
   }
@@ -59,12 +59,12 @@ function RouteComponent() {
     useState<DeleteWorkspaceItem | null>(null);
 
   const [updateWorkspace] = useMutation(UPDATE_WORKSPACE_MUTATION);
-  const [removeWorkspace, { loading: removing }] = useMutation(
-    REMOVE_WORKSPACE_MUTATION,
+  const [deleteWorkspace, { loading: deleting }] = useMutation(
+    DELETE_WORKSPACE_MUTATION,
     {
       update(cache, result) {
-        if (result.data?.removeWorkspace) {
-          cache.evict({ id: cache.identify(result.data.removeWorkspace) });
+        if (result.data?.deleteWorkspace) {
+          cache.evict({ id: cache.identify(result.data.deleteWorkspace) });
           cache.gc();
         }
       },
@@ -87,7 +87,7 @@ function RouteComponent() {
   });
 
   const handleDelete = async () => {
-    await removeWorkspace();
+    await deleteWorkspace();
     navigate({
       to: "/workspaces",
     });
@@ -181,7 +181,7 @@ function RouteComponent() {
 
       <DeleteWorkspaceDialog
         workspace={deletingWorkspace}
-        deleting={removing}
+        deleting={deleting}
         onOpenChange={() => setDeletingWorkspace(null)}
         onConfirm={handleDelete}
       />

@@ -92,9 +92,9 @@ const UPDATE_DOMAIN_MUTATION = graphql(`
   }
 `);
 
-const REMOVE_DOMAIN_MUTATION = graphql(`
-  mutation RemoveDomain($id: ID!) {
-    removeDomain(id: $id) {
+const DELETE_DOMAIN_MUTATION = graphql(`
+  mutation DeleteDomain($id: ID!) {
+    deleteDomain(id: $id) {
       id
     }
   }
@@ -135,12 +135,12 @@ function RouteComponent() {
     },
   });
 
-  const [removeDomain, { loading: removing }] = useMutation(
-    REMOVE_DOMAIN_MUTATION,
+  const [deleteDomain, { loading: deleting }] = useMutation(
+    DELETE_DOMAIN_MUTATION,
     {
       update(cache, result) {
-        if (result.data?.removeDomain) {
-          cache.evict({ id: cache.identify(result.data.removeDomain) });
+        if (result.data?.deleteDomain) {
+          cache.evict({ id: cache.identify(result.data.deleteDomain) });
           cache.gc();
         }
       },
@@ -183,7 +183,7 @@ function RouteComponent() {
   };
 
   const handleDelete = async (id: string) => {
-    await removeDomain({
+    await deleteDomain({
       variables: { id },
     });
     setDeletingDomain(null);
@@ -297,7 +297,7 @@ function RouteComponent() {
 
       <DeleteDomainDialog
         domain={deletingDomain}
-        deleting={removing}
+        deleting={deleting}
         onOpenChange={() => setDeletingDomain(null)}
         onConfirm={handleDelete}
       />

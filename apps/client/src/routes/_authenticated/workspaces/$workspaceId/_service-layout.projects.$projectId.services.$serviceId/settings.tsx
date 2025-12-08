@@ -31,9 +31,9 @@ const UPDATE_SERVICE_MUTATION = graphql(`
   }
 `);
 
-const REMOVE_SERVICE_MUTATION = graphql(`
-  mutation RemoveService($id: ID!) {
-    removeService(id: $id) {
+const DELETE_SERVICE_MUTATION = graphql(`
+  mutation DeleteService($id: ID!) {
+    deleteService(id: $id) {
       id
     }
   }
@@ -57,12 +57,12 @@ function RouteComponent() {
     useState<DeleteServiceItem | null>(null);
 
   const [updateService] = useMutation(UPDATE_SERVICE_MUTATION);
-  const [removeService, { loading: removing }] = useMutation(
-    REMOVE_SERVICE_MUTATION,
+  const [deleteService, { loading: deleting }] = useMutation(
+    DELETE_SERVICE_MUTATION,
     {
       update(cache, result) {
-        if (result.data?.removeService) {
-          cache.evict({ id: cache.identify(result.data.removeService) });
+        if (result.data?.deleteService) {
+          cache.evict({ id: cache.identify(result.data.deleteService) });
           cache.gc();
         }
       },
@@ -90,7 +90,7 @@ function RouteComponent() {
   });
 
   const handleDelete = async (id: string) => {
-    await removeService({
+    await deleteService({
       variables: { id },
     });
     navigate({
@@ -254,7 +254,7 @@ function RouteComponent() {
 
       <DeleteServiceDialog
         service={deletingService}
-        deleting={removing}
+        deleting={deleting}
         onOpenChange={() => setDeletingService(null)}
         onConfirm={handleDelete}
       />

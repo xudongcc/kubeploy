@@ -62,7 +62,7 @@ export class ProjectResolver {
 
   @Can(PermissionAction.DELETE, Project)
   @Mutation(() => Project)
-  async removeProject(
+  async deleteProject(
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Project> {
     return await this.projectService.remove(id);

@@ -54,7 +54,7 @@ export class VolumeResolver {
 
   @Can(PermissionAction.DELETE, Volume)
   @Mutation(() => Volume)
-  async removeVolume(
+  async deleteVolume(
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Volume> {
     return await this.volumeService.remove(id);

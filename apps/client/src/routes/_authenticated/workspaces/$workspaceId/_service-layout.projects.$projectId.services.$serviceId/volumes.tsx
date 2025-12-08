@@ -92,9 +92,9 @@ const UPDATE_VOLUME_MUTATION = graphql(`
   }
 `);
 
-const REMOVE_VOLUME_MUTATION = graphql(`
-  mutation RemoveVolume($id: ID!) {
-    removeVolume(id: $id) {
+const DELETE_VOLUME_MUTATION = graphql(`
+  mutation DeleteVolume($id: ID!) {
+    deleteVolume(id: $id) {
       id
     }
   }
@@ -134,12 +134,12 @@ function RouteComponent() {
     },
   });
 
-  const [removeVolume, { loading: removing }] = useMutation(
-    REMOVE_VOLUME_MUTATION,
+  const [deleteVolume, { loading: deleting }] = useMutation(
+    DELETE_VOLUME_MUTATION,
     {
       update(cache, result) {
-        if (result.data?.removeVolume) {
-          cache.evict({ id: cache.identify(result.data.removeVolume) });
+        if (result.data?.deleteVolume) {
+          cache.evict({ id: cache.identify(result.data.deleteVolume) });
           cache.gc();
         }
       },
@@ -182,7 +182,7 @@ function RouteComponent() {
   };
 
   const handleDelete = async (id: string) => {
-    await removeVolume({
+    await deleteVolume({
       variables: { id },
     });
     setDeletingVolume(null);
@@ -276,7 +276,7 @@ function RouteComponent() {
 
       <DeleteVolumeDialog
         volume={deletingVolume}
-        deleting={removing}
+        deleting={deleting}
         onOpenChange={() => setDeletingVolume(null)}
         onConfirm={handleDelete}
       />

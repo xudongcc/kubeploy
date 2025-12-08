@@ -77,7 +77,7 @@ export class ServiceResolver {
 
   @Can(PermissionAction.DELETE, Service)
   @Mutation(() => Service)
-  async removeService(
+  async deleteService(
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Service> {
     return await this.serviceService.remove(id);

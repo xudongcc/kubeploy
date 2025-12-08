@@ -54,9 +54,9 @@ const UPDATE_CLUSTER_MUTATION = graphql(`
   }
 `);
 
-const REMOVE_CLUSTER_MUTATION = graphql(`
-  mutation RemoveCluster($id: ID!) {
-    removeCluster(id: $id) {
+const DELETE_CLUSTER_MUTATION = graphql(`
+  mutation DeleteCluster($id: ID!) {
+    deleteCluster(id: $id) {
       id
     }
   }
@@ -98,12 +98,12 @@ function RouteComponent() {
     useState<DeleteClusterItem | null>(null);
 
   const [updateCluster] = useMutation(UPDATE_CLUSTER_MUTATION);
-  const [removeCluster, { loading: removing }] = useMutation(
-    REMOVE_CLUSTER_MUTATION,
+  const [deleteCluster, { loading: deleting }] = useMutation(
+    DELETE_CLUSTER_MUTATION,
     {
       update(cache, result) {
-        if (result.data?.removeCluster) {
-          cache.evict({ id: cache.identify(result.data.removeCluster) });
+        if (result.data?.deleteCluster) {
+          cache.evict({ id: cache.identify(result.data.deleteCluster) });
           cache.gc();
         }
       },
@@ -146,7 +146,7 @@ function RouteComponent() {
   });
 
   const handleDelete = async (id: string) => {
-    await removeCluster({
+    await deleteCluster({
       variables: { id },
     });
     navigate({
@@ -348,7 +348,7 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
 
       <DeleteClusterDialog
         cluster={deletingCluster}
-        deleting={removing}
+        deleting={deleting}
         onOpenChange={() => setDeletingCluster(null)}
         onConfirm={handleDelete}
       />

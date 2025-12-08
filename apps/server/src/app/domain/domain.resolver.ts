@@ -54,7 +54,7 @@ export class DomainResolver {
 
   @Can(PermissionAction.DELETE, Domain)
   @Mutation(() => Domain)
-  async removeDomain(
+  async deleteDomain(
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Domain> {
     return await this.domainService.remove(id);

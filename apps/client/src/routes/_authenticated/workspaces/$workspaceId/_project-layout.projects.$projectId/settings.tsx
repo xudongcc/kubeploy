@@ -31,9 +31,9 @@ const UPDATE_PROJECT_MUTATION = graphql(`
   }
 `);
 
-const REMOVE_PROJECT_MUTATION = graphql(`
-  mutation RemoveProject($id: ID!) {
-    removeProject(id: $id) {
+const DELETE_PROJECT_MUTATION = graphql(`
+  mutation DeleteProject($id: ID!) {
+    deleteProject(id: $id) {
       id
     }
   }
@@ -58,12 +58,12 @@ function RouteComponent() {
     useState<DeleteProjectItem | null>(null);
 
   const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION);
-  const [removeProject, { loading: removing }] = useMutation(
-    REMOVE_PROJECT_MUTATION,
+  const [deleteProject, { loading: deleting }] = useMutation(
+    DELETE_PROJECT_MUTATION,
     {
       update(cache, result) {
-        if (result.data?.removeProject) {
-          cache.evict({ id: cache.identify(result.data.removeProject) });
+        if (result.data?.deleteProject) {
+          cache.evict({ id: cache.identify(result.data.deleteProject) });
           cache.gc();
         }
       },
@@ -87,7 +87,7 @@ function RouteComponent() {
   });
 
   const handleDelete = async (id: string) => {
-    await removeProject({
+    await deleteProject({
       variables: { id },
     });
     navigate({
@@ -188,7 +188,7 @@ function RouteComponent() {
 
       <DeleteProjectDialog
         project={deletingProject}
-        deleting={removing}
+        deleting={deleting}
         onOpenChange={() => setDeletingProject(null)}
         onConfirm={handleDelete}
       />

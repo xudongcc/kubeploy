@@ -65,7 +65,7 @@ export class ClusterResolver {
 
   @Can(PermissionAction.DELETE, Cluster)
   @Mutation(() => Cluster)
-  async removeCluster(
+  async deleteCluster(
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Cluster> {
     return await this.clusterService.remove(id);

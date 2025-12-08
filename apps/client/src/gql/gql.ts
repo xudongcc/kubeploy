@@ -22,23 +22,23 @@ type Documents = {
   "\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateServiceDocument;
   "\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    project(id: $projectId) {\n      services(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ServiceItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    status\n    createdAt\n  }\n": typeof types.GetServicesDocument;
   "\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n": typeof types.UpdateProjectDocument;
-  "\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveProjectDocument;
+  "\n  mutation DeleteProject($id: ID!) {\n    deleteProject(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteProjectDocument;
   "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n\n      project {\n        id\n        name\n      }\n\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n  }\n": typeof types.GetServiceDocument;
   "\n  query GetDomains(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: DomainOrder\n  ) {\n    service(id: $serviceId) {\n      domains(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...DomainItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment DomainItem on Domain {\n    id\n    host\n    path\n    servicePort\n    createdAt\n  }\n": typeof types.GetDomainsDocument;
   "\n  mutation CreateDomain($input: CreateDomainInput!) {\n    createDomain(input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n": typeof types.CreateDomainDocument;
   "\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n": typeof types.UpdateDomainDocument;
-  "\n  mutation RemoveDomain($id: ID!) {\n    removeDomain(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveDomainDocument;
+  "\n  mutation DeleteDomain($id: ID!) {\n    deleteDomain(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteDomainDocument;
   "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceEnvironmentDocument;
   "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n": typeof types.DeployServiceDocument;
   "\n  mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceDocument;
-  "\n  mutation RemoveService($id: ID!) {\n    removeService(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveServiceDocument;
+  "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteServiceDocument;
   "\n  query GetVolumes(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: VolumeOrder\n  ) {\n    service(id: $serviceId) {\n      volumes(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...VolumeItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment VolumeItem on Volume {\n    id\n    name\n    size\n    mountPath\n    createdAt\n  }\n": typeof types.GetVolumesDocument;
   "\n  mutation CreateVolume($input: CreateVolumeInput!) {\n    createVolume(input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n": typeof types.CreateVolumeDocument;
   "\n  mutation UpdateVolume($id: ID!, $input: UpdateVolumeInput!) {\n    updateVolume(id: $id, input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n": typeof types.UpdateVolumeDocument;
-  "\n  mutation RemoveVolume($id: ID!) {\n    removeVolume(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveVolumeDocument;
+  "\n  mutation DeleteVolume($id: ID!) {\n    deleteVolume(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteVolumeDocument;
   "\n  query GetCluster($id: ID!) {\n    cluster(id: $id) {\n      id\n      ...ClusterDetail @unmask\n    }\n  }\n\n  fragment ClusterDetail on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n": typeof types.GetClusterDocument;
   "\n  mutation UpdateCluster($id: ID!, $input: UpdateClusterInput!) {\n    updateCluster(id: $id, input: $input) {\n      id\n      ...ClusterDetail\n    }\n  }\n": typeof types.UpdateClusterDocument;
-  "\n  mutation RemoveCluster($id: ID!) {\n    removeCluster(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveClusterDocument;
+  "\n  mutation DeleteCluster($id: ID!) {\n    deleteCluster(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteClusterDocument;
   "\n  query GetClusters(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      clusters(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ClusterItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n": typeof types.GetClustersDocument;
   "\n  mutation CreateCluster($input: CreateClusterInput!) {\n    createCluster(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateClusterDocument;
   "\n  query GetWorkspaceMembers(\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: WorkspaceMemberOrder\n    $query: String\n  ) {\n    workspaceMembers(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      orderBy: $orderBy\n      query: $query\n    ) {\n      edges {\n        node {\n          id\n          ...WorkspaceMemberItem @unmask\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n\n  fragment WorkspaceMemberItem on WorkspaceMember {\n    id\n    name\n    email\n    role\n    inviteStatus\n    createdAt\n    user {\n      id\n      name\n      email\n    }\n  }\n": typeof types.GetWorkspaceMembersDocument;
@@ -48,7 +48,7 @@ type Documents = {
   "\n  query GetProjects(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      projects(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ProjectItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n": typeof types.GetProjectsDocument;
   "\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateProjectDocument;
   "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.UpdateWorkspaceDocument;
-  "\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n": typeof types.RemoveWorkspaceDocument;
+  "\n  mutation DeleteWorkspace {\n    deleteWorkspace {\n      id\n    }\n  }\n": typeof types.DeleteWorkspaceDocument;
   "\n  mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n    createWorkspace(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateWorkspaceDocument;
   "\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n": typeof types.GetFirstWorkspaceDocument;
 };
@@ -69,8 +69,8 @@ const documents: Documents = {
     types.GetServicesDocument,
   "\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n":
     types.UpdateProjectDocument,
-  "\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n":
-    types.RemoveProjectDocument,
+  "\n  mutation DeleteProject($id: ID!) {\n    deleteProject(id: $id) {\n      id\n    }\n  }\n":
+    types.DeleteProjectDocument,
   "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n\n      project {\n        id\n        name\n      }\n\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n  }\n":
     types.GetServiceDocument,
   "\n  query GetDomains(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: DomainOrder\n  ) {\n    service(id: $serviceId) {\n      domains(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...DomainItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment DomainItem on Domain {\n    id\n    host\n    path\n    servicePort\n    createdAt\n  }\n":
@@ -79,30 +79,30 @@ const documents: Documents = {
     types.CreateDomainDocument,
   "\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n":
     types.UpdateDomainDocument,
-  "\n  mutation RemoveDomain($id: ID!) {\n    removeDomain(id: $id) {\n      id\n    }\n  }\n":
-    types.RemoveDomainDocument,
+  "\n  mutation DeleteDomain($id: ID!) {\n    deleteDomain(id: $id) {\n      id\n    }\n  }\n":
+    types.DeleteDomainDocument,
   "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
     types.UpdateServiceEnvironmentDocument,
   "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n":
     types.DeployServiceDocument,
   "\n  mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
     types.UpdateServiceDocument,
-  "\n  mutation RemoveService($id: ID!) {\n    removeService(id: $id) {\n      id\n    }\n  }\n":
-    types.RemoveServiceDocument,
+  "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n":
+    types.DeleteServiceDocument,
   "\n  query GetVolumes(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: VolumeOrder\n  ) {\n    service(id: $serviceId) {\n      volumes(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...VolumeItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment VolumeItem on Volume {\n    id\n    name\n    size\n    mountPath\n    createdAt\n  }\n":
     types.GetVolumesDocument,
   "\n  mutation CreateVolume($input: CreateVolumeInput!) {\n    createVolume(input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n":
     types.CreateVolumeDocument,
   "\n  mutation UpdateVolume($id: ID!, $input: UpdateVolumeInput!) {\n    updateVolume(id: $id, input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n":
     types.UpdateVolumeDocument,
-  "\n  mutation RemoveVolume($id: ID!) {\n    removeVolume(id: $id) {\n      id\n    }\n  }\n":
-    types.RemoveVolumeDocument,
+  "\n  mutation DeleteVolume($id: ID!) {\n    deleteVolume(id: $id) {\n      id\n    }\n  }\n":
+    types.DeleteVolumeDocument,
   "\n  query GetCluster($id: ID!) {\n    cluster(id: $id) {\n      id\n      ...ClusterDetail @unmask\n    }\n  }\n\n  fragment ClusterDetail on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n":
     types.GetClusterDocument,
   "\n  mutation UpdateCluster($id: ID!, $input: UpdateClusterInput!) {\n    updateCluster(id: $id, input: $input) {\n      id\n      ...ClusterDetail\n    }\n  }\n":
     types.UpdateClusterDocument,
-  "\n  mutation RemoveCluster($id: ID!) {\n    removeCluster(id: $id) {\n      id\n    }\n  }\n":
-    types.RemoveClusterDocument,
+  "\n  mutation DeleteCluster($id: ID!) {\n    deleteCluster(id: $id) {\n      id\n    }\n  }\n":
+    types.DeleteClusterDocument,
   "\n  query GetClusters(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ClusterOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      clusters(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ClusterItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ClusterItem on Cluster {\n    id\n    name\n    server\n    createdAt\n  }\n":
     types.GetClustersDocument,
   "\n  mutation CreateCluster($input: CreateClusterInput!) {\n    createCluster(input: $input) {\n      id\n    }\n  }\n":
@@ -121,8 +121,8 @@ const documents: Documents = {
     types.CreateProjectDocument,
   "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n":
     types.UpdateWorkspaceDocument,
-  "\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n":
-    types.RemoveWorkspaceDocument,
+  "\n  mutation DeleteWorkspace {\n    deleteWorkspace {\n      id\n    }\n  }\n":
+    types.DeleteWorkspaceDocument,
   "\n  mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n    createWorkspace(input: $input) {\n      id\n    }\n  }\n":
     types.CreateWorkspaceDocument,
   "\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n":
@@ -195,8 +195,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation RemoveProject($id: ID!) {\n    removeProject(id: $id) {\n      id\n    }\n  }\n"];
+  source: "\n  mutation DeleteProject($id: ID!) {\n    deleteProject(id: $id) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation DeleteProject($id: ID!) {\n    deleteProject(id: $id) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -225,8 +225,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation RemoveDomain($id: ID!) {\n    removeDomain(id: $id) {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation RemoveDomain($id: ID!) {\n    removeDomain(id: $id) {\n      id\n    }\n  }\n"];
+  source: "\n  mutation DeleteDomain($id: ID!) {\n    deleteDomain(id: $id) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation DeleteDomain($id: ID!) {\n    deleteDomain(id: $id) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -249,8 +249,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation RemoveService($id: ID!) {\n    removeService(id: $id) {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation RemoveService($id: ID!) {\n    removeService(id: $id) {\n      id\n    }\n  }\n"];
+  source: "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -273,8 +273,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation RemoveVolume($id: ID!) {\n    removeVolume(id: $id) {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation RemoveVolume($id: ID!) {\n    removeVolume(id: $id) {\n      id\n    }\n  }\n"];
+  source: "\n  mutation DeleteVolume($id: ID!) {\n    deleteVolume(id: $id) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation DeleteVolume($id: ID!) {\n    deleteVolume(id: $id) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -291,8 +291,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation RemoveCluster($id: ID!) {\n    removeCluster(id: $id) {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation RemoveCluster($id: ID!) {\n    removeCluster(id: $id) {\n      id\n    }\n  }\n"];
+  source: "\n  mutation DeleteCluster($id: ID!) {\n    deleteCluster(id: $id) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation DeleteCluster($id: ID!) {\n    deleteCluster(id: $id) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -351,8 +351,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation RemoveWorkspace {\n    removeWorkspace {\n      id\n    }\n  }\n"];
+  source: "\n  mutation DeleteWorkspace {\n    deleteWorkspace {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation DeleteWorkspace {\n    deleteWorkspace {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

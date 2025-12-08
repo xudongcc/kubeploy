@@ -208,13 +208,13 @@ export type Mutation = {
   createVolume: Volume;
   createWorkspace: Workspace;
   createWorkspaceInvite: WorkspaceMember;
+  deleteCluster: Cluster;
+  deleteDomain: Domain;
+  deleteProject: Project;
+  deleteService: Service;
+  deleteVolume: Volume;
+  deleteWorkspace: Workspace;
   deployService: Service;
-  removeCluster: Cluster;
-  removeDomain: Domain;
-  removeProject: Project;
-  removeService: Service;
-  removeVolume: Volume;
-  removeWorkspace: Workspace;
   removeWorkspaceMember: WorkspaceMember;
   updateCluster: Cluster;
   updateDomain: Domain;
@@ -262,27 +262,27 @@ export type MutationCreateWorkspaceInviteArgs = {
   input: CreateWorkspaceInviteInput;
 };
 
+export type MutationDeleteClusterArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationDeleteDomainArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationDeleteProjectArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationDeleteServiceArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationDeleteVolumeArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationDeployServiceArgs = {
-  id: Scalars["ID"]["input"];
-};
-
-export type MutationRemoveClusterArgs = {
-  id: Scalars["ID"]["input"];
-};
-
-export type MutationRemoveDomainArgs = {
-  id: Scalars["ID"]["input"];
-};
-
-export type MutationRemoveProjectArgs = {
-  id: Scalars["ID"]["input"];
-};
-
-export type MutationRemoveServiceArgs = {
-  id: Scalars["ID"]["input"];
-};
-
-export type MutationRemoveVolumeArgs = {
   id: Scalars["ID"]["input"];
 };
 
@@ -917,13 +917,13 @@ export type UpdateProjectMutation = {
   };
 };
 
-export type RemoveProjectMutationVariables = Exact<{
+export type DeleteProjectMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type RemoveProjectMutation = {
+export type DeleteProjectMutation = {
   __typename?: "Mutation";
-  removeProject: { __typename?: "Project"; id: string };
+  deleteProject: { __typename?: "Project"; id: string };
 };
 
 export type GetServiceQueryVariables = Exact<{
@@ -1033,13 +1033,13 @@ export type UpdateDomainMutation = {
   };
 };
 
-export type RemoveDomainMutationVariables = Exact<{
+export type DeleteDomainMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type RemoveDomainMutation = {
+export type DeleteDomainMutation = {
   __typename?: "Mutation";
-  removeDomain: { __typename?: "Domain"; id: string };
+  deleteDomain: { __typename?: "Domain"; id: string };
 };
 
 export type UpdateServiceEnvironmentMutationVariables = Exact<{
@@ -1075,13 +1075,13 @@ export type UpdateServiceMutation = {
   };
 };
 
-export type RemoveServiceMutationVariables = Exact<{
+export type DeleteServiceMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type RemoveServiceMutation = {
+export type DeleteServiceMutation = {
   __typename?: "Mutation";
-  removeService: { __typename?: "Service"; id: string };
+  deleteService: { __typename?: "Service"; id: string };
 };
 
 export type GetVolumesQueryVariables = Exact<{
@@ -1153,13 +1153,13 @@ export type UpdateVolumeMutation = {
   };
 };
 
-export type RemoveVolumeMutationVariables = Exact<{
+export type DeleteVolumeMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type RemoveVolumeMutation = {
+export type DeleteVolumeMutation = {
   __typename?: "Mutation";
-  removeVolume: { __typename?: "Volume"; id: string };
+  deleteVolume: { __typename?: "Volume"; id: string };
 };
 
 export type GetClusterQueryVariables = Exact<{
@@ -1197,13 +1197,13 @@ export type UpdateClusterMutation = {
   };
 };
 
-export type RemoveClusterMutationVariables = Exact<{
+export type DeleteClusterMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type RemoveClusterMutation = {
+export type DeleteClusterMutation = {
   __typename?: "Mutation";
-  removeCluster: { __typename?: "Cluster"; id: string };
+  deleteCluster: { __typename?: "Cluster"; id: string };
 };
 
 export type GetClustersQueryVariables = Exact<{
@@ -1412,11 +1412,11 @@ export type UpdateWorkspaceMutation = {
   updateWorkspace: { __typename?: "Workspace"; id: string; name: string };
 };
 
-export type RemoveWorkspaceMutationVariables = Exact<{ [key: string]: never }>;
+export type DeleteWorkspaceMutationVariables = Exact<{ [key: string]: never }>;
 
-export type RemoveWorkspaceMutation = {
+export type DeleteWorkspaceMutation = {
   __typename?: "Mutation";
-  removeWorkspace: { __typename?: "Workspace"; id: string };
+  deleteWorkspace: { __typename?: "Workspace"; id: string };
 };
 
 export type CreateWorkspaceMutationVariables = Exact<{
@@ -2481,13 +2481,13 @@ export const UpdateProjectDocument = {
   UpdateProjectMutation,
   UpdateProjectMutationVariables
 >;
-export const RemoveProjectDocument = {
+export const DeleteProjectDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "RemoveProject" },
+      name: { kind: "Name", value: "DeleteProject" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -2503,7 +2503,7 @@ export const RemoveProjectDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "removeProject" },
+            name: { kind: "Name", value: "deleteProject" },
             arguments: [
               {
                 kind: "Argument",
@@ -2526,8 +2526,8 @@ export const RemoveProjectDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  RemoveProjectMutation,
-  RemoveProjectMutationVariables
+  DeleteProjectMutation,
+  DeleteProjectMutationVariables
 >;
 export const GetServiceDocument = {
   kind: "Document",
@@ -3006,13 +3006,13 @@ export const UpdateDomainDocument = {
   UpdateDomainMutation,
   UpdateDomainMutationVariables
 >;
-export const RemoveDomainDocument = {
+export const DeleteDomainDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "RemoveDomain" },
+      name: { kind: "Name", value: "DeleteDomain" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -3028,7 +3028,7 @@ export const RemoveDomainDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "removeDomain" },
+            name: { kind: "Name", value: "deleteDomain" },
             arguments: [
               {
                 kind: "Argument",
@@ -3051,8 +3051,8 @@ export const RemoveDomainDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  RemoveDomainMutation,
-  RemoveDomainMutationVariables
+  DeleteDomainMutation,
+  DeleteDomainMutationVariables
 >;
 export const UpdateServiceEnvironmentDocument = {
   kind: "Document",
@@ -3310,13 +3310,13 @@ export const UpdateServiceDocument = {
   UpdateServiceMutation,
   UpdateServiceMutationVariables
 >;
-export const RemoveServiceDocument = {
+export const DeleteServiceDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "RemoveService" },
+      name: { kind: "Name", value: "DeleteService" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -3332,7 +3332,7 @@ export const RemoveServiceDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "removeService" },
+            name: { kind: "Name", value: "deleteService" },
             arguments: [
               {
                 kind: "Argument",
@@ -3355,8 +3355,8 @@ export const RemoveServiceDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  RemoveServiceMutation,
-  RemoveServiceMutationVariables
+  DeleteServiceMutation,
+  DeleteServiceMutationVariables
 >;
 export const GetVolumesDocument = {
   kind: "Document",
@@ -3739,13 +3739,13 @@ export const UpdateVolumeDocument = {
   UpdateVolumeMutation,
   UpdateVolumeMutationVariables
 >;
-export const RemoveVolumeDocument = {
+export const DeleteVolumeDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "RemoveVolume" },
+      name: { kind: "Name", value: "DeleteVolume" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -3761,7 +3761,7 @@ export const RemoveVolumeDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "removeVolume" },
+            name: { kind: "Name", value: "deleteVolume" },
             arguments: [
               {
                 kind: "Argument",
@@ -3784,8 +3784,8 @@ export const RemoveVolumeDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  RemoveVolumeMutation,
-  RemoveVolumeMutationVariables
+  DeleteVolumeMutation,
+  DeleteVolumeMutationVariables
 >;
 export const GetClusterDocument = {
   kind: "Document",
@@ -3950,13 +3950,13 @@ export const UpdateClusterDocument = {
   UpdateClusterMutation,
   UpdateClusterMutationVariables
 >;
-export const RemoveClusterDocument = {
+export const DeleteClusterDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "RemoveCluster" },
+      name: { kind: "Name", value: "DeleteCluster" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -3972,7 +3972,7 @@ export const RemoveClusterDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "removeCluster" },
+            name: { kind: "Name", value: "deleteCluster" },
             arguments: [
               {
                 kind: "Argument",
@@ -3995,8 +3995,8 @@ export const RemoveClusterDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  RemoveClusterMutation,
-  RemoveClusterMutationVariables
+  DeleteClusterMutation,
+  DeleteClusterMutationVariables
 >;
 export const GetClustersDocument = {
   kind: "Document",
@@ -5024,19 +5024,19 @@ export const UpdateWorkspaceDocument = {
   UpdateWorkspaceMutation,
   UpdateWorkspaceMutationVariables
 >;
-export const RemoveWorkspaceDocument = {
+export const DeleteWorkspaceDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "RemoveWorkspace" },
+      name: { kind: "Name", value: "DeleteWorkspace" },
       selectionSet: {
         kind: "SelectionSet",
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "removeWorkspace" },
+            name: { kind: "Name", value: "deleteWorkspace" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -5049,8 +5049,8 @@ export const RemoveWorkspaceDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  RemoveWorkspaceMutation,
-  RemoveWorkspaceMutationVariables
+  DeleteWorkspaceMutation,
+  DeleteWorkspaceMutationVariables
 >;
 export const CreateWorkspaceDocument = {
   kind: "Document",

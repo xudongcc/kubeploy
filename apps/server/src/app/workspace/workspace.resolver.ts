@@ -101,7 +101,7 @@ export class WorkspaceResolver {
 
   @Can(PermissionAction.DELETE, Workspace)
   @Mutation(() => Workspace)
-  async removeWorkspace(
+  async deleteWorkspace(
     @CurrentWorkspace() workspace: Workspace,
     @CurrentWorkspaceMember() workspaceMember: WorkspaceMember,
   ): Promise<Workspace> {
