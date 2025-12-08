@@ -85,10 +85,9 @@ export const WorkspaceSidebar: FC<ComponentProps<typeof Sidebar>> = ({
   ];
 
   return (
-    <Sidebar collapsible="icon" className="z-11" {...props}>
-      <SidebarLogo />
-
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
+        <SidebarLogo />
         <WorkspaceSwitcher />
       </SidebarHeader>
 
