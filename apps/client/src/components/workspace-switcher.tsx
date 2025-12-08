@@ -59,7 +59,6 @@ export function WorkspaceSwitcher() {
       <SidebarMenuItem>
         <SidebarMenuButton size="lg" asChild>
           <Link to="/">
-            {/* <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"></div> */}
             <img
               src="/logo.png"
               alt="Kubeploy"
