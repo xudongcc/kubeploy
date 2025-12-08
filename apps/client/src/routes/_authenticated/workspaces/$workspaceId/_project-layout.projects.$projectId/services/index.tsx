@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { Link } from "@/components/link";
 
 import { Page } from "@/components/page";
+import { ServiceStatusBadge } from "@/components/service-status-badge";
 import { DataTable } from "@/components/turboost-ui/data-table";
 import { Button } from "@/components/ui/button";
 import { graphql } from "@/gql";
@@ -50,9 +51,7 @@ const GET_SERVICES_QUERY = graphql(`
   fragment ServiceItem on Service {
     id
     name
-    image
-    replicas
-    ports
+    status
     createdAt
   }
 `);
@@ -118,19 +117,11 @@ function RouteComponent() {
             },
           },
           {
-            accessorKey: "image",
-            header: "Image",
-          },
-          {
-            accessorKey: "replicas",
-            header: "Replicas",
-          },
-          {
-            accessorKey: "ports",
-            header: "Ports",
-            cell: ({ row }) => {
-              return row.original.ports?.join(", ") || "-";
-            },
+            accessorKey: "status",
+            header: "Status",
+            cell: ({ row }) => (
+              <ServiceStatusBadge status={row.original.status} />
+            ),
           },
           {
             accessorKey: "createdAt",

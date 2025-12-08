@@ -22,6 +22,7 @@ import {
 } from '@/volume/volume.connection-definition';
 import { Volume } from '@/volume/volume.entity';
 
+import { ServiceStatus } from './enums/service-status.enum';
 import { CreateServiceInput } from './inputs/create-service.input';
 import { UpdateServiceInput } from './inputs/update-service.input';
 import { Service } from './service.entity';
@@ -108,5 +109,11 @@ export class ServiceResolver {
     return await this.cm.find(VolumeConnection, args, {
       where: { service },
     });
+  }
+
+  @Can(PermissionAction.READ, Service)
+  @ResolveField(() => ServiceStatus)
+  async status(@Parent() service: Service) {
+    return await this.serviceService.getStatus(service);
   }
 }

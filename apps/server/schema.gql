@@ -396,6 +396,7 @@ type Service {
   ports: [Int!]!
   project: Project!
   replicas: Int!
+  status: ServiceStatus!
   updatedAt: DateTime!
   volumes(
     """Returns the elements that come after the specified cursor."""
@@ -457,6 +458,16 @@ input ServiceOrder {
 enum ServiceOrderField {
   CREATED_AT
   ID
+}
+
+enum ServiceStatus {
+  BUILDING
+  DEPLOYING
+  FAILED
+  PENDING
+  RUNNING
+  STOPPED
+  UNKNOWN
 }
 
 input UpdateClusterInput {

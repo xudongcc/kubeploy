@@ -470,6 +470,7 @@ export type Service = {
   ports: Array<Scalars["Int"]["output"]>;
   project: Project;
   replicas: Scalars["Int"]["output"];
+  status: ServiceStatus;
   updatedAt: Scalars["DateTime"]["output"];
   volumes: VolumeConnection;
 };
@@ -523,6 +524,16 @@ export type ServiceOrder = {
 export enum ServiceOrderField {
   CREATED_AT = "CREATED_AT",
   ID = "ID",
+}
+
+export enum ServiceStatus {
+  BUILDING = "BUILDING",
+  DEPLOYING = "DEPLOYING",
+  FAILED = "FAILED",
+  PENDING = "PENDING",
+  RUNNING = "RUNNING",
+  STOPPED = "STOPPED",
+  UNKNOWN = "UNKNOWN",
 }
 
 export type UpdateClusterInput = {
@@ -871,9 +882,7 @@ export type GetServicesQuery = {
           __typename?: "Service";
           id: string;
           name: string;
-          image: string;
-          replicas: number;
-          ports: Array<number>;
+          status: ServiceStatus;
           createdAt: any;
         };
       }>;
@@ -892,9 +901,7 @@ export type ServiceItemFragment = {
   __typename?: "Service";
   id: string;
   name: string;
-  image: string;
-  replicas: number;
-  ports: Array<number>;
+  status: ServiceStatus;
   createdAt: any;
 } & { " $fragmentName"?: "ServiceItemFragment" };
 
@@ -1518,9 +1525,7 @@ export const ServiceItemFragmentDoc = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "image" } },
-          { kind: "Field", name: { kind: "Name", value: "replicas" } },
-          { kind: "Field", name: { kind: "Name", value: "ports" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
         ],
       },
@@ -2368,9 +2373,7 @@ export const GetServicesDocument = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "image" } },
-          { kind: "Field", name: { kind: "Name", value: "replicas" } },
-          { kind: "Field", name: { kind: "Name", value: "ports" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
         ],
       },

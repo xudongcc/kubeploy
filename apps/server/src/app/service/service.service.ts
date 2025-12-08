@@ -11,8 +11,8 @@ import {
   isNotFoundError,
 } from '@/kubernetes';
 import { ProjectService } from '@/project/project.service';
-import { Volume } from '@/volume/volume.entity';
 
+import { ServiceStatus } from './enums/service-status.enum';
 import { Service } from './service.entity';
 
 @Injectable()
@@ -229,5 +229,83 @@ export class ServiceService extends EntityService<Service> {
         })),
       },
     };
+  }
+
+  async getStatus(service: Service): Promise<ServiceStatus> {
+    const project = await service.project.loadOrFail();
+    const cluster = await project.cluster.loadOrFail();
+    const namespace = project.kubeNamespaceName;
+
+    const appsV1Api = this.clusterClientFactory.getAppsV1Api(cluster);
+
+    try {
+      const deployment = await appsV1Api.readNamespacedDeployment({
+        name: service.kubeDeploymentName,
+        namespace,
+      });
+
+      const spec = deployment.spec;
+      const status = deployment.status;
+
+      if (!spec || !status) {
+        return ServiceStatus.UNKNOWN;
+      }
+
+      const desiredReplicas = spec.replicas ?? 0;
+      const readyReplicas = status.readyReplicas ?? 0;
+      const updatedReplicas = status.updatedReplicas ?? 0;
+      const availableReplicas = status.availableReplicas ?? 0;
+      const unavailableReplicas = status.unavailableReplicas ?? 0;
+
+      // 副本数为 0，已停止
+      if (desiredReplicas === 0) {
+        return ServiceStatus.STOPPED;
+      }
+
+      // 检查是否有失败的条件
+      const conditions = status.conditions ?? [];
+      const progressingCondition = conditions.find(
+        (c: { type?: string }) => c.type === 'Progressing',
+      );
+      const availableCondition = conditions.find(
+        (c: { type?: string }) => c.type === 'Available',
+      );
+
+      // 如果 Progressing 条件为 False 且原因是 ProgressDeadlineExceeded，则部署失败
+      if (
+        progressingCondition?.status === 'False' &&
+        progressingCondition?.reason === 'ProgressDeadlineExceeded'
+      ) {
+        return ServiceStatus.FAILED;
+      }
+
+      // 正在滚动更新
+      if (updatedReplicas < desiredReplicas || unavailableReplicas > 0) {
+        return ServiceStatus.DEPLOYING;
+      }
+
+      // 所有副本都已就绪
+      if (
+        readyReplicas === desiredReplicas &&
+        availableReplicas === desiredReplicas &&
+        availableCondition?.status === 'True'
+      ) {
+        return ServiceStatus.RUNNING;
+      }
+
+      // 部分副本未就绪，可能正在部署
+      if (readyReplicas < desiredReplicas) {
+        return ServiceStatus.DEPLOYING;
+      }
+
+      return ServiceStatus.RUNNING;
+    } catch (error: unknown) {
+      if (isNotFoundError(error)) {
+        // Deployment 不存在，返回待部署状态
+        return ServiceStatus.PENDING;
+      }
+      // 其他错误，返回未知状态
+      return ServiceStatus.UNKNOWN;
+    }
   }
 }
