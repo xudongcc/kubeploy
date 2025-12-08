@@ -9,9 +9,11 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import appCss from "../styles.css?url";
 import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
 import { NotFoundPageTemplate } from "@/components/not-found-page-template";
+import i18n from "i18next";
 
 export const Route = createRootRouteWithContext<
   ApolloClientIntegration.RouterContext & {
+    i18n: typeof i18n;
     title?: string;
   }
 >()({

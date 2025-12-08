@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
+import { useTranslation } from "react-i18next";
 
 export function LoginForm({
   className,
@@ -20,12 +21,14 @@ export function LoginForm({
     select: (search) => search.redirect,
   });
 
+  const { t } = useTranslation();
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Login with your GitHub account</CardDescription>
+          <CardTitle className="text-xl">{t("welcomeBack")}</CardTitle>
+          <CardDescription>{t("loginWithGitHubAccount")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form>
@@ -41,7 +44,7 @@ export function LoginForm({
                     })
                   }
                 >
-                  Login with GitHub
+                  {t("loginWithGitHub")}
                 </Button>
               </Field>
               {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
@@ -79,8 +82,8 @@ export function LoginForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        {t("byClickingContinue")} <a href="#">{t("termsOfService")}</a>{" "}
+        {t("and")} <a href="#">{t("privacyPolicy")}</a>.
       </FieldDescription>
     </div>
   );
