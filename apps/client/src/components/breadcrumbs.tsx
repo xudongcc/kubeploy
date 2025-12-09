@@ -1,5 +1,5 @@
 import { Fragment, useMemo } from "react";
-import { LinkComponentProps, useRouterState } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 import type { FC } from "react";
 import {
   Breadcrumb,
@@ -12,11 +12,6 @@ import {
 import uniqBy from "lodash-es/uniqBy";
 
 import { Link } from "@/components/link";
-
-export interface BreadcrumbsItemProps {
-  title: string;
-  link: LinkComponentProps<"a">;
-}
 
 export const Breadcrumbs: FC = () => {
   const matches = useRouterState({ select: (state) => state.matches });
