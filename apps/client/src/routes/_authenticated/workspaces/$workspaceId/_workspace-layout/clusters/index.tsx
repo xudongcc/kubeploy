@@ -77,9 +77,6 @@ export const Route = createFileRoute(
       defaultOrderDirection: OrderDirection.DESC,
     }),
   ),
-  beforeLoad: () => {
-    return { title: t("cluster.title") };
-  },
 });
 
 function RouteComponent() {

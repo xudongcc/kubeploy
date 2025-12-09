@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from "react";
 import {
   LinkComponentProps,
-  linkOptions,
+  useRouter,
   useRouterState,
 } from "@tanstack/react-router";
 import type { FC } from "react";
@@ -13,6 +13,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import uniqBy from "lodash-es/uniqBy";
 
 import { Link } from "@/components/link";
 
@@ -26,26 +27,32 @@ export interface BreadcrumbsProps {
 }
 
 export const Breadcrumbs: FC<BreadcrumbsProps> = ({ baseItems = [] }) => {
+  const { buildLocation } = useRouter();
+
   const matches = useRouterState({ select: (state) => state.matches });
 
   const [breadcrumbs, lastBreadcrumb] = useMemo(() => {
-    const breadcrumbs = [
-      ...baseItems,
-      ...matches
-        .map(({ pathname, context }) => {
-          if (!context.title) {
-            return null;
-          }
+    const breadcrumbs = uniqBy(
+      [
+        ...baseItems.map((item) => ({
+          title: item.title,
+          path: buildLocation(item.link).pathname,
+        })),
+        ...matches
+          .map(({ pathname, context }) => {
+            if (!context.title) {
+              return null;
+            }
 
-          return {
-            title: context.title,
-            link: linkOptions({
-              to: pathname,
-            }),
-          };
-        })
-        .filter((item) => item !== null),
-    ];
+            return {
+              title: context.title,
+              path: pathname,
+            };
+          })
+          .filter((item) => item !== null),
+      ],
+      (item) => item.path.replace(/\/+$/, ""),
+    );
 
     const lastBreadcrumb = breadcrumbs.pop();
 
@@ -59,9 +66,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ baseItems = [] }) => {
           <Fragment key={breadcrumb.title}>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink asChild>
-                <Link {...(breadcrumb.link as LinkComponentProps<"a">)}>
-                  {breadcrumb.title}
-                </Link>
+                <Link to={breadcrumb.path}>{breadcrumb.title}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
 
