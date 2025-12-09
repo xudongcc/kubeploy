@@ -10,21 +10,15 @@ import {
 import { ConnectionManager } from '@nest-boot/graphql-connection';
 
 import { Cluster } from '@/cluster/cluster.entity';
-import { CurrentWorkspace } from '@/common/decorators/current-workspace.decorator';
 import { Can, PermissionAction } from '@/lib/permission';
 import {
   ServiceConnection,
   ServiceConnectionArgs,
 } from '@/service/service.connection-definition';
 import { Service } from '@/service/service.entity';
-import { Workspace } from '@/workspace/workspace.entity';
 
 import { CreateProjectInput } from './inputs/create-project.input';
 import { UpdateProjectInput } from './inputs/update-project.input';
-import {
-  ProjectConnection,
-  ProjectConnectionArgs,
-} from './project.connection-definition';
 import { Project } from './project.entity';
 import { ProjectService } from './project.service';
 

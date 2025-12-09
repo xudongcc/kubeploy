@@ -18,10 +18,6 @@ import {
 import { Project } from '@/project/project.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
-import {
-  ClusterConnection,
-  ClusterConnectionArgs,
-} from './cluster.connection-definition';
 import { Cluster } from './cluster.entity';
 import { ClusterService } from './cluster.service';
 import { CreateClusterInput } from './inputs/create-cluster.input';
