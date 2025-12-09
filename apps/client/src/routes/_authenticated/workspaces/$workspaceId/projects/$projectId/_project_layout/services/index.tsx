@@ -25,6 +25,7 @@ const GET_SERVICES_QUERY = graphql(`
     $query: String
   ) {
     project(id: $projectId) {
+      id
       services(
         after: $after
         before: $before

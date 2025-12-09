@@ -1,4 +1,9 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  redirect,
+  useRouter,
+} from "@tanstack/react-router";
 
 import { graphql } from "@/gql";
 import {
@@ -9,11 +14,17 @@ import {
 import { WorkspaceSidebar } from "@/components/workspace-sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { useApolloClient } from "@apollo/client/react";
+import { useEffect } from "react";
 
-const GET_CURRENT_WORKSPACE_QUERY = graphql(`
-  query GetCurrentWorkspace($id: ID!) {
+const GET_WORKSPACE_QUERY = graphql(`
+  query GetWorkspace($id: ID!) {
     workspace(id: $id) {
       id
+      name
+      createdAt
+      updatedAt
+
       ...CurrentWorkspace @unmask
     }
   }
@@ -21,6 +32,8 @@ const GET_CURRENT_WORKSPACE_QUERY = graphql(`
   fragment CurrentWorkspace on Workspace {
     id
     name
+    createdAt
+    updatedAt
   }
 `);
 
@@ -33,7 +46,7 @@ export const Route = createFileRoute("/_authenticated/workspaces/$workspaceId")(
     }) => {
       try {
         const { data } = await apolloClient.query({
-          query: GET_CURRENT_WORKSPACE_QUERY,
+          query: GET_WORKSPACE_QUERY,
           variables: { id: workspaceId },
         });
 
@@ -50,6 +63,31 @@ export const Route = createFileRoute("/_authenticated/workspaces/$workspaceId")(
 );
 
 function RouteComponent() {
+  const router = useRouter();
+  const apolloClient = useApolloClient();
+
+  const workspace = Route.useRouteContext({
+    select: (context) => context.workspace,
+  });
+
+  useEffect(() => {
+    const subscription = apolloClient
+      .watchQuery({
+        query: GET_WORKSPACE_QUERY,
+        variables: { id: workspace.id },
+        fetchPolicy: "cache-only",
+      })
+      .subscribe({
+        next(result) {
+          if (result.data?.workspace?.updatedAt !== workspace.updatedAt) {
+            router.invalidate();
+          }
+        },
+      });
+
+    return () => subscription.unsubscribe();
+  }, [apolloClient, workspace]);
+
   return (
     <SidebarProvider>
       <WorkspaceSidebar />

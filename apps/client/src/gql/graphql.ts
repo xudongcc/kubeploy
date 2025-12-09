@@ -841,19 +841,27 @@ export type CurrentUserFragment = {
   email: string;
 } & { " $fragmentName"?: "CurrentUserFragment" };
 
-export type GetCurrentWorkspaceQueryVariables = Exact<{
+export type GetWorkspaceQueryVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type GetCurrentWorkspaceQuery = {
+export type GetWorkspaceQuery = {
   __typename?: "Query";
-  workspace?: { __typename?: "Workspace"; id: string; name: string } | null;
+  workspace?: {
+    __typename?: "Workspace";
+    id: string;
+    name: string;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
 };
 
 export type CurrentWorkspaceFragment = {
   __typename?: "Workspace";
   id: string;
   name: string;
+  createdAt: any;
+  updatedAt: any;
 } & { " $fragmentName"?: "CurrentWorkspaceFragment" };
 
 export type GetClusterQueryVariables = Exact<{
@@ -938,6 +946,7 @@ export type GetClustersQuery = {
   __typename?: "Query";
   workspace?: {
     __typename?: "Workspace";
+    id: string;
     clusters: {
       __typename?: "ClusterConnection";
       edges: Array<{
@@ -1073,13 +1082,21 @@ export type GetProjectQueryVariables = Exact<{
 
 export type GetProjectQuery = {
   __typename?: "Query";
-  project?: { __typename?: "Project"; id: string; name: string } | null;
+  project?: {
+    __typename?: "Project";
+    id: string;
+    name: string;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
 };
 
 export type ProjectDetailFragment = {
   __typename?: "Project";
   id: string;
   name: string;
+  createdAt: any;
+  updatedAt: any;
 } & { " $fragmentName"?: "ProjectDetailFragment" };
 
 export type CreateServiceMutationVariables = Exact<{
@@ -1105,6 +1122,7 @@ export type GetServicesQuery = {
   __typename?: "Query";
   project?: {
     __typename?: "Project";
+    id: string;
     services: {
       __typename?: "ServiceConnection";
       edges: Array<{
@@ -1167,10 +1185,11 @@ export type GetServiceQuery = {
     __typename?: "Service";
     id: string;
     name: string;
+    createdAt: any;
+    updatedAt: any;
     image: string;
     ports: Array<number>;
     replicas: number;
-    createdAt: any;
     environmentVariables: Array<{
       __typename?: "EnvironmentVariable";
       key: string;
@@ -1187,6 +1206,7 @@ export type ServiceDetailFragment = {
   ports: Array<number>;
   replicas: number;
   createdAt: any;
+  updatedAt: any;
   environmentVariables: Array<{
     __typename?: "EnvironmentVariable";
     key: string;
@@ -1207,6 +1227,7 @@ export type GetDomainsQuery = {
   __typename?: "Query";
   service?: {
     __typename?: "Service";
+    id: string;
     domains: {
       __typename?: "DomainConnection";
       edges: Array<{
@@ -1327,6 +1348,7 @@ export type GetVolumesQuery = {
   __typename?: "Query";
   service?: {
     __typename?: "Service";
+    id: string;
     volumes: {
       __typename?: "VolumeConnection";
       edges: Array<{
@@ -1406,6 +1428,7 @@ export type GetProjectsQuery = {
   __typename?: "Query";
   workspace?: {
     __typename?: "Workspace";
+    id: string;
     projects: {
       __typename?: "ProjectConnection";
       edges: Array<{
@@ -1540,6 +1563,8 @@ export const CurrentWorkspaceFragmentDoc = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -1676,6 +1701,8 @@ export const ProjectDetailFragmentDoc = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -1733,6 +1760,7 @@ export const ServiceDetailFragmentDoc = {
             },
           },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -2043,13 +2071,13 @@ export const GetCurrentUserDocument = {
     },
   ],
 } as unknown as DocumentNode<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
-export const GetCurrentWorkspaceDocument = {
+export const GetWorkspaceDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "query",
-      name: { kind: "Name", value: "GetCurrentWorkspace" },
+      name: { kind: "Name", value: "GetWorkspace" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -2080,6 +2108,9 @@ export const GetCurrentWorkspaceDocument = {
               kind: "SelectionSet",
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
                 {
                   kind: "FragmentSpread",
                   name: { kind: "Name", value: "CurrentWorkspace" },
@@ -2108,14 +2139,13 @@ export const GetCurrentWorkspaceDocument = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
   ],
-} as unknown as DocumentNode<
-  GetCurrentWorkspaceQuery,
-  GetCurrentWorkspaceQueryVariables
->;
+} as unknown as DocumentNode<GetWorkspaceQuery, GetWorkspaceQueryVariables>;
 export const GetClusterDocument = {
   kind: "Document",
   definitions: [
@@ -2486,6 +2516,7 @@ export const GetClustersDocument = {
             selectionSet: {
               kind: "SelectionSet",
               selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "clusters" },
@@ -3112,6 +3143,9 @@ export const GetProjectDocument = {
               kind: "SelectionSet",
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
                 {
                   kind: "FragmentSpread",
                   name: { kind: "Name", value: "ProjectDetail" },
@@ -3140,6 +3174,8 @@ export const GetProjectDocument = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -3286,6 +3322,7 @@ export const GetServicesDocument = {
             selectionSet: {
               kind: "SelectionSet",
               selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "services" },
@@ -3511,6 +3548,8 @@ export const UpdateProjectDocument = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -3604,6 +3643,9 @@ export const GetServiceDocument = {
               kind: "SelectionSet",
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
                 {
                   kind: "FragmentSpread",
                   name: { kind: "Name", value: "ServiceDetail" },
@@ -3647,6 +3689,7 @@ export const GetServiceDocument = {
             },
           },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -3731,6 +3774,7 @@ export const GetDomainsDocument = {
             selectionSet: {
               kind: "SelectionSet",
               selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "domains" },
@@ -4177,6 +4221,7 @@ export const UpdateServiceEnvironmentDocument = {
             },
           },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -4329,6 +4374,7 @@ export const UpdateServiceDocument = {
             },
           },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
@@ -4464,6 +4510,7 @@ export const GetVolumesDocument = {
             selectionSet: {
               kind: "SelectionSet",
               selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "volumes" },
@@ -4901,6 +4948,7 @@ export const GetProjectsDocument = {
             selectionSet: {
               kind: "SelectionSet",
               selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "projects" },

@@ -35,6 +35,7 @@ const GET_VOLUMES_QUERY = graphql(`
     $orderBy: VolumeOrder
   ) {
     service(id: $serviceId) {
+      id
       volumes(
         after: $after
         before: $before

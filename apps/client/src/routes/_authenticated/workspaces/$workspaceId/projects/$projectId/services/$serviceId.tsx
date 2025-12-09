@@ -3,17 +3,23 @@ import {
   createFileRoute,
   linkOptions,
   redirect,
+  useRouter,
 } from "@tanstack/react-router";
 
 import { graphql } from "@/gql";
 import { NavTabs } from "@/components/nav-tabs";
 import { t } from "i18next";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { useApolloClient } from "@apollo/client/react";
 
 const GET_SERVICE_QUERY = graphql(`
   query GetService($id: ID!) {
     service(id: $id) {
       id
+      name
+      createdAt
+      updatedAt
+
       ...ServiceDetail @unmask
     }
   }
@@ -29,6 +35,7 @@ const GET_SERVICE_QUERY = graphql(`
       value
     }
     createdAt
+    updatedAt
   }
 `);
 
@@ -63,6 +70,30 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { workspaceId, projectId, serviceId } = Route.useParams();
+
+  const router = useRouter();
+  const apolloClient = useApolloClient();
+  const service = Route.useRouteContext({
+    select: (context) => context.service,
+  });
+
+  useEffect(() => {
+    const subscription = apolloClient
+      .watchQuery({
+        query: GET_SERVICE_QUERY,
+        variables: { id: service.id },
+        fetchPolicy: "cache-only",
+      })
+      .subscribe({
+        next(result) {
+          if (result.data?.service?.updatedAt !== service.updatedAt) {
+            router.invalidate();
+          }
+        },
+      });
+
+    return () => subscription.unsubscribe();
+  }, [apolloClient, service]);
 
   const tabs = useMemo(
     () => [

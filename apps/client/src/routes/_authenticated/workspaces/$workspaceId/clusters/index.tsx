@@ -25,6 +25,7 @@ const GET_CLUSTERS_QUERY = graphql(`
     $query: String
   ) {
     workspace(id: $workspaceId) {
+      id
       clusters(
         after: $after
         before: $before

@@ -37,6 +37,7 @@ const GET_PROJECTS_QUERY = graphql(`
     $query: String
   ) {
     workspace(id: $workspaceId) {
+      id
       projects(
         after: $after
         before: $before

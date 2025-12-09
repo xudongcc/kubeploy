@@ -35,6 +35,7 @@ const GET_DOMAINS_QUERY = graphql(`
     $orderBy: DomainOrder
   ) {
     service(id: $serviceId) {
+      id
       domains(
         after: $after
         before: $before
