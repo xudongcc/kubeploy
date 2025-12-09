@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { ClusterNodeStatus } from "@/gql/graphql";
 import { graphql } from "@/gql";
 
 const GET_CLUSTER_QUERY = graphql(`
@@ -46,6 +47,7 @@ const GET_CLUSTER_QUERY = graphql(`
     nodes {
       name
       ip
+      status
       allocatableCpuCores
       allocatableMemoryBytes
       allocatableDiskBytes
@@ -171,37 +173,47 @@ function RouteComponent() {
   }
 
   const nodes = cluster.nodes ?? [];
-  const totalAllocatableCpu = nodes.reduce(
-    (sum, node) => sum + node.allocatableCpuCores,
-    0,
-  );
+  const activeNodeCount = nodes.filter(
+    (node) => node.status === ClusterNodeStatus.ACTIVE,
+  ).length;
   const totalCapacityCpu = nodes.reduce(
     (sum, node) => sum + node.capacityCpuCores,
     0,
   );
-  const totalAllocatableMemory = nodes.reduce(
-    (sum, node) => sum + node.allocatableMemoryBytes,
+  const totalReservedCpu = nodes.reduce(
+    (sum, node) => sum + (node.capacityCpuCores - node.allocatableCpuCores),
     0,
   );
   const totalCapacityMemory = nodes.reduce(
     (sum, node) => sum + node.capacityMemoryBytes,
     0,
   );
-  const totalAllocatableDisk = nodes.reduce(
-    (sum, node) => sum + node.allocatableDiskBytes,
+  const totalReservedMemory = nodes.reduce(
+    (sum, node) =>
+      sum + (node.capacityMemoryBytes - node.allocatableMemoryBytes),
     0,
   );
   const totalCapacityDisk = nodes.reduce(
     (sum, node) => sum + node.capacityDiskBytes,
     0,
   );
+  const totalReservedDisk = nodes.reduce(
+    (sum, node) => sum + (node.capacityDiskBytes - node.allocatableDiskBytes),
+    0,
+  );
+
+  const formatCpu = (cores: number) => {
+    if (Number.isInteger(cores)) return cores.toString();
+    const rounded = Math.round(cores * 100) / 100;
+    return Number.isInteger(rounded) ? rounded.toString() : rounded.toString();
+  };
 
   const formatBytes = (bytes: number) => {
     if (bytes >= 1024 ** 4) return `${(bytes / 1024 ** 4).toFixed(2)}TB`;
     if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(2)}GB`;
     if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(2)}MB`;
     if (bytes >= 1024) return `${(bytes / 1024).toFixed(2)}KB`;
-    return `${bytes} B`;
+    return `${bytes}B`;
   };
 
   return (
@@ -226,7 +238,9 @@ function RouteComponent() {
                 <Server className="text-muted-foreground h-4 w-4" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{nodes.length}</div>
+                <div className="text-2xl font-bold">
+                  {activeNodeCount} / {nodes.length}
+                </div>
               </CardContent>
             </Card>
 
@@ -239,12 +253,8 @@ function RouteComponent() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {totalAllocatableCpu.toFixed(1)} /{" "}
-                  {totalCapacityCpu.toFixed(1)}
+                  {formatCpu(totalReservedCpu)} / {formatCpu(totalCapacityCpu)}
                 </div>
-                <p className="text-muted-foreground text-xs">
-                  {t("cluster.overview.allocatableTotal")}
-                </p>
               </CardContent>
             </Card>
 
@@ -257,12 +267,9 @@ function RouteComponent() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatBytes(totalAllocatableMemory)} /{" "}
+                  {formatBytes(totalReservedMemory)} /{" "}
                   {formatBytes(totalCapacityMemory)}
                 </div>
-                <p className="text-muted-foreground text-xs">
-                  {t("cluster.overview.allocatableTotal")}
-                </p>
               </CardContent>
             </Card>
 
@@ -275,12 +282,9 @@ function RouteComponent() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatBytes(totalAllocatableDisk)} /{" "}
+                  {formatBytes(totalReservedDisk)} /{" "}
                   {formatBytes(totalCapacityDisk)}
                 </div>
-                <p className="text-muted-foreground text-xs">
-                  {t("cluster.overview.allocatableTotal")}
-                </p>
               </CardContent>
             </Card>
           </div>

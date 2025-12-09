@@ -6,6 +6,7 @@ import { CreateEntityData } from '@/common/types/create-entity-data.type';
 
 import { Cluster } from './cluster.entity';
 import { ClusterClientFactory } from './cluster-client.factory';
+import { ClusterNodeStatus } from './enums/cluster-node-status.enum';
 import { ClusterNode } from './objects/cluster-node.object';
 
 @Injectable()
@@ -45,6 +46,14 @@ export class ClusterService extends EntityService<Cluster> {
           (addr) => addr.type === 'InternalIP',
         );
 
+        const readyCondition = node.status?.conditions?.find(
+          (condition) => condition.type === 'Ready',
+        );
+        const status =
+          readyCondition?.status === 'True'
+            ? ClusterNodeStatus.ACTIVE
+            : ClusterNodeStatus.UNKNOWN;
+
         return {
           id: node.metadata?.uid ?? '',
           name: node.metadata?.name ?? '',
@@ -57,6 +66,7 @@ export class ClusterService extends EntityService<Cluster> {
           capacityCpuCores: this.parseCpu(capacity.cpu),
           capacityMemoryBytes: this.parseMemory(capacity.memory),
           capacityDiskBytes: this.parseMemory(capacity['ephemeral-storage']),
+          status,
         };
       });
     } catch {

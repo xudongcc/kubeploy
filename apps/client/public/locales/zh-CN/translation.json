@@ -54,6 +54,7 @@
     },
     "notFound": "集群未找到",
     "overview": {
+      "activeTotal": "活跃 / 总计",
       "allocatableTotal": "可分配 / 总计",
       "cpu": "CPU（核）",
       "disk": "磁盘",

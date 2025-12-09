@@ -79,6 +79,12 @@ type ClusterNode {
   id: ID!
   ip: String!
   name: String!
+  status: ClusterNodeStatus!
+}
+
+enum ClusterNodeStatus {
+  ACTIVE
+  UNKNOWN
 }
 
 """Ordering options for cluster connections"""

@@ -95,7 +95,13 @@ export type ClusterNode = {
   id: Scalars["ID"]["output"];
   ip: Scalars["String"]["output"];
   name: Scalars["String"]["output"];
+  status: ClusterNodeStatus;
 };
+
+export enum ClusterNodeStatus {
+  ACTIVE = "ACTIVE",
+  UNKNOWN = "UNKNOWN",
+}
 
 /** Ordering options for cluster connections */
 export type ClusterOrder = {
@@ -1192,6 +1198,7 @@ export type GetClusterQuery = {
       __typename?: "ClusterNode";
       name: string;
       ip: string;
+      status: ClusterNodeStatus;
       allocatableCpuCores: number;
       allocatableMemoryBytes: number;
       allocatableDiskBytes: number;
@@ -1212,6 +1219,7 @@ export type ClusterDetailFragment = {
     __typename?: "ClusterNode";
     name: string;
     ip: string;
+    status: ClusterNodeStatus;
     allocatableCpuCores: number;
     allocatableMemoryBytes: number;
     allocatableDiskBytes: number;
@@ -1686,6 +1694,7 @@ export const ClusterDetailFragmentDoc = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "ip" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "allocatableCpuCores" },
@@ -3933,6 +3942,7 @@ export const GetClusterDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "ip" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "allocatableCpuCores" },
@@ -4056,6 +4066,7 @@ export const UpdateClusterDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "ip" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "allocatableCpuCores" },

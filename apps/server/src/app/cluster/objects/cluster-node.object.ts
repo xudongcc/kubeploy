@@ -1,5 +1,7 @@
 import { Field, Float, ID, Int, ObjectType } from '@nest-boot/graphql';
 
+import { ClusterNodeStatus } from '../enums/cluster-node-status.enum';
+
 @ObjectType()
 export class ClusterNode {
   @Field(() => ID)
@@ -28,4 +30,7 @@ export class ClusterNode {
 
   @Field(() => Float)
   capacityDiskBytes!: number;
+
+  @Field(() => ClusterNodeStatus)
+  status!: ClusterNodeStatus;
 }
