@@ -30,6 +30,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { ClusterNodeStatus } from "@/gql/graphql";
 import { graphql } from "@/gql";
+import { zodValidator } from "@tanstack/zod-adapter";
+import z from "zod";
 
 const GET_CLUSTER_QUERY = graphql(`
   query GetCluster($id: ID!) {
@@ -79,6 +81,11 @@ export const Route = createFileRoute(
   "/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/$clusterId",
 )({
   component: RouteComponent,
+  validateSearch: zodValidator(
+    z.object({
+      tab: z.enum(["overview", "settings"]).default("overview"),
+    }),
+  ),
   beforeLoad: async ({
     context: { apolloClient },
     params: { workspaceId, clusterId },
@@ -102,6 +109,7 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
+  const { tab } = Route.useSearch();
   const { workspaceId, clusterId } = Route.useParams();
   const navigate = Route.useNavigate();
 
@@ -218,7 +226,21 @@ function RouteComponent() {
 
   return (
     <Page title={cluster.name} description={t("cluster.detail.description")}>
-      <Tabs defaultValue="overview">
+      <Tabs
+        defaultValue={tab}
+        onValueChange={(value) => {
+          navigate({
+            to: "/workspaces/$workspaceId/clusters/$clusterId",
+            params: { workspaceId, clusterId },
+            search: {
+              tab:
+                value === "overview" || value === "settings"
+                  ? value
+                  : "overview",
+            },
+          });
+        }}
+      >
         <TabsList>
           <TabsTrigger value="overview">
             {t("cluster.tabs.overview")}
