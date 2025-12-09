@@ -67,9 +67,9 @@ export class ClusterService extends EntityService<Cluster> {
   private parseCpu(cpu?: string): number {
     if (!cpu) return 0;
     if (cpu.endsWith('m')) {
-      return parseInt(cpu.slice(0, -1), 10) / 1000;
+      return parseFloat(cpu.slice(0, -1)) / 1000;
     }
-    return parseInt(cpu, 10);
+    return parseFloat(cpu);
   }
 
   private parseMemory(memory?: string): number {
@@ -80,10 +80,14 @@ export class ClusterService extends EntityService<Cluster> {
       Mi: 1024 ** 2,
       Gi: 1024 ** 3,
       Ti: 1024 ** 4,
+      Pi: 1024 ** 5,
+      Ei: 1024 ** 6,
       K: 1000,
       M: 1000 ** 2,
       G: 1000 ** 3,
       T: 1000 ** 4,
+      P: 1000 ** 5,
+      E: 1000 ** 6,
     };
 
     for (const [unit, multiplier] of Object.entries(units)) {
