@@ -66,7 +66,7 @@ const CREATE_CLUSTER_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/",
+  "/_authenticated/workspaces/$workspaceId/clusters/",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(

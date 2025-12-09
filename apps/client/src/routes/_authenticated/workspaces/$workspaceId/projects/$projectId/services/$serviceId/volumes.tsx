@@ -101,13 +101,10 @@ const DELETE_VOLUME_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/volumes",
+  "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(volumeConnectionSchema),
-  beforeLoad: () => {
-    return { title: null };
-  },
 });
 
 function RouteComponent() {

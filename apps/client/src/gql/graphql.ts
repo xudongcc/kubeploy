@@ -856,6 +856,217 @@ export type CurrentWorkspaceFragment = {
   name: string;
 } & { " $fragmentName"?: "CurrentWorkspaceFragment" };
 
+export type GetClusterQueryVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type GetClusterQuery = {
+  __typename?: "Query";
+  cluster?: {
+    __typename?: "Cluster";
+    id: string;
+    name: string;
+    server: string;
+    createdAt: any;
+    nodes: Array<{
+      __typename?: "ClusterNode";
+      name: string;
+      ip: string;
+      status: ClusterNodeStatus;
+      allocatableCpuCores: number;
+      allocatableMemoryBytes: number;
+      allocatableDiskBytes: number;
+      capacityCpuCores: number;
+      capacityMemoryBytes: number;
+      capacityDiskBytes: number;
+    }>;
+  } | null;
+};
+
+export type ClusterDetailFragment = {
+  __typename?: "Cluster";
+  id: string;
+  name: string;
+  server: string;
+  createdAt: any;
+  nodes: Array<{
+    __typename?: "ClusterNode";
+    name: string;
+    ip: string;
+    status: ClusterNodeStatus;
+    allocatableCpuCores: number;
+    allocatableMemoryBytes: number;
+    allocatableDiskBytes: number;
+    capacityCpuCores: number;
+    capacityMemoryBytes: number;
+    capacityDiskBytes: number;
+  }>;
+} & { " $fragmentName"?: "ClusterDetailFragment" };
+
+export type UpdateClusterMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: UpdateClusterInput;
+}>;
+
+export type UpdateClusterMutation = {
+  __typename?: "Mutation";
+  updateCluster: { __typename?: "Cluster"; id: string } & {
+    " $fragmentRefs"?: { ClusterDetailFragment: ClusterDetailFragment };
+  };
+};
+
+export type DeleteClusterMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type DeleteClusterMutation = {
+  __typename?: "Mutation";
+  deleteCluster: { __typename?: "Cluster"; id: string };
+};
+
+export type GetClustersQueryVariables = Exact<{
+  workspaceId: Scalars["ID"]["input"];
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<ClusterOrder>;
+  query?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type GetClustersQuery = {
+  __typename?: "Query";
+  workspace?: {
+    __typename?: "Workspace";
+    clusters: {
+      __typename?: "ClusterConnection";
+      edges: Array<{
+        __typename?: "ClusterEdge";
+        node: {
+          __typename?: "Cluster";
+          id: string;
+          name: string;
+          server: string;
+          createdAt: any;
+        };
+      }>;
+      pageInfo: {
+        __typename?: "PageInfo";
+        endCursor?: string | null;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor?: string | null;
+      };
+    };
+  } | null;
+};
+
+export type ClusterItemFragment = {
+  __typename?: "Cluster";
+  id: string;
+  name: string;
+  server: string;
+  createdAt: any;
+} & { " $fragmentName"?: "ClusterItemFragment" };
+
+export type CreateClusterMutationVariables = Exact<{
+  input: CreateClusterInput;
+}>;
+
+export type CreateClusterMutation = {
+  __typename?: "Mutation";
+  createCluster: { __typename?: "Cluster"; id: string };
+};
+
+export type GetWorkspaceMembersQueryVariables = Exact<{
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<WorkspaceMemberOrder>;
+  query?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type GetWorkspaceMembersQuery = {
+  __typename?: "Query";
+  workspaceMembers: {
+    __typename?: "WorkspaceMemberConnection";
+    edges: Array<{
+      __typename?: "WorkspaceMemberEdge";
+      node: {
+        __typename?: "WorkspaceMember";
+        id: string;
+        name: string;
+        email?: string | null;
+        role: WorkspaceMemberRole;
+        inviteStatus?: WorkspaceMemberInviteStatus | null;
+        createdAt: any;
+        user?: {
+          __typename?: "User";
+          id: string;
+          name: string;
+          email: string;
+        } | null;
+      };
+    }>;
+    pageInfo: {
+      __typename?: "PageInfo";
+      endCursor?: string | null;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      startCursor?: string | null;
+    };
+  };
+};
+
+export type WorkspaceMemberItemFragment = {
+  __typename?: "WorkspaceMember";
+  id: string;
+  name: string;
+  email?: string | null;
+  role: WorkspaceMemberRole;
+  inviteStatus?: WorkspaceMemberInviteStatus | null;
+  createdAt: any;
+  user?: {
+    __typename?: "User";
+    id: string;
+    name: string;
+    email: string;
+  } | null;
+} & { " $fragmentName"?: "WorkspaceMemberItemFragment" };
+
+export type CreateWorkspaceInviteMutationVariables = Exact<{
+  input: CreateWorkspaceInviteInput;
+}>;
+
+export type CreateWorkspaceInviteMutation = {
+  __typename?: "Mutation";
+  createWorkspaceInvite: { __typename?: "WorkspaceMember"; id: string };
+};
+
+export type UpdateWorkspaceMemberMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: UpdateWorkspaceMemberInput;
+}>;
+
+export type UpdateWorkspaceMemberMutation = {
+  __typename?: "Mutation";
+  updateWorkspaceMember?: {
+    __typename?: "WorkspaceMember";
+    id: string;
+    role: WorkspaceMemberRole;
+  } | null;
+};
+
+export type RemoveWorkspaceMemberMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type RemoveWorkspaceMemberMutation = {
+  __typename?: "Mutation";
+  removeWorkspaceMember: { __typename?: "WorkspaceMember"; id: string };
+};
+
 export type GetProjectQueryVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
@@ -960,7 +1171,6 @@ export type GetServiceQuery = {
     ports: Array<number>;
     replicas: number;
     createdAt: any;
-    project: { __typename?: "Project"; id: string; name: string };
     environmentVariables: Array<{
       __typename?: "EnvironmentVariable";
       key: string;
@@ -1182,217 +1392,6 @@ export type DeleteVolumeMutation = {
   deleteVolume: { __typename?: "Volume"; id: string };
 };
 
-export type GetClusterQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
-}>;
-
-export type GetClusterQuery = {
-  __typename?: "Query";
-  cluster?: {
-    __typename?: "Cluster";
-    id: string;
-    name: string;
-    server: string;
-    createdAt: any;
-    nodes: Array<{
-      __typename?: "ClusterNode";
-      name: string;
-      ip: string;
-      status: ClusterNodeStatus;
-      allocatableCpuCores: number;
-      allocatableMemoryBytes: number;
-      allocatableDiskBytes: number;
-      capacityCpuCores: number;
-      capacityMemoryBytes: number;
-      capacityDiskBytes: number;
-    }>;
-  } | null;
-};
-
-export type ClusterDetailFragment = {
-  __typename?: "Cluster";
-  id: string;
-  name: string;
-  server: string;
-  createdAt: any;
-  nodes: Array<{
-    __typename?: "ClusterNode";
-    name: string;
-    ip: string;
-    status: ClusterNodeStatus;
-    allocatableCpuCores: number;
-    allocatableMemoryBytes: number;
-    allocatableDiskBytes: number;
-    capacityCpuCores: number;
-    capacityMemoryBytes: number;
-    capacityDiskBytes: number;
-  }>;
-} & { " $fragmentName"?: "ClusterDetailFragment" };
-
-export type UpdateClusterMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
-  input: UpdateClusterInput;
-}>;
-
-export type UpdateClusterMutation = {
-  __typename?: "Mutation";
-  updateCluster: { __typename?: "Cluster"; id: string } & {
-    " $fragmentRefs"?: { ClusterDetailFragment: ClusterDetailFragment };
-  };
-};
-
-export type DeleteClusterMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
-}>;
-
-export type DeleteClusterMutation = {
-  __typename?: "Mutation";
-  deleteCluster: { __typename?: "Cluster"; id: string };
-};
-
-export type GetClustersQueryVariables = Exact<{
-  workspaceId: Scalars["ID"]["input"];
-  after?: InputMaybe<Scalars["String"]["input"]>;
-  before?: InputMaybe<Scalars["String"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  last?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<ClusterOrder>;
-  query?: InputMaybe<Scalars["String"]["input"]>;
-}>;
-
-export type GetClustersQuery = {
-  __typename?: "Query";
-  workspace?: {
-    __typename?: "Workspace";
-    clusters: {
-      __typename?: "ClusterConnection";
-      edges: Array<{
-        __typename?: "ClusterEdge";
-        node: {
-          __typename?: "Cluster";
-          id: string;
-          name: string;
-          server: string;
-          createdAt: any;
-        };
-      }>;
-      pageInfo: {
-        __typename?: "PageInfo";
-        endCursor?: string | null;
-        hasNextPage: boolean;
-        hasPreviousPage: boolean;
-        startCursor?: string | null;
-      };
-    };
-  } | null;
-};
-
-export type ClusterItemFragment = {
-  __typename?: "Cluster";
-  id: string;
-  name: string;
-  server: string;
-  createdAt: any;
-} & { " $fragmentName"?: "ClusterItemFragment" };
-
-export type CreateClusterMutationVariables = Exact<{
-  input: CreateClusterInput;
-}>;
-
-export type CreateClusterMutation = {
-  __typename?: "Mutation";
-  createCluster: { __typename?: "Cluster"; id: string };
-};
-
-export type GetWorkspaceMembersQueryVariables = Exact<{
-  after?: InputMaybe<Scalars["String"]["input"]>;
-  before?: InputMaybe<Scalars["String"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  last?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<WorkspaceMemberOrder>;
-  query?: InputMaybe<Scalars["String"]["input"]>;
-}>;
-
-export type GetWorkspaceMembersQuery = {
-  __typename?: "Query";
-  workspaceMembers: {
-    __typename?: "WorkspaceMemberConnection";
-    edges: Array<{
-      __typename?: "WorkspaceMemberEdge";
-      node: {
-        __typename?: "WorkspaceMember";
-        id: string;
-        name: string;
-        email?: string | null;
-        role: WorkspaceMemberRole;
-        inviteStatus?: WorkspaceMemberInviteStatus | null;
-        createdAt: any;
-        user?: {
-          __typename?: "User";
-          id: string;
-          name: string;
-          email: string;
-        } | null;
-      };
-    }>;
-    pageInfo: {
-      __typename?: "PageInfo";
-      endCursor?: string | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: string | null;
-    };
-  };
-};
-
-export type WorkspaceMemberItemFragment = {
-  __typename?: "WorkspaceMember";
-  id: string;
-  name: string;
-  email?: string | null;
-  role: WorkspaceMemberRole;
-  inviteStatus?: WorkspaceMemberInviteStatus | null;
-  createdAt: any;
-  user?: {
-    __typename?: "User";
-    id: string;
-    name: string;
-    email: string;
-  } | null;
-} & { " $fragmentName"?: "WorkspaceMemberItemFragment" };
-
-export type CreateWorkspaceInviteMutationVariables = Exact<{
-  input: CreateWorkspaceInviteInput;
-}>;
-
-export type CreateWorkspaceInviteMutation = {
-  __typename?: "Mutation";
-  createWorkspaceInvite: { __typename?: "WorkspaceMember"; id: string };
-};
-
-export type UpdateWorkspaceMemberMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
-  input: UpdateWorkspaceMemberInput;
-}>;
-
-export type UpdateWorkspaceMemberMutation = {
-  __typename?: "Mutation";
-  updateWorkspaceMember?: {
-    __typename?: "WorkspaceMember";
-    id: string;
-    role: WorkspaceMemberRole;
-  } | null;
-};
-
-export type RemoveWorkspaceMemberMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
-}>;
-
-export type RemoveWorkspaceMemberMutation = {
-  __typename?: "Mutation";
-  removeWorkspaceMember: { __typename?: "WorkspaceMember"; id: string };
-};
-
 export type GetProjectsQueryVariables = Exact<{
   workspaceId: Scalars["ID"]["input"];
   after?: InputMaybe<Scalars["String"]["input"]>;
@@ -1546,6 +1545,122 @@ export const CurrentWorkspaceFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<CurrentWorkspaceFragment, unknown>;
+export const ClusterDetailFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ClusterDetail" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Cluster" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "server" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "nodes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "ip" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityDiskBytes" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ClusterDetailFragment, unknown>;
+export const ClusterItemFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ClusterItem" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Cluster" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "server" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ClusterItemFragment, unknown>;
+export const WorkspaceMemberItemFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "WorkspaceMemberItem" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "WorkspaceMember" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "email" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "inviteStatus" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "user" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "email" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<WorkspaceMemberItemFragment, unknown>;
 export const ProjectDetailFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -1669,122 +1784,6 @@ export const VolumeItemFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<VolumeItemFragment, unknown>;
-export const ClusterDetailFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ClusterDetail" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Cluster" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "server" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "nodes" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "ip" } },
-                { kind: "Field", name: { kind: "Name", value: "status" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableDiskBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDiskBytes" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<ClusterDetailFragment, unknown>;
-export const ClusterItemFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ClusterItem" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Cluster" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "server" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<ClusterItemFragment, unknown>;
-export const WorkspaceMemberItemFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "WorkspaceMemberItem" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "WorkspaceMember" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          { kind: "Field", name: { kind: "Name", value: "inviteStatus" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "user" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "email" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<WorkspaceMemberItemFragment, unknown>;
 export const ProjectItemFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -2116,6 +2115,965 @@ export const GetCurrentWorkspaceDocument = {
 } as unknown as DocumentNode<
   GetCurrentWorkspaceQuery,
   GetCurrentWorkspaceQueryVariables
+>;
+export const GetClusterDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetCluster" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "cluster" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ClusterDetail" },
+                  directives: [
+                    {
+                      kind: "Directive",
+                      name: { kind: "Name", value: "unmask" },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ClusterDetail" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Cluster" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "server" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "nodes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "ip" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityDiskBytes" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetClusterQuery, GetClusterQueryVariables>;
+export const UpdateClusterDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UpdateCluster" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "UpdateClusterInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateCluster" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ClusterDetail" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ClusterDetail" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Cluster" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "server" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "nodes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "ip" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityDiskBytes" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateClusterMutation,
+  UpdateClusterMutationVariables
+>;
+export const DeleteClusterDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "DeleteCluster" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "deleteCluster" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DeleteClusterMutation,
+  DeleteClusterMutationVariables
+>;
+export const GetClustersDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetClusters" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "workspaceId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "after" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "before" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "first" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "orderBy" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "ClusterOrder" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "query" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "workspace" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "workspaceId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "clusters" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "after" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "after" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "before" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "before" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "first" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "first" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "last" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "last" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "orderBy" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "orderBy" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "query" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "query" },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "edges" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "node" },
+                              selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "id" },
+                                  },
+                                  {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                      kind: "Name",
+                                      value: "ClusterItem",
+                                    },
+                                    directives: [
+                                      {
+                                        kind: "Directive",
+                                        name: { kind: "Name", value: "unmask" },
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "pageInfo" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "endCursor" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "hasNextPage" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "hasPreviousPage" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "startCursor" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ClusterItem" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Cluster" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "server" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetClustersQuery, GetClustersQueryVariables>;
+export const CreateClusterDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CreateCluster" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "CreateClusterInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "createCluster" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateClusterMutation,
+  CreateClusterMutationVariables
+>;
+export const GetWorkspaceMembersDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetWorkspaceMembers" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "after" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "before" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "first" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "orderBy" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "WorkspaceMemberOrder" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "query" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "workspaceMembers" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "after" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "after" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "before" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "before" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "first" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "first" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "last" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "last" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "orderBy" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "orderBy" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "query" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "query" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "edges" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "node" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                            {
+                              kind: "FragmentSpread",
+                              name: {
+                                kind: "Name",
+                                value: "WorkspaceMemberItem",
+                              },
+                              directives: [
+                                {
+                                  kind: "Directive",
+                                  name: { kind: "Name", value: "unmask" },
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "pageInfo" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "endCursor" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "hasNextPage" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "hasPreviousPage" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "startCursor" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "WorkspaceMemberItem" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "WorkspaceMember" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "email" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "inviteStatus" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "user" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "email" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetWorkspaceMembersQuery,
+  GetWorkspaceMembersQueryVariables
+>;
+export const CreateWorkspaceInviteDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CreateWorkspaceInvite" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "CreateWorkspaceInviteInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "createWorkspaceInvite" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateWorkspaceInviteMutation,
+  CreateWorkspaceInviteMutationVariables
+>;
+export const UpdateWorkspaceMemberDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UpdateWorkspaceMember" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "UpdateWorkspaceMemberInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateWorkspaceMember" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "role" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateWorkspaceMemberMutation,
+  UpdateWorkspaceMemberMutationVariables
+>;
+export const RemoveWorkspaceMemberDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RemoveWorkspaceMember" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "removeWorkspaceMember" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RemoveWorkspaceMemberMutation,
+  RemoveWorkspaceMemberMutationVariables
 >;
 export const GetProjectDocument = {
   kind: "Document",
@@ -2646,17 +3604,6 @@ export const GetServiceDocument = {
               kind: "SelectionSet",
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "project" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      { kind: "Field", name: { kind: "Name", value: "id" } },
-                      { kind: "Field", name: { kind: "Name", value: "name" } },
-                    ],
-                  },
-                },
                 {
                   kind: "FragmentSpread",
                   name: { kind: "Name", value: "ServiceDetail" },
@@ -3866,965 +4813,6 @@ export const DeleteVolumeDocument = {
 } as unknown as DocumentNode<
   DeleteVolumeMutation,
   DeleteVolumeMutationVariables
->;
-export const GetClusterDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetCluster" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "cluster" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                {
-                  kind: "FragmentSpread",
-                  name: { kind: "Name", value: "ClusterDetail" },
-                  directives: [
-                    {
-                      kind: "Directive",
-                      name: { kind: "Name", value: "unmask" },
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ClusterDetail" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Cluster" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "server" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "nodes" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "ip" } },
-                { kind: "Field", name: { kind: "Name", value: "status" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableDiskBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDiskBytes" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetClusterQuery, GetClusterQueryVariables>;
-export const UpdateClusterDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "UpdateCluster" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "UpdateClusterInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updateCluster" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                {
-                  kind: "FragmentSpread",
-                  name: { kind: "Name", value: "ClusterDetail" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ClusterDetail" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Cluster" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "server" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "nodes" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "ip" } },
-                { kind: "Field", name: { kind: "Name", value: "status" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableDiskBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDiskBytes" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateClusterMutation,
-  UpdateClusterMutationVariables
->;
-export const DeleteClusterDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "DeleteCluster" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "deleteCluster" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteClusterMutation,
-  DeleteClusterMutationVariables
->;
-export const GetClustersDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetClusters" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "workspaceId" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "after" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "before" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "first" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "orderBy" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "ClusterOrder" },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "query" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workspace" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "workspaceId" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "clusters" },
-                  arguments: [
-                    {
-                      kind: "Argument",
-                      name: { kind: "Name", value: "after" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" },
-                      },
-                    },
-                    {
-                      kind: "Argument",
-                      name: { kind: "Name", value: "before" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" },
-                      },
-                    },
-                    {
-                      kind: "Argument",
-                      name: { kind: "Name", value: "first" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" },
-                      },
-                    },
-                    {
-                      kind: "Argument",
-                      name: { kind: "Name", value: "last" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" },
-                      },
-                    },
-                    {
-                      kind: "Argument",
-                      name: { kind: "Name", value: "orderBy" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "orderBy" },
-                      },
-                    },
-                    {
-                      kind: "Argument",
-                      name: { kind: "Name", value: "query" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "query" },
-                      },
-                    },
-                  ],
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "edges" },
-                        selectionSet: {
-                          kind: "SelectionSet",
-                          selections: [
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "node" },
-                              selectionSet: {
-                                kind: "SelectionSet",
-                                selections: [
-                                  {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "id" },
-                                  },
-                                  {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                      kind: "Name",
-                                      value: "ClusterItem",
-                                    },
-                                    directives: [
-                                      {
-                                        kind: "Directive",
-                                        name: { kind: "Name", value: "unmask" },
-                                      },
-                                    ],
-                                  },
-                                ],
-                              },
-                            },
-                          ],
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "pageInfo" },
-                        selectionSet: {
-                          kind: "SelectionSet",
-                          selections: [
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "endCursor" },
-                            },
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "hasNextPage" },
-                            },
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "hasPreviousPage" },
-                            },
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "startCursor" },
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ClusterItem" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Cluster" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "server" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetClustersQuery, GetClustersQueryVariables>;
-export const CreateClusterDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "CreateCluster" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "CreateClusterInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createCluster" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateClusterMutation,
-  CreateClusterMutationVariables
->;
-export const GetWorkspaceMembersDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetWorkspaceMembers" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "after" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "before" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "first" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "orderBy" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "WorkspaceMemberOrder" },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "query" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workspaceMembers" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "after" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "after" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "before" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "before" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "first" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "first" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "last" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "last" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "orderBy" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "orderBy" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "query" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "query" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "edges" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "node" },
-                        selectionSet: {
-                          kind: "SelectionSet",
-                          selections: [
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "id" },
-                            },
-                            {
-                              kind: "FragmentSpread",
-                              name: {
-                                kind: "Name",
-                                value: "WorkspaceMemberItem",
-                              },
-                              directives: [
-                                {
-                                  kind: "Directive",
-                                  name: { kind: "Name", value: "unmask" },
-                                },
-                              ],
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "pageInfo" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "endCursor" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hasNextPage" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hasPreviousPage" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "startCursor" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "WorkspaceMemberItem" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "WorkspaceMember" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          { kind: "Field", name: { kind: "Name", value: "inviteStatus" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "user" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "email" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetWorkspaceMembersQuery,
-  GetWorkspaceMembersQueryVariables
->;
-export const CreateWorkspaceInviteDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "CreateWorkspaceInvite" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "CreateWorkspaceInviteInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createWorkspaceInvite" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateWorkspaceInviteMutation,
-  CreateWorkspaceInviteMutationVariables
->;
-export const UpdateWorkspaceMemberDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "UpdateWorkspaceMember" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "UpdateWorkspaceMemberInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updateWorkspaceMember" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "role" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateWorkspaceMemberMutation,
-  UpdateWorkspaceMemberMutationVariables
->;
-export const RemoveWorkspaceMemberDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "RemoveWorkspaceMember" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "removeWorkspaceMember" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  RemoveWorkspaceMemberMutation,
-  RemoveWorkspaceMemberMutationVariables
 >;
 export const GetProjectsDocument = {
   kind: "Document",

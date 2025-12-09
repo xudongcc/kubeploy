@@ -15,6 +15,7 @@ import { ErrorLink } from "@apollo/client/link/error";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 import i18next from "@/lib/i18n";
+import { BreadcrumbContext } from "@/lib/breadcrumb-context";
 
 // Create a new router instance
 export const getRouter = () => {
@@ -59,6 +60,8 @@ export const getRouter = () => {
     context: {
       ...routerWithApolloClient.defaultContext,
       i18n: i18next,
+      breadcrumb: new BreadcrumbContext(),
+      breadcrumbs: [],
     },
   });
 

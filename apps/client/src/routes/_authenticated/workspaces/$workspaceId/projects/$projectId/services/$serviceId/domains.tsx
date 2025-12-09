@@ -101,13 +101,10 @@ const DELETE_DOMAIN_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/domains",
+  "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(domainConnectionSchema),
-  beforeLoad: () => {
-    return { title: null };
-  },
 });
 
 function RouteComponent() {

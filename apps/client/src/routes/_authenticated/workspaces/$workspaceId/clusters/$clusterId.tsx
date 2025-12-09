@@ -78,7 +78,7 @@ const DELETE_CLUSTER_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/$clusterId",
+  "/_authenticated/workspaces/$workspaceId/clusters/$clusterId",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(

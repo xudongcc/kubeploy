@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/",
+  "/_authenticated/workspaces/$workspaceId/projects/$projectId/",
 )({
   beforeLoad: ({ params: { workspaceId, projectId } }) => {
     throw redirect({

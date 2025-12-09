@@ -1,5 +1,6 @@
 import {
   HeadContent,
+  LinkOptions,
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
@@ -10,11 +11,14 @@ import appCss from "../styles.css?url";
 import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
 import { NotFoundPageTemplate } from "@/components/not-found-page-template";
 import i18n from "i18next";
+import { BreadcrumbContext } from "@/lib/breadcrumb-context";
 
 export const Route = createRootRouteWithContext<
   ApolloClientIntegration.RouterContext & {
     i18n: typeof i18n;
     title?: string;
+    breadcrumb: BreadcrumbContext;
+    breadcrumbs: { title: string; link: LinkOptions }[];
   }
 >()({
   head: () => ({

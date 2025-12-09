@@ -26,7 +26,7 @@ const CREATE_SERVICE_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/create",
+  "/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/create",
 )({
   component: RouteComponent,
   beforeLoad: () => {

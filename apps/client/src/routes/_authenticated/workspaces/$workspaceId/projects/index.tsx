@@ -81,7 +81,7 @@ const CREATE_PROJECT_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_workspace-layout/projects",
+  "/_authenticated/workspaces/$workspaceId/projects/",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(

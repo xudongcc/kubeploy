@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { t } from "i18next";
 
 import {
-  DeleteProjectDialog,
-  type DeleteProjectItem,
-} from "@/components/delete-project-dialog";
+  DeleteWorkspaceDialog,
+  type DeleteWorkspaceItem,
+} from "@/components/delete-workspace-dialog";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,48 +22,51 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
 
-const UPDATE_PROJECT_MUTATION = graphql(`
-  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
-    updateProject(id: $id, input: $input) {
+const UPDATE_WORKSPACE_MUTATION = graphql(`
+  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
+    updateWorkspace(input: $input) {
       id
-      ...ProjectDetail
+      name
     }
   }
 `);
 
-const DELETE_PROJECT_MUTATION = graphql(`
-  mutation DeleteProject($id: ID!) {
-    deleteProject(id: $id) {
+const DELETE_WORKSPACE_MUTATION = graphql(`
+  mutation DeleteWorkspace {
+    deleteWorkspace {
       id
     }
   }
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/settings",
+  "/_authenticated/workspaces/$workspaceId/settings",
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return { title: null };
+    return {
+      title: t("workspace.title"),
+    };
   },
 });
 
 function RouteComponent() {
-  const { workspaceId, projectId } = Route.useParams();
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate();
 
-  const { project } = Route.useRouteContext();
+  const workspace = Route.useRouteContext({
+    select: (context) => context.workspace,
+  });
 
-  const [deletingProject, setDeletingProject] =
-    useState<DeleteProjectItem | null>(null);
+  const [deletingWorkspace, setDeletingWorkspace] =
+    useState<DeleteWorkspaceItem | null>(null);
 
-  const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION);
-  const [deleteProject, { loading: deleting }] = useMutation(
-    DELETE_PROJECT_MUTATION,
+  const [updateWorkspace] = useMutation(UPDATE_WORKSPACE_MUTATION);
+  const [deleteWorkspace, { loading: deleting }] = useMutation(
+    DELETE_WORKSPACE_MUTATION,
     {
       update(cache, result) {
-        if (result.data?.deleteProject) {
-          cache.evict({ id: cache.identify(result.data.deleteProject) });
+        if (result.data?.deleteWorkspace) {
+          cache.evict({ id: cache.identify(result.data.deleteWorkspace) });
           cache.gc();
         }
       },
@@ -72,12 +75,11 @@ function RouteComponent() {
 
   const form = useForm({
     defaultValues: {
-      name: project?.name ?? "",
+      name: workspace.name,
     },
     onSubmit: async ({ value }) => {
-      await updateProject({
+      await updateWorkspace({
         variables: {
-          id: projectId,
           input: {
             name: value.name.trim(),
           },
@@ -86,24 +88,17 @@ function RouteComponent() {
     },
   });
 
-  const handleDelete = async (id: string) => {
-    await deleteProject({
-      variables: { id },
-    });
+  const handleDelete = async () => {
+    await deleteWorkspace();
     navigate({
-      to: "/workspaces/$workspaceId/projects",
-      params: { workspaceId },
+      to: "/workspaces",
     });
   };
 
-  if (!project) {
-    return <div>{t("project.notFound")}</div>;
-  }
-
   return (
     <Page
-      title={t("project.settings.title")}
-      description={t("project.settings.description")}
+      title={t("workspace.title")}
+      description={t("workspace.settings.description")}
     >
       <div className="flex flex-col gap-6">
         <form
@@ -115,9 +110,9 @@ function RouteComponent() {
         >
           <Card>
             <CardHeader>
-              <CardTitle>{t("project.updateForm.title")}</CardTitle>
+              <CardTitle>{t("workspace.settings.title")}</CardTitle>
               <CardDescription>
-                {t("project.updateForm.description")}
+                {t("workspace.settings.description")}
               </CardDescription>
             </CardHeader>
 
@@ -127,18 +122,20 @@ function RouteComponent() {
                 validators={{
                   onChange: ({ value }) =>
                     !value.trim()
-                      ? t("project.updateForm.name.required")
+                      ? t("workspace.settings.form.name.required")
                       : undefined,
                 }}
               >
                 {(field) => (
                   <Field>
                     <FieldLabel htmlFor="name">
-                      {t("project.updateForm.name.label")}
+                      {t("workspace.settings.form.name.label")}
                     </FieldLabel>
                     <Input
                       id="name"
-                      placeholder={t("project.updateForm.name.placeholder")}
+                      placeholder={t(
+                        "workspace.settings.form.name.placeholder",
+                      )}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -169,27 +166,27 @@ function RouteComponent() {
         <Card className="border-destructive">
           <CardHeader>
             <CardTitle className="text-destructive">
-              {t("project.settings.dangerZone.title")}
+              {t("workspace.settings.dangerZone.title")}
             </CardTitle>
             <CardDescription>
-              {t("project.settings.dangerZone.description")}
+              {t("workspace.settings.dangerZone.description")}
             </CardDescription>
           </CardHeader>
           <CardFooter>
             <Button
               variant="destructive"
-              onClick={() => setDeletingProject(project)}
+              onClick={() => setDeletingWorkspace(workspace)}
             >
-              {t("project.settings.dangerZone.deleteButton")}
+              {t("workspace.settings.dangerZone.deleteButton")}
             </Button>
           </CardFooter>
         </Card>
       </div>
 
-      <DeleteProjectDialog
-        project={deletingProject}
+      <DeleteWorkspaceDialog
+        workspace={deletingWorkspace}
         deleting={deleting}
-        onOpenChange={() => setDeletingProject(null)}
+        onOpenChange={() => setDeletingWorkspace(null)}
         onConfirm={handleDelete}
       />
     </Page>

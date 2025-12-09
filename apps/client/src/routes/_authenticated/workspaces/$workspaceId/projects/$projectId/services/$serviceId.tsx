@@ -5,14 +5,6 @@ import {
   redirect,
 } from "@tanstack/react-router";
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { WorkspaceSidebar } from "@/components/workspace-sidebar";
 import { graphql } from "@/gql";
 import { NavTabs } from "@/components/nav-tabs";
 import { t } from "i18next";
@@ -22,12 +14,6 @@ const GET_SERVICE_QUERY = graphql(`
   query GetService($id: ID!) {
     service(id: $id) {
       id
-
-      project {
-        id
-        name
-      }
-
       ...ServiceDetail @unmask
     }
   }
@@ -47,7 +33,7 @@ const GET_SERVICE_QUERY = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId",
+  "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId",
 )({
   component: RouteComponent,
   beforeLoad: async ({
@@ -64,7 +50,6 @@ export const Route = createFileRoute(
         return {
           title: data.service.name,
           service: data.service,
-          project: data.service.project,
         };
       }
     } catch {}
@@ -78,7 +63,6 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { workspaceId, projectId, serviceId } = Route.useParams();
-  const { project } = Route.useRouteContext();
 
   const tabs = useMemo(
     () => [
@@ -165,50 +149,10 @@ function RouteComponent() {
   );
 
   return (
-    <SidebarProvider>
-      <WorkspaceSidebar />
+    <>
+      <NavTabs tabs={tabs} />
 
-      <SidebarInset>
-        <header className="bg-background flex h-16 shrink-0 items-center gap-2 transition-[width,height] duration-200 ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:left-(--sidebar-width) md:group-has-data-[collapsible=icon]/sidebar-wrapper:left-(--sidebar-width-icon)">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-
-            <Breadcrumbs
-              baseItems={[
-                {
-                  title: t("project.title"),
-                  link: linkOptions({
-                    to: "/workspaces/$workspaceId/projects",
-                    params: { workspaceId },
-                  }),
-                },
-                {
-                  title: project.name,
-                  link: linkOptions({
-                    to: "/workspaces/$workspaceId/projects/$projectId",
-                    params: { workspaceId, projectId },
-                  }),
-                },
-                {
-                  title: t("service.title"),
-                  link: linkOptions({
-                    to: "/workspaces/$workspaceId/projects/$projectId/services",
-                    params: { workspaceId, projectId },
-                  }),
-                },
-              ]}
-            />
-          </div>
-        </header>
-
-        <NavTabs tabs={tabs} />
-
-        <Outlet />
-      </SidebarInset>
-    </SidebarProvider>
+      <Outlet />
+    </>
   );
 }

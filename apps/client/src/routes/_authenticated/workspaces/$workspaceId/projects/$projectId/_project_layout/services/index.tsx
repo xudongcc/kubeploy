@@ -58,7 +58,7 @@ const GET_SERVICES_QUERY = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId/services/",
+  "/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(

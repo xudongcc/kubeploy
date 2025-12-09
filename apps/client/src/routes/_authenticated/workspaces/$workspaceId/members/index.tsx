@@ -118,7 +118,7 @@ const REMOVE_WORKSPACE_MEMBER_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_workspace-layout/members/",
+  "/_authenticated/workspaces/$workspaceId/members/",
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
@@ -129,8 +129,14 @@ export const Route = createFileRoute(
       defaultOrderDirection: OrderDirection.DESC,
     }),
   ),
-  beforeLoad: () => {
-    return { title: "Members" };
+  beforeLoad: ({
+    context: {
+      i18n: { t },
+    },
+  }) => {
+    return {
+      title: t("members.title"),
+    };
   },
 });
 
@@ -145,8 +151,7 @@ function RouteComponent() {
     },
   });
 
-  const members =
-    data?.workspaceMembers.edges.map((edge) => edge.node) ?? [];
+  const members = data?.workspaceMembers.edges.map((edge) => edge.node) ?? [];
 
   const [createWorkspaceInvite] = useMutation(CREATE_WORKSPACE_INVITE_MUTATION);
   const [updateWorkspaceMember] = useMutation(UPDATE_WORKSPACE_MEMBER_MUTATION);
@@ -179,7 +184,10 @@ function RouteComponent() {
     }
   };
 
-  const handleRoleChange = async (memberId: string, role: WorkspaceMemberRole) => {
+  const handleRoleChange = async (
+    memberId: string,
+    role: WorkspaceMemberRole,
+  ) => {
     await updateWorkspaceMember({
       variables: {
         id: memberId,
@@ -193,7 +201,9 @@ function RouteComponent() {
       variables: { id: memberId },
       update(cache, result) {
         if (result.data?.removeWorkspaceMember) {
-          cache.evict({ id: cache.identify(result.data.removeWorkspaceMember) });
+          cache.evict({
+            id: cache.identify(result.data.removeWorkspaceMember),
+          });
           cache.gc();
         }
       },
@@ -213,7 +223,9 @@ function RouteComponent() {
     }
   };
 
-  const getStatusLabel = (status: WorkspaceMemberInviteStatus | null | undefined) => {
+  const getStatusLabel = (
+    status: WorkspaceMemberInviteStatus | null | undefined,
+  ) => {
     if (!status) return null;
     switch (status) {
       case WorkspaceMemberInviteStatus.PENDING:
@@ -385,7 +397,8 @@ function RouteComponent() {
             header: "Status",
             cell: ({ row }) => {
               const status = row.original.inviteStatus;
-              if (!status) return <span className="text-muted-foreground">Active</span>;
+              if (!status)
+                return <span className="text-muted-foreground">Active</span>;
               return (
                 <span
                   className={

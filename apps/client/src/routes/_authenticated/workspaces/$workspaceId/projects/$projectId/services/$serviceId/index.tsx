@@ -13,12 +13,9 @@ const DEPLOY_SERVICE_MUTATION = graphql(`
 `);
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_service-layout/projects/$projectId/services/$serviceId/",
+  "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/",
 )({
   component: RouteComponent,
-  beforeLoad: () => {
-    return { title: null };
-  },
 });
 
 function RouteComponent() {

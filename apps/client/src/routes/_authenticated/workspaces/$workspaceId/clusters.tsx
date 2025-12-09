@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters",
+  "/_authenticated/workspaces/$workspaceId/clusters",
 )({
   component: Outlet,
   beforeLoad: async ({
