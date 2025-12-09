@@ -3,15 +3,16 @@ import { EntityService, IdOrEntity } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
 
 import { CreateEntityData } from '@/common/types/create-entity-data.type';
-import { WorkspaceService } from '@/workspace/workspace.service';
 
 import { Cluster } from './cluster.entity';
+import { ClusterClientFactory } from './cluster-client.factory';
+import { ClusterNode } from './objects/cluster-node.object';
 
 @Injectable()
 export class ClusterService extends EntityService<Cluster> {
   constructor(
     protected readonly em: EntityManager,
-    private readonly workspaceService: WorkspaceService,
+    private readonly clusterClientFactory: ClusterClientFactory,
   ) {
     super(Cluster, em);
   }
@@ -29,5 +30,68 @@ export class ClusterService extends EntityService<Cluster> {
 
   async remove(idOrEntity: IdOrEntity<Cluster>): Promise<Cluster> {
     return await super.remove(idOrEntity);
+  }
+
+  async getNodes(cluster: Cluster): Promise<ClusterNode[]> {
+    try {
+      const coreV1Api = this.clusterClientFactory.getCoreV1Api(cluster);
+      const { items: nodes } = await coreV1Api.listNode();
+
+      return nodes.map((node) => {
+        const allocatable = node.status?.allocatable ?? {};
+        const capacity = node.status?.capacity ?? {};
+
+        const internalAddress = node.status?.addresses?.find(
+          (addr) => addr.type === 'InternalIP',
+        );
+
+        return {
+          id: node.metadata?.uid ?? '',
+          name: node.metadata?.name ?? '',
+          ip: internalAddress?.address ?? '',
+          allocatableCpuCores: this.parseCpu(allocatable.cpu),
+          allocatableMemoryBytes: this.parseMemory(allocatable.memory),
+          allocatableDiskBytes: this.parseMemory(
+            allocatable['ephemeral-storage'],
+          ),
+          capacityCpuCores: this.parseCpu(capacity.cpu),
+          capacityMemoryBytes: this.parseMemory(capacity.memory),
+          capacityDiskBytes: this.parseMemory(capacity['ephemeral-storage']),
+        };
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  private parseCpu(cpu?: string): number {
+    if (!cpu) return 0;
+    if (cpu.endsWith('m')) {
+      return parseInt(cpu.slice(0, -1), 10) / 1000;
+    }
+    return parseInt(cpu, 10);
+  }
+
+  private parseMemory(memory?: string): number {
+    if (!memory) return 0;
+
+    const units: Record<string, number> = {
+      Ki: 1024,
+      Mi: 1024 ** 2,
+      Gi: 1024 ** 3,
+      Ti: 1024 ** 4,
+      K: 1000,
+      M: 1000 ** 2,
+      G: 1000 ** 3,
+      T: 1000 ** 4,
+    };
+
+    for (const [unit, multiplier] of Object.entries(units)) {
+      if (memory.endsWith(unit)) {
+        return parseInt(memory.slice(0, -unit.length), 10) * multiplier;
+      }
+    }
+
+    return parseInt(memory, 10);
   }
 }

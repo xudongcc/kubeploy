@@ -22,7 +22,7 @@
     },
     "description": "创建和管理您的 Kubernetes 集群。",
     "detail": {
-      "description": "更新您的集群连接设置。"
+      "description": "监控集群健康状态和配置连接详情。"
     },
     "form": {
       "certificateAuthorityData": {
@@ -53,6 +53,14 @@
       }
     },
     "notFound": "集群未找到",
+    "overview": {
+      "allocatableTotal": "可分配 / 总计",
+      "cpu": "CPU（核）",
+      "disk": "磁盘",
+      "memory": "内存",
+      "nodes": "节点",
+      "total": "总计"
+    },
     "settings": {
       "dangerZone": {
         "deleteButton": "删除集群",
@@ -61,6 +69,10 @@
       },
       "description": "更新您的集群名称和连接详情。",
       "title": "集群设置"
+    },
+    "tabs": {
+      "overview": "概览",
+      "settings": "设置"
     },
     "title": "集群"
   },

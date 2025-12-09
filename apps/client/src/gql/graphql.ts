@@ -50,6 +50,7 @@ export type Cluster = {
   createdAt: Scalars["DateTime"]["output"];
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
+  nodes: Array<ClusterNode>;
   projects: ProjectConnection;
   server: Scalars["String"]["output"];
   updatedAt: Scalars["DateTime"]["output"];
@@ -81,6 +82,19 @@ export type ClusterEdge = {
   cursor: Scalars["String"]["output"];
   /** The item at the end of ClusterEdge. */
   node: Cluster;
+};
+
+export type ClusterNode = {
+  __typename?: "ClusterNode";
+  allocatableCpuCores: Scalars["Float"]["output"];
+  allocatableDiskBytes: Scalars["Float"]["output"];
+  allocatableMemoryBytes: Scalars["Float"]["output"];
+  capacityCpuCores: Scalars["Float"]["output"];
+  capacityDiskBytes: Scalars["Float"]["output"];
+  capacityMemoryBytes: Scalars["Float"]["output"];
+  id: Scalars["ID"]["output"];
+  ip: Scalars["String"]["output"];
+  name: Scalars["String"]["output"];
 };
 
 /** Ordering options for cluster connections */
@@ -1174,6 +1188,17 @@ export type GetClusterQuery = {
     name: string;
     server: string;
     createdAt: any;
+    nodes: Array<{
+      __typename?: "ClusterNode";
+      name: string;
+      ip: string;
+      allocatableCpuCores: number;
+      allocatableMemoryBytes: number;
+      allocatableDiskBytes: number;
+      capacityCpuCores: number;
+      capacityMemoryBytes: number;
+      capacityDiskBytes: number;
+    }>;
   } | null;
 };
 
@@ -1183,6 +1208,17 @@ export type ClusterDetailFragment = {
   name: string;
   server: string;
   createdAt: any;
+  nodes: Array<{
+    __typename?: "ClusterNode";
+    name: string;
+    ip: string;
+    allocatableCpuCores: number;
+    allocatableMemoryBytes: number;
+    allocatableDiskBytes: number;
+    capacityCpuCores: number;
+    capacityMemoryBytes: number;
+    capacityDiskBytes: number;
+  }>;
 } & { " $fragmentName"?: "ClusterDetailFragment" };
 
 export type UpdateClusterMutationVariables = Exact<{
@@ -1642,6 +1678,41 @@ export const ClusterDetailFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "name" } },
           { kind: "Field", name: { kind: "Name", value: "server" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "nodes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "ip" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityDiskBytes" },
+                },
+              ],
+            },
+          },
         ],
       },
     },
@@ -3854,6 +3925,41 @@ export const GetClusterDocument = {
           { kind: "Field", name: { kind: "Name", value: "name" } },
           { kind: "Field", name: { kind: "Name", value: "server" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "nodes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "ip" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityDiskBytes" },
+                },
+              ],
+            },
+          },
         ],
       },
     },
@@ -3942,6 +4048,41 @@ export const UpdateClusterDocument = {
           { kind: "Field", name: { kind: "Name", value: "name" } },
           { kind: "Field", name: { kind: "Name", value: "server" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "nodes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "ip" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityCpuCores" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemoryBytes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityDiskBytes" },
+                },
+              ],
+            },
+          },
         ],
       },
     },

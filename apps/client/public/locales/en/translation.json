@@ -22,7 +22,7 @@
     },
     "description": "Create and manage your Kubernetes clusters.",
     "detail": {
-      "description": "Update your cluster connection settings."
+      "description": "Monitor cluster health and configure connection details."
     },
     "form": {
       "certificateAuthorityData": {
@@ -53,6 +53,14 @@
       }
     },
     "notFound": "Cluster not found",
+    "overview": {
+      "allocatableTotal": "Allocatable / Total",
+      "cpu": "CPU (Cores)",
+      "disk": "Disk",
+      "memory": "Memory",
+      "nodes": "Nodes",
+      "total": "Total"
+    },
     "settings": {
       "dangerZone": {
         "deleteButton": "Delete Cluster",
@@ -61,6 +69,10 @@
       },
       "description": "Update your cluster name and connection details.",
       "title": "Cluster Settings"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "settings": "Settings"
     },
     "title": "Clusters"
   },

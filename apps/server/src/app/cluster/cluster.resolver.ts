@@ -22,6 +22,7 @@ import { Cluster } from './cluster.entity';
 import { ClusterService } from './cluster.service';
 import { CreateClusterInput } from './inputs/create-cluster.input';
 import { UpdateClusterInput } from './inputs/update-cluster.input';
+import { ClusterNode } from './objects/cluster-node.object';
 
 @Resolver(() => Cluster)
 export class ClusterResolver {
@@ -65,6 +66,12 @@ export class ClusterResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Cluster> {
     return await this.clusterService.remove(id);
+  }
+
+  @Can(PermissionAction.READ, Cluster)
+  @ResolveField(() => [ClusterNode])
+  async nodes(@Parent() cluster: Cluster) {
+    return await this.clusterService.getNodes(cluster);
   }
 
   @Can(PermissionAction.READ, Project)

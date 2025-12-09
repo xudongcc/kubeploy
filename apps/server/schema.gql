@@ -19,6 +19,7 @@ type Cluster {
   createdAt: DateTime!
   id: ID!
   name: String!
+  nodes: [ClusterNode!]!
   projects(
     """Returns the elements that come after the specified cursor."""
     after: String
@@ -66,6 +67,18 @@ type ClusterEdge {
 
   """The item at the end of ClusterEdge."""
   node: Cluster!
+}
+
+type ClusterNode {
+  allocatableCpuCores: Float!
+  allocatableDiskBytes: Float!
+  allocatableMemoryBytes: Float!
+  capacityCpuCores: Float!
+  capacityDiskBytes: Float!
+  capacityMemoryBytes: Float!
+  id: ID!
+  ip: String!
+  name: String!
 }
 
 """Ordering options for cluster connections"""
