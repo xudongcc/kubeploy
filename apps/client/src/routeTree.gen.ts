@@ -19,6 +19,7 @@ import { Route as AuthenticatedWorkspacesWorkspaceIdIndexRouteImport } from './r
 import { Route as AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRouteImport } from './routes/_authenticated/workspaces/$workspaceId/_workspace-layout'
 import { Route as AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/_workspace-layout/settings'
 import { Route as AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/_workspace-layout/projects'
+import { Route as AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteImport } from './routes/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters'
 import { Route as AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/_workspace-layout/members/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/$clusterId'
@@ -93,6 +94,13 @@ const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute =
     getParentRoute: () =>
       AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute,
   } as any)
+const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute =
+  AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteImport.update({
+    id: '/clusters',
+    path: '/clusters',
+    getParentRoute: () =>
+      AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute,
+  } as any)
 const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRouteImport.update(
     {
@@ -105,19 +113,19 @@ const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRoute =
 const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRouteImport.update(
     {
-      id: '/clusters/',
-      path: '/clusters/',
+      id: '/',
+      path: '/',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute,
+        AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute =
   AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRouteImport.update(
     {
-      id: '/clusters/$clusterId',
-      path: '/clusters/$clusterId',
+      id: '/$clusterId',
+      path: '/$clusterId',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute,
+        AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectLayoutProjectsProjectIdRoute =
@@ -243,11 +251,12 @@ export interface FileRoutesByFullPath {
   '/workspaces/create': typeof AuthenticatedWorkspacesCreateRoute
   '/workspaces': typeof AuthenticatedWorkspacesIndexRoute
   '/workspaces/$workspaceId/': typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  '/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteWithChildren
   '/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute
   '/workspaces/$workspaceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute
   '/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectLayoutProjectsProjectIdRouteWithChildren
   '/workspaces/$workspaceId/clusters/$clusterId': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute
-  '/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute
+  '/workspaces/$workspaceId/clusters/': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute
   '/workspaces/$workspaceId/members': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectLayoutProjectsProjectIdSettingsRoute
   '/workspaces/$workspaceId/projects/$projectId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectLayoutProjectsProjectIdIndexRoute
@@ -295,6 +304,7 @@ export interface FileRoutesById {
   '/_authenticated/workspaces/': typeof AuthenticatedWorkspacesIndexRoute
   '/_authenticated/workspaces/$workspaceId/_workspace-layout': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/': typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/_workspace-layout/projects': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute
   '/_authenticated/workspaces/$workspaceId/_workspace-layout/settings': typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute
   '/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectLayoutProjectsProjectIdRouteWithChildren
@@ -323,11 +333,12 @@ export interface FileRouteTypes {
     | '/workspaces/create'
     | '/workspaces'
     | '/workspaces/$workspaceId/'
+    | '/workspaces/$workspaceId/clusters'
     | '/workspaces/$workspaceId/projects'
     | '/workspaces/$workspaceId/settings'
     | '/workspaces/$workspaceId/projects/$projectId'
     | '/workspaces/$workspaceId/clusters/$clusterId'
-    | '/workspaces/$workspaceId/clusters'
+    | '/workspaces/$workspaceId/clusters/'
     | '/workspaces/$workspaceId/members'
     | '/workspaces/$workspaceId/projects/$projectId/settings'
     | '/workspaces/$workspaceId/projects/$projectId/'
@@ -374,6 +385,7 @@ export interface FileRouteTypes {
     | '/_authenticated/workspaces/'
     | '/_authenticated/workspaces/$workspaceId/_workspace-layout'
     | '/_authenticated/workspaces/$workspaceId/'
+    | '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters'
     | '/_authenticated/workspaces/$workspaceId/_workspace-layout/projects'
     | '/_authenticated/workspaces/$workspaceId/_workspace-layout/settings'
     | '/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId'
@@ -472,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRouteImport
       parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute
     }
+    '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters': {
+      id: '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters'
+      path: '/clusters'
+      fullPath: '/workspaces/$workspaceId/clusters'
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute
+    }
     '/_authenticated/workspaces/$workspaceId/_workspace-layout/members/': {
       id: '/_authenticated/workspaces/$workspaceId/_workspace-layout/members/'
       path: '/members'
@@ -481,17 +500,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/': {
       id: '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/'
-      path: '/clusters'
-      fullPath: '/workspaces/$workspaceId/clusters'
+      path: '/'
+      fullPath: '/workspaces/$workspaceId/clusters/'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute
     }
     '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/$clusterId': {
       id: '/_authenticated/workspaces/$workspaceId/_workspace-layout/clusters/$clusterId'
-      path: '/clusters/$clusterId'
+      path: '/$clusterId'
       fullPath: '/workspaces/$workspaceId/clusters/$clusterId'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute
     }
     '/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId': {
       id: '/_authenticated/workspaces/$workspaceId/_project-layout/projects/$projectId'
@@ -587,24 +606,39 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRouteChildren {
-  AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute
-  AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute
+interface AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteChildren {
   AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute
   AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute
+}
+
+const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteChildren: AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteChildren =
+  {
+    AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute:
+      AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute,
+    AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute:
+      AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute,
+  }
+
+const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteChildren,
+  )
+
+interface AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRouteChildren {
+  AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteWithChildren
+  AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute
+  AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute
   AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRoute
 }
 
 const AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRouteChildren: AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutRouteChildren =
   {
+    AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRoute:
+      AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersRouteWithChildren,
     AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute:
       AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutProjectsRoute,
     AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute:
       AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutSettingsRoute,
-    AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute:
-      AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersClusterIdRoute,
-    AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute:
-      AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutClustersIndexRoute,
     AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRoute:
       AuthenticatedWorkspacesWorkspaceIdWorkspaceLayoutMembersIndexRoute,
   }
