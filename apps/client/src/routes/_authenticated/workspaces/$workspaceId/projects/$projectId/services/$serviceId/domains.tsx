@@ -67,13 +67,6 @@ const GET_DOMAINS_QUERY = graphql(`
   }
 `);
 
-const domainConnectionSchema = createConnectionSchema({
-  pageSize: 20,
-  orderField: DomainOrderField,
-  defaultOrderField: DomainOrderField.CREATED_AT,
-  defaultOrderDirection: OrderDirection.DESC,
-});
-
 const CREATE_DOMAIN_MUTATION = graphql(`
   mutation CreateDomain($input: CreateDomainInput!) {
     createDomain(input: $input) {
@@ -104,7 +97,17 @@ export const Route = createFileRoute(
   "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains",
 )({
   component: RouteComponent,
-  validateSearch: zodValidator(domainConnectionSchema),
+  validateSearch: zodValidator(
+    createConnectionSchema({
+      pageSize: 20,
+      orderField: DomainOrderField,
+      defaultOrderField: DomainOrderField.CREATED_AT,
+      defaultOrderDirection: OrderDirection.DESC,
+    }),
+  ),
+  beforeLoad: () => {
+    return { title: null };
+  },
 });
 
 function RouteComponent() {

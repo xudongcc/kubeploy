@@ -67,13 +67,6 @@ const GET_VOLUMES_QUERY = graphql(`
   }
 `);
 
-const volumeConnectionSchema = createConnectionSchema({
-  pageSize: 20,
-  orderField: VolumeOrderField,
-  defaultOrderField: VolumeOrderField.CREATED_AT,
-  defaultOrderDirection: OrderDirection.DESC,
-});
-
 const CREATE_VOLUME_MUTATION = graphql(`
   mutation CreateVolume($input: CreateVolumeInput!) {
     createVolume(input: $input) {
@@ -104,7 +97,17 @@ export const Route = createFileRoute(
   "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes",
 )({
   component: RouteComponent,
-  validateSearch: zodValidator(volumeConnectionSchema),
+  validateSearch: zodValidator(
+    createConnectionSchema({
+      pageSize: 20,
+      orderField: VolumeOrderField,
+      defaultOrderField: VolumeOrderField.CREATED_AT,
+      defaultOrderDirection: OrderDirection.DESC,
+    }),
+  ),
+  beforeLoad: () => {
+    return { title: null };
+  },
 });
 
 function RouteComponent() {

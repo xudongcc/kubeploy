@@ -5,6 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import dayjs from "dayjs";
 import { MoreHorizontal } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Page } from "@/components/page";
 import { DataTable } from "@/components/turboost-ui/data-table";
@@ -141,6 +142,7 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
+  const { t } = useTranslation();
   const search = Route.useSearch();
 
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -213,11 +215,11 @@ function RouteComponent() {
   const getRoleLabel = (role: WorkspaceMemberRole) => {
     switch (role) {
       case WorkspaceMemberRole.OWNER:
-        return "Owner";
+        return t("members.roles.owner");
       case WorkspaceMemberRole.ADMIN:
-        return "Admin";
+        return t("members.roles.admin");
       case WorkspaceMemberRole.MEMBER:
-        return "Member";
+        return t("members.roles.member");
       default:
         return role;
     }
@@ -229,11 +231,11 @@ function RouteComponent() {
     if (!status) return null;
     switch (status) {
       case WorkspaceMemberInviteStatus.PENDING:
-        return "Pending";
+        return t("members.status.pending");
       case WorkspaceMemberInviteStatus.ACCEPTED:
-        return "Accepted";
+        return t("members.status.accepted");
       case WorkspaceMemberInviteStatus.EXPIRED:
-        return "Expired";
+        return t("members.status.expired");
       default:
         return status;
     }
@@ -241,12 +243,12 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Members"
-      description="Manage workspace members and invitations"
+      title={t("members.title")}
+      description={t("members.description")}
       actions={
         <Dialog open={inviteOpen} onOpenChange={handleInviteOpenChange}>
           <DialogTrigger asChild>
-            <Button>Invite Member</Button>
+            <Button>{t("members.invite.button")}</Button>
           </DialogTrigger>
           <DialogContent>
             <form
@@ -257,9 +259,9 @@ function RouteComponent() {
               }}
             >
               <DialogHeader>
-                <DialogTitle>Invite Member</DialogTitle>
+                <DialogTitle>{t("members.invite.title")}</DialogTitle>
                 <DialogDescription>
-                  Send an invitation to join this workspace.
+                  {t("members.invite.description")}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -267,16 +269,16 @@ function RouteComponent() {
                   name="email"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? "Email is required" : undefined,
+                      !value.trim() ? t("members.form.email.required") : undefined,
                   }}
                 >
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="email">Email</FieldLabel>
+                      <FieldLabel htmlFor="email">{t("members.form.email.label")}</FieldLabel>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="user@example.com"
+                        placeholder={t("members.form.email.placeholder")}
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}
@@ -293,7 +295,7 @@ function RouteComponent() {
                 <inviteForm.Field name="role">
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="role">Role</FieldLabel>
+                      <FieldLabel htmlFor="role">{t("members.form.role.label")}</FieldLabel>
                       <Select
                         value={field.state.value}
                         onValueChange={(value) =>
@@ -301,14 +303,14 @@ function RouteComponent() {
                         }
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a role" />
+                          <SelectValue placeholder={t("members.form.role.placeholder")} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value={WorkspaceMemberRole.MEMBER}>
-                            Member
+                            {t("members.roles.member")}
                           </SelectItem>
                           <SelectItem value={WorkspaceMemberRole.ADMIN}>
-                            Admin
+                            {t("members.roles.admin")}
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -322,14 +324,14 @@ function RouteComponent() {
                   variant="outline"
                   onClick={() => handleInviteOpenChange(false)}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <inviteForm.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? "Sending..." : "Send Invitation"}
+                      {isSubmitting ? t("members.invite.sending") : t("members.invite.submit")}
                     </Button>
                   )}
                 </inviteForm.Subscribe>
@@ -343,7 +345,7 @@ function RouteComponent() {
         columns={[
           {
             accessorKey: "name",
-            header: "Name",
+            header: t("members.table.name"),
             cell: ({ row }) => {
               const member = row.original;
               return (
@@ -360,7 +362,7 @@ function RouteComponent() {
           },
           {
             accessorKey: "role",
-            header: "Role",
+            header: t("members.table.role"),
             cell: ({ row }) => {
               const member = row.original;
               if (member.role === WorkspaceMemberRole.OWNER) {
@@ -382,10 +384,10 @@ function RouteComponent() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value={WorkspaceMemberRole.MEMBER}>
-                      Member
+                      {t("members.roles.member")}
                     </SelectItem>
                     <SelectItem value={WorkspaceMemberRole.ADMIN}>
-                      Admin
+                      {t("members.roles.admin")}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -394,11 +396,11 @@ function RouteComponent() {
           },
           {
             accessorKey: "inviteStatus",
-            header: "Status",
+            header: t("members.table.status"),
             cell: ({ row }) => {
               const status = row.original.inviteStatus;
               if (!status)
-                return <span className="text-muted-foreground">Active</span>;
+                return <span className="text-muted-foreground">{t("members.status.active")}</span>;
               return (
                 <span
                   className={
@@ -416,7 +418,7 @@ function RouteComponent() {
           },
           {
             accessorKey: "createdAt",
-            header: "Joined",
+            header: t("members.table.joined"),
             cell: ({ row }) => {
               return dayjs(row.original.createdAt).format("YYYY-MM-DD");
             },
@@ -440,7 +442,7 @@ function RouteComponent() {
                       className="text-destructive"
                       onClick={() => handleRemoveMember(member.id)}
                     >
-                      Remove
+                      {t("members.remove")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

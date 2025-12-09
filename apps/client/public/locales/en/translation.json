@@ -54,13 +54,10 @@
     },
     "notFound": "Cluster not found",
     "overview": {
-      "activeTotal": "Active / Total",
-      "allocatableTotal": "Allocatable / Total",
       "cpu": "CPU (Cores)",
       "disk": "Disk",
       "memory": "Memory",
-      "nodes": "Nodes",
-      "total": "Total"
+      "nodes": "Nodes"
     },
     "settings": {
       "dangerZone": {
@@ -129,6 +126,46 @@
       "description": "Update the domain configuration.",
       "title": "Update Domain"
     }
+  },
+  "members": {
+    "description": "Manage workspace members and invitations",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "user@example.com",
+        "required": "Email is required"
+      },
+      "role": {
+        "label": "Role",
+        "placeholder": "Select a role"
+      }
+    },
+    "invite": {
+      "button": "Invite Member",
+      "description": "Send an invitation to join this workspace.",
+      "sending": "Sending...",
+      "submit": "Send Invitation",
+      "title": "Invite Member"
+    },
+    "remove": "Remove",
+    "roles": {
+      "admin": "Admin",
+      "member": "Member",
+      "owner": "Owner"
+    },
+    "status": {
+      "accepted": "Accepted",
+      "active": "Active",
+      "expired": "Expired",
+      "pending": "Pending"
+    },
+    "table": {
+      "joined": "Joined",
+      "name": "Name",
+      "role": "Role",
+      "status": "Status"
+    },
+    "title": "Members"
   },
   "project": {
     "createProject": "Create Project",

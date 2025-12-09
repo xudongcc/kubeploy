@@ -4,6 +4,9 @@ export const Route = createFileRoute(
   "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics",
 )({
   component: RouteComponent,
+  beforeLoad: () => {
+    return { title: null };
+  },
 });
 
 function RouteComponent() {

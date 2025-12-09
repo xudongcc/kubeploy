@@ -54,13 +54,10 @@
     },
     "notFound": "集群未找到",
     "overview": {
-      "activeTotal": "活跃 / 总计",
-      "allocatableTotal": "可分配 / 总计",
       "cpu": "CPU（核）",
       "disk": "磁盘",
       "memory": "内存",
-      "nodes": "节点",
-      "total": "总计"
+      "nodes": "节点"
     },
     "settings": {
       "dangerZone": {
@@ -129,6 +126,46 @@
       "description": "更新域名配置。",
       "title": "更新域名"
     }
+  },
+  "members": {
+    "description": "管理工作空间成员和邀请",
+    "form": {
+      "email": {
+        "label": "邮箱",
+        "placeholder": "user@example.com",
+        "required": "邮箱是必填的"
+      },
+      "role": {
+        "label": "角色",
+        "placeholder": "选择角色"
+      }
+    },
+    "invite": {
+      "button": "邀请成员",
+      "description": "发送邀请加入此工作空间。",
+      "sending": "发送中...",
+      "submit": "发送邀请",
+      "title": "邀请成员"
+    },
+    "remove": "移除",
+    "roles": {
+      "admin": "管理员",
+      "member": "成员",
+      "owner": "所有者"
+    },
+    "status": {
+      "accepted": "已接受",
+      "active": "活跃",
+      "expired": "已过期",
+      "pending": "待处理"
+    },
+    "table": {
+      "joined": "加入时间",
+      "name": "名称",
+      "role": "角色",
+      "status": "状态"
+    },
+    "title": "成员"
   },
   "project": {
     "createProject": "创建项目",

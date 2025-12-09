@@ -16,6 +16,9 @@ export const Route = createFileRoute(
   "/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/",
 )({
   component: RouteComponent,
+  beforeLoad: () => {
+    return { title: null };
+  },
 });
 
 function RouteComponent() {
