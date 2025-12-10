@@ -288,6 +288,16 @@
       },
       "title": "镜像"
     },
+    "metrics": {
+      "cpu": {
+        "title": "CPU"
+      },
+      "description": "监控服务的 CPU 和内存使用情况。",
+      "memory": {
+        "title": "内存"
+      },
+      "noLimit": "未设置限制"
+    },
     "notFound": "服务未找到",
     "overview": {
       "description": "服务的概览和配置。"

@@ -74,17 +74,17 @@ function RouteComponent() {
   const form = useForm({
     defaultValues: {
       // Convert millicores to cores for display (e.g., 1500 -> 1.5)
-      cpu: service.resourceUsage?.cpu
-        ? service.resourceUsage.cpu / 1000
+      cpu: service.resourceLimits?.cpu
+        ? service.resourceLimits.cpu / 1000
         : null,
-      memory: service.resourceUsage?.memory ?? null,
+      memory: service.resourceLimits?.memory ?? null,
     },
     onSubmit: async ({ value }) => {
       await updateService({
         variables: {
           id: serviceId,
           input: {
-            resourceUsage: {
+            resourceLimits: {
               // Convert cores back to millicores (e.g., 1.5 -> 1500)
               cpu: value.cpu ? Math.round(value.cpu * 1000) : null,
               memory: value.memory || null,

@@ -37,7 +37,7 @@ const GET_SERVICE_QUERY = graphql(`
       key
       value
     }
-    resourceUsage {
+    resourceLimits {
       cpu
       memory
     }

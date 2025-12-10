@@ -1,4 +1,4 @@
-import { Field, Float, ID, ObjectType } from '@nest-boot/graphql';
+import { Field, ID, Int, ObjectType } from '@nest-boot/graphql';
 
 import { ClusterNodeStatus } from '../enums/cluster-node-status.enum';
 
@@ -13,22 +13,22 @@ export class ClusterNode {
   @Field(() => String)
   ip!: string;
 
-  @Field(() => Float, {
+  @Field(() => Int, {
     description: 'Used CPU in millicores (1000 = 1 core)',
   })
   usedCpu!: number;
 
-  @Field(() => Float, {
+  @Field(() => Int, {
     description: 'Used memory in megabytes',
   })
   usedMemory!: number;
 
-  @Field(() => Float, {
+  @Field(() => Int, {
     description: 'Total CPU capacity in millicores (1000 = 1 core)',
   })
   totalCpu!: number;
 
-  @Field(() => Float, {
+  @Field(() => Int, {
     description: 'Total memory capacity in megabytes',
   })
   totalMemory!: number;

@@ -100,4 +100,37 @@ export class ClusterClientFactory {
       return {};
     }
   }
+
+  async getPodMetrics(
+    cluster: Cluster,
+    namespace: string,
+    labelSelector?: string,
+  ): Promise<{ cpu: string; memory: string }[]> {
+    try {
+      const params = new URLSearchParams();
+      if (labelSelector) {
+        params.append('labelSelector', labelSelector);
+      }
+
+      const url = `${cluster.server}/apis/metrics.k8s.io/v1beta1/namespaces/${namespace}/pods${params.toString() ? `?${params.toString()}` : ''}`;
+
+      const response = await this.axios.get<{
+        items: {
+          metadata: { name: string };
+          containers: { name: string; usage: { cpu: string; memory: string } }[];
+        }[];
+      }>(url, {
+        headers: {
+          Authorization: `Bearer ${cluster.token}`,
+        },
+      });
+
+      return response.data.items.flatMap((pod) =>
+        pod.containers.map((container) => container.usage),
+      );
+    } catch {
+      // If metrics-server is not available, return empty array
+      return [];
+    }
+  }
 }

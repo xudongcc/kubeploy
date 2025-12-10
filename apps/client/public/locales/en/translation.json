@@ -288,6 +288,16 @@
       },
       "title": "Image"
     },
+    "metrics": {
+      "cpu": {
+        "title": "CPU"
+      },
+      "description": "Monitor CPU and memory usage for your service.",
+      "memory": {
+        "title": "Memory"
+      },
+      "noLimit": "No limit set"
+    },
     "notFound": "Service not found",
     "overview": {
       "description": "Overview and configuration of your service."

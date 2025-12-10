@@ -76,16 +76,16 @@ type ClusterNode {
   status: ClusterNodeStatus!
 
   """Total CPU capacity in millicores (1000 = 1 core)"""
-  totalCpu: Float!
+  totalCpu: Int!
 
   """Total memory capacity in megabytes"""
-  totalMemory: Float!
+  totalMemory: Int!
 
   """Used CPU in millicores (1000 = 1 core)"""
-  usedCpu: Float!
+  usedCpu: Int!
 
   """Used memory in megabytes"""
-  usedMemory: Float!
+  usedMemory: Int!
 }
 
 enum ClusterNodeStatus {
@@ -402,7 +402,7 @@ type Query {
 }
 
 """Resource limits for a service container"""
-type ResourceUsage {
+type ResourceLimits {
   """CPU limit in millicores (1000 = 1 core)"""
   cpu: Int
 
@@ -447,10 +447,11 @@ type Service {
   environmentVariables: [EnvironmentVariable!]!
   id: ID!
   image: Image!
+  metrics: ServiceMetrics!
   name: String!
   ports: [ServicePort!]!
   project: Project!
-  resourceUsage: ResourceUsage!
+  resourceLimits: ResourceLimits!
   status: ServiceStatus!
   updatedAt: DateTime!
   volumes(
@@ -498,6 +499,21 @@ type ServiceEdge {
 
   """The item at the end of ServiceEdge."""
   node: Service!
+}
+
+"""Service resource metrics"""
+type ServiceMetrics {
+  """CPU limit in millicores (1000 = 1 core)"""
+  limitCpu: Int
+
+  """Memory limit in megabytes"""
+  limitMemory: Int
+
+  """Current CPU usage in millicores (1000 = 1 core)"""
+  usedCpu: Int!
+
+  """Current memory usage in megabytes"""
+  usedMemory: Int!
 }
 
 """Ordering options for service connections"""

@@ -19,6 +19,7 @@ import { ProjectService } from '@/project/project.service';
 
 import { ServicePortProtocol } from './enums/service-port-protocol.enum';
 import { ServiceStatus } from './enums/service-status.enum';
+import { ServiceMetrics } from './objects/service-metrics.object';
 import { Service } from './service.entity';
 
 @Injectable()
@@ -326,30 +327,30 @@ export class ServiceService extends EntityService<Service> {
   private buildContainerResources(
     service: Service,
   ): V1ResourceRequirements | undefined {
-    const { resourceUsage } = service;
+    const { resourceLimits } = service;
 
-    if (!resourceUsage.cpu && !resourceUsage.memory) {
+    if (!resourceLimits.cpu && !resourceLimits.memory) {
       return undefined;
     }
 
     const resources: V1ResourceRequirements = {};
 
-    if (resourceUsage.cpu || resourceUsage.memory) {
+    if (resourceLimits.cpu || resourceLimits.memory) {
       resources.limits = {};
       resources.requests = {};
 
-      if (resourceUsage.cpu) {
+      if (resourceLimits.cpu) {
         // Convert millicores to Kubernetes format (e.g., 1000m = 1 core)
-        resources.limits.cpu = `${resourceUsage.cpu}m`;
+        resources.limits.cpu = `${resourceLimits.cpu}m`;
         // Request is half of the limit
-        resources.requests.cpu = `${Math.floor(resourceUsage.cpu / 2)}m`;
+        resources.requests.cpu = `${Math.floor(resourceLimits.cpu / 2)}m`;
       }
 
-      if (resourceUsage.memory) {
+      if (resourceLimits.memory) {
         // Convert megabytes to Kubernetes format (e.g., 512Mi)
-        resources.limits.memory = `${resourceUsage.memory}Mi`;
+        resources.limits.memory = `${resourceLimits.memory}Mi`;
         // Request is half of the limit
-        resources.requests.memory = `${Math.floor(resourceUsage.memory / 2)}Mi`;
+        resources.requests.memory = `${Math.floor(resourceLimits.memory / 2)}Mi`;
       }
     }
 
@@ -457,5 +458,102 @@ export class ServiceService extends EntityService<Service> {
       // 其他错误，返回未知状态
       return ServiceStatus.UNKNOWN;
     }
+  }
+
+  async getMetrics(service: Service): Promise<ServiceMetrics> {
+    const project = await service.project.loadOrFail();
+    const cluster = await project.cluster.loadOrFail();
+    const namespace = project.kubeNamespaceName;
+
+    try {
+      // Get pod metrics for this service using label selector
+      const labelSelector = `kubeploy.com/service-id=${service.id}`;
+      const podMetrics = await this.clusterClientFactory.getPodMetrics(
+        cluster,
+        namespace,
+        labelSelector,
+      );
+
+      // Aggregate metrics from all pods/containers
+      let totalUsedCpu = 0;
+      let totalUsedMemory = 0;
+
+      for (const metrics of podMetrics) {
+        totalUsedCpu += this.parseCpuToMillicores(metrics.cpu);
+        totalUsedMemory += this.parseMemoryToMB(metrics.memory);
+      }
+
+      return {
+        usedCpu: Math.round(totalUsedCpu),
+        usedMemory: Math.round(totalUsedMemory),
+        limitCpu: service.resourceLimits.cpu,
+        limitMemory: service.resourceLimits.memory,
+      };
+    } catch {
+      // If metrics are not available, return zeros
+      return {
+        usedCpu: 0,
+        usedMemory: 0,
+        limitCpu: service.resourceLimits.cpu,
+        limitMemory: service.resourceLimits.memory,
+      };
+    }
+  }
+
+  /**
+   * Parse CPU from Kubernetes format to millicores
+   * Examples: "1" -> 1000, "500m" -> 500, "123456789n" -> 123.456789
+   */
+  private parseCpuToMillicores(cpu?: string): number {
+    if (!cpu) return 0;
+
+    // Handle nanocores (n) - used by metrics-server
+    if (cpu.endsWith('n')) {
+      const nanocores = parseFloat(cpu.slice(0, -1));
+      return nanocores / 1000000; // Convert nanocores to millicores
+    }
+
+    // Handle millicores (m)
+    if (cpu.endsWith('m')) {
+      return parseFloat(cpu.slice(0, -1));
+    }
+
+    // Handle cores (no unit) - convert to millicores
+    return parseFloat(cpu) * 1000;
+  }
+
+  /**
+   * Parse memory from Kubernetes format to MB (megabytes)
+   * Examples: "128Mi" -> 128, "1Gi" -> 1024, "512Ki" -> 0.5
+   */
+  private parseMemoryToMB(memory?: string): number {
+    if (!memory) return 0;
+
+    // Parse Kubernetes memory format with binary units (Ki, Mi, Gi, Ti)
+    const units: Record<string, number> = {
+      Ki: 1024, // 1 KiB = 1024 bytes
+      Mi: 1024 ** 2, // 1 MiB = 1024^2 bytes
+      Gi: 1024 ** 3, // 1 GiB = 1024^3 bytes
+      Ti: 1024 ** 4, // 1 TiB = 1024^4 bytes
+      Pi: 1024 ** 5, // 1 PiB = 1024^5 bytes
+      Ei: 1024 ** 6, // 1 EiB = 1024^6 bytes
+      K: 1000, // 1 KB = 1000 bytes (decimal)
+      M: 1000 ** 2, // 1 MB = 1000^2 bytes
+      G: 1000 ** 3, // 1 GB = 1000^3 bytes
+      T: 1000 ** 4, // 1 TB = 1000^4 bytes
+      P: 1000 ** 5, // 1 PB = 1000^5 bytes
+      E: 1000 ** 6, // 1 EB = 1000^6 bytes
+    };
+
+    for (const [unit, multiplier] of Object.entries(units)) {
+      if (memory.endsWith(unit)) {
+        const value = parseFloat(memory.slice(0, -unit.length));
+        const bytes = value * multiplier;
+        return bytes / (1024 * 1024); // Convert to MB
+      }
+    }
+
+    // No unit, assume bytes
+    return parseFloat(memory) / (1024 * 1024);
   }
 }

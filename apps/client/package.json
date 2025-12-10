@@ -60,6 +60,7 @@
     "react-dom": "^19.2.1",
     "react-hook-form": "^7.68.0",
     "react-i18next": "^16.4.0",
+    "recharts": "2.15.4",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
     "tailwindcss": "^4.1.17",

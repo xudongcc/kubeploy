@@ -91,13 +91,13 @@ export type ClusterNode = {
   name: Scalars["String"]["output"];
   status: ClusterNodeStatus;
   /** Total CPU capacity in millicores (1000 = 1 core) */
-  totalCpu: Scalars["Float"]["output"];
+  totalCpu: Scalars["Int"]["output"];
   /** Total memory capacity in megabytes */
-  totalMemory: Scalars["Float"]["output"];
+  totalMemory: Scalars["Int"]["output"];
   /** Used CPU in millicores (1000 = 1 core) */
-  usedCpu: Scalars["Float"]["output"];
+  usedCpu: Scalars["Int"]["output"];
   /** Used memory in megabytes */
-  usedMemory: Scalars["Float"]["output"];
+  usedMemory: Scalars["Int"]["output"];
 };
 
 export enum ClusterNodeStatus {
@@ -495,8 +495,8 @@ export type QueryWorkspacesArgs = {
 };
 
 /** Resource limits for a service container */
-export type ResourceUsage = {
-  __typename?: "ResourceUsage";
+export type ResourceLimits = {
+  __typename?: "ResourceLimits";
   /** CPU limit in millicores (1000 = 1 core) */
   cpu?: Maybe<Scalars["Int"]["output"]>;
   /** Memory limit in megabytes */
@@ -518,10 +518,11 @@ export type Service = {
   environmentVariables: Array<EnvironmentVariable>;
   id: Scalars["ID"]["output"];
   image: Image;
+  metrics: ServiceMetrics;
   name: Scalars["String"]["output"];
   ports: Array<ServicePort>;
   project: Project;
-  resourceUsage: ResourceUsage;
+  resourceLimits: ResourceLimits;
   status: ServiceStatus;
   updatedAt: Scalars["DateTime"]["output"];
   volumes: VolumeConnection;
@@ -562,6 +563,19 @@ export type ServiceEdge = {
   cursor: Scalars["String"]["output"];
   /** The item at the end of ServiceEdge. */
   node: Service;
+};
+
+/** Service resource metrics */
+export type ServiceMetrics = {
+  __typename?: "ServiceMetrics";
+  /** CPU limit in millicores (1000 = 1 core) */
+  limitCpu?: Maybe<Scalars["Int"]["output"]>;
+  /** Memory limit in megabytes */
+  limitMemory?: Maybe<Scalars["Int"]["output"]>;
+  /** Current CPU usage in millicores (1000 = 1 core) */
+  usedCpu: Scalars["Int"]["output"];
+  /** Current memory usage in megabytes */
+  usedMemory: Scalars["Int"]["output"];
 };
 
 /** Ordering options for service connections */
@@ -1259,8 +1273,8 @@ export type GetServiceQuery = {
       key: string;
       value: string;
     }>;
-    resourceUsage: {
-      __typename?: "ResourceUsage";
+    resourceLimits: {
+      __typename?: "ResourceLimits";
       cpu?: number | null;
       memory?: number | null;
     };
@@ -1290,8 +1304,8 @@ export type ServiceDetailFragment = {
     key: string;
     value: string;
   }>;
-  resourceUsage: {
-    __typename?: "ResourceUsage";
+  resourceLimits: {
+    __typename?: "ResourceLimits";
     cpu?: number | null;
     memory?: number | null;
   };
@@ -1328,6 +1342,25 @@ export type DeployServiceMutationVariables = Exact<{
 export type DeployServiceMutation = {
   __typename?: "Mutation";
   deployService: { __typename?: "Service"; id: string };
+};
+
+export type ServiceMetricsQueryVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type ServiceMetricsQuery = {
+  __typename?: "Query";
+  service?: {
+    __typename?: "Service";
+    id: string;
+    metrics: {
+      __typename?: "ServiceMetrics";
+      usedCpu: number;
+      usedMemory: number;
+      limitCpu?: number | null;
+      limitMemory?: number | null;
+    };
+  } | null;
 };
 
 export type GetDomainsQueryVariables = Exact<{
@@ -1877,7 +1910,7 @@ export const ServiceDetailFragmentDoc = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "resourceUsage" },
+            name: { kind: "Name", value: "resourceLimits" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -3809,7 +3842,7 @@ export const GetServiceDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "resourceUsage" },
+            name: { kind: "Name", value: "resourceLimits" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -3943,7 +3976,7 @@ export const UpdateServiceEnvironmentDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "resourceUsage" },
+            name: { kind: "Name", value: "resourceLimits" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -4080,7 +4113,7 @@ export const UpdateServiceImageDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "resourceUsage" },
+            name: { kind: "Name", value: "resourceLimits" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -4147,6 +4180,76 @@ export const DeployServiceDocument = {
   DeployServiceMutation,
   DeployServiceMutationVariables
 >;
+export const ServiceMetricsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ServiceMetrics" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "service" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "metrics" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "usedCpu" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "usedMemory" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "limitCpu" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "limitMemory" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ServiceMetricsQuery, ServiceMetricsQueryVariables>;
 export const GetDomainsDocument = {
   kind: "Document",
   definitions: [
@@ -4695,7 +4798,7 @@ export const UpdateServicePortsDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "resourceUsage" },
+            name: { kind: "Name", value: "resourceLimits" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -4832,7 +4935,7 @@ export const UpdateServiceResourcesDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "resourceUsage" },
+            name: { kind: "Name", value: "resourceLimits" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [

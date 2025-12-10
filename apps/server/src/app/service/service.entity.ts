@@ -14,7 +14,6 @@ import {
   Unique,
 } from '@mikro-orm/core';
 import { Field, HideField, ID, Int, ObjectType } from '@nest-boot/graphql';
-import { Float } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
 import { Domain } from '@/domain/domain.entity';
@@ -50,7 +49,7 @@ export class EnvironmentVariable {
 
 @ObjectType({ description: 'Resource limits for a service container' })
 @Embeddable()
-export class ResourceUsage {
+export class ResourceLimits {
   @Field(() => Int, {
     nullable: true,
     description: 'CPU limit in millicores (1000 = 1 core)',
@@ -128,9 +127,9 @@ export class Service {
   environmentVariables: Opt<EnvironmentVariable[]> = [];
 
   // eslint-disable-next-line @nest-boot/entity-property-config-from-types
-  @Field(() => ResourceUsage)
-  @Embedded(() => ResourceUsage)
-  resourceUsage: Opt<ResourceUsage> = new ResourceUsage();
+  @Field(() => ResourceLimits)
+  @Embedded(() => ResourceLimits)
+  resourceLimits: Opt<ResourceLimits> = new ResourceLimits();
 
   @Field(() => Date)
   @Property({ type: t.datetime, defaultRaw: 'now()' })

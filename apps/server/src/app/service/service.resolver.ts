@@ -25,6 +25,7 @@ import { Volume } from '@/volume/volume.entity';
 import { ServiceStatus } from './enums/service-status.enum';
 import { CreateServiceInput } from './inputs/create-service.input';
 import { UpdateServiceInput } from './inputs/update-service.input';
+import { ServiceMetrics } from './objects/service-metrics.object';
 import { Service } from './service.entity';
 import { ServiceService } from './service.service';
 
@@ -112,5 +113,11 @@ export class ServiceResolver {
   @ResolveField(() => ServiceStatus)
   async status(@Parent() service: Service) {
     return await this.serviceService.getStatus(service);
+  }
+
+  @Can(PermissionAction.READ, Service)
+  @ResolveField(() => ServiceMetrics)
+  async metrics(@Parent() service: Service) {
+    return await this.serviceService.getMetrics(service);
   }
 }
