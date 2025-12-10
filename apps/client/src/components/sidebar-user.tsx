@@ -26,14 +26,15 @@ export function SidebarUser() {
 
   const navigate = useNavigate();
 
-  const user = useRouteContext({
+  const currentUser = useRouteContext({
     from: "/_authenticated/workspaces/$workspaceId",
-    select: (context) => context.user,
+    select: (context) => context.currentUser,
   });
 
   const userAvatar = useMemo(
-    () => `https://www.gravatar.com/avatar/${md5(user.email)}?s=32&d=identicon`,
-    [user.email],
+    () =>
+      `https://www.gravatar.com/avatar/${md5(currentUser.email)}?s=32&d=identicon`,
+    [currentUser.email],
   );
 
   return (
@@ -46,15 +47,15 @@ export function SidebarUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="rounded-lg">
-                <AvatarImage src={userAvatar} alt={user.name} />
+                <AvatarImage src={userAvatar} alt={currentUser.name} />
                 <AvatarFallback className="rounded-lg">
-                  {user.name.charAt(0).toUpperCase()}
+                  {currentUser.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{currentUser.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+                  {currentUser.email}
                 </span>
               </div>
               <EllipsisVertical className="ml-auto size-4" />
@@ -69,15 +70,17 @@ export function SidebarUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="rounded-lg">
-                  <AvatarImage src={userAvatar} alt={user.name} />
+                  <AvatarImage src={userAvatar} alt={currentUser.name} />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.charAt(0).toUpperCase()}
+                    {currentUser.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">
+                    {currentUser.name}
+                  </span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {user.email}
+                    {currentUser.email}
                   </span>
                 </div>
               </div>

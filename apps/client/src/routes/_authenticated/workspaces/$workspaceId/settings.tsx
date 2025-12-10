@@ -26,7 +26,7 @@ const UPDATE_WORKSPACE_MUTATION = graphql(`
   mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
     updateWorkspace(input: $input) {
       id
-      name
+      ...Workspace @unmask
     }
   }
 `);
@@ -149,7 +149,7 @@ function RouteComponent() {
                 )}
               </form.Field>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-end">
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}
               >

@@ -152,7 +152,7 @@ function RouteComponent() {
                 )}
               </form.Field>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-end">
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}
               >

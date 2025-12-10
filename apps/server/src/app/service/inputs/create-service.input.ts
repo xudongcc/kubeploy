@@ -1,45 +1,31 @@
-import { Field, ID, InputType, Int } from '@nest-boot/graphql';
-import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsInt,
-  IsOptional,
-  IsPositive,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { Field, ID, InputType } from '@nest-boot/graphql';
+import { IsOptional, IsString, Length, Matches } from 'class-validator';
 
-import { EnvironmentVariableInput } from './environment-variable.input';
+function IsServiceName(): PropertyDecorator {
+  return (target: object, propertyKey: string | symbol) => {
+    IsString()(target, propertyKey);
+
+    Length(1, 63)(target, propertyKey);
+
+    // Kubernetes DNS-1123 subdomain name pattern
+    // https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
+    Matches(/^[a-z]([a-z0-9-]*[a-z0-9])?$/, {
+      message:
+        'Name must be lowercase alphanumeric, may contain hyphens, and must start and end with an alphanumeric character',
+    })(target, propertyKey);
+  };
+}
 
 @InputType()
 export class CreateServiceInput {
-  @IsString()
+  @IsServiceName()
   @Field(() => String)
   name!: string;
 
+  @IsOptional()
   @IsString()
-  @Field(() => String)
-  image!: string;
-
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  @Field(() => Int, { nullable: true })
-  replicas?: number;
-
-  @IsOptional()
-  @IsArray()
-  @IsInt({ each: true })
-  @IsPositive({ each: true })
-  @Field(() => [Int], { nullable: true })
-  ports?: number[];
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => EnvironmentVariableInput)
-  @Field(() => [EnvironmentVariableInput], { nullable: true })
-  environmentVariables?: EnvironmentVariableInput[];
+  @Field(() => String, { nullable: true })
+  description?: string;
 
   @IsString()
   @Field(() => ID)

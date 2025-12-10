@@ -15,9 +15,10 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
  */
 type Documents = {
   "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetClustersForSelectDocument;
+  "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.CreateServiceDialogDocument;
   "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n": typeof types.WorkspaceSwitcherWorkspacesDocument;
-  "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n": typeof types.GetCurrentUserDocument;
-  "\n  query GetWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n": typeof types.GetWorkspaceDocument;
+  "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n    createdAt\n    updatedAt\n  }\n": typeof types.GetCurrentUserDocument;
+  "\n  query GetWorkspace($id: ID!) {\n    workspace: workspace(id: $id) {\n      id\n      ...Workspace @unmask\n    }\n  }\n\n  fragment Workspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n": typeof types.GetWorkspaceDocument;
   "\n  query GetCluster($id: ID!) {\n    cluster(id: $id) {\n      id\n      ...ClusterDetail @unmask\n    }\n  }\n\n  fragment ClusterDetail on Cluster {\n    id\n    name\n    server\n    createdAt\n    nodes {\n      name\n      ip\n      status\n      allocatableCpuCores\n      allocatableMemoryBytes\n      allocatableDiskBytes\n      capacityCpuCores\n      capacityMemoryBytes\n      capacityDiskBytes\n    }\n  }\n": typeof types.GetClusterDocument;
   "\n  mutation UpdateCluster($id: ID!, $input: UpdateClusterInput!) {\n    updateCluster(id: $id, input: $input) {\n      id\n      ...ClusterDetail\n    }\n  }\n": typeof types.UpdateClusterDocument;
   "\n  mutation DeleteCluster($id: ID!) {\n    deleteCluster(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteClusterDocument;
@@ -27,19 +28,19 @@ type Documents = {
   "\n  mutation CreateWorkspaceInvite($input: CreateWorkspaceInviteInput!) {\n    createWorkspaceInvite(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateWorkspaceInviteDocument;
   "\n  mutation UpdateWorkspaceMember(\n    $id: ID!\n    $input: UpdateWorkspaceMemberInput!\n  ) {\n    updateWorkspaceMember(id: $id, input: $input) {\n      id\n      role\n    }\n  }\n": typeof types.UpdateWorkspaceMemberDocument;
   "\n  mutation RemoveWorkspaceMember($id: ID!) {\n    removeWorkspaceMember(id: $id) {\n      id\n    }\n  }\n": typeof types.RemoveWorkspaceMemberDocument;
-  "\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n": typeof types.GetProjectDocument;
-  "\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateServiceDocument;
+  "\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n": typeof types.GetProjectDocument;
   "\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    project(id: $projectId) {\n      id\n      services(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ServiceItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    status\n    createdAt\n  }\n": typeof types.GetServicesDocument;
   "\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n": typeof types.UpdateProjectDocument;
   "\n  mutation DeleteProject($id: ID!) {\n    deleteProject(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteProjectDocument;
-  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n": typeof types.GetServiceDocument;
+  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n": typeof types.GetServiceDocument;
+  "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceEnvironmentDocument;
+  "\n  mutation UpdateServiceImage($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceImageDocument;
+  "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n": typeof types.DeployServiceDocument;
   "\n  query GetDomains(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: DomainOrder\n  ) {\n    service(id: $serviceId) {\n      id\n      domains(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...DomainItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment DomainItem on Domain {\n    id\n    host\n    path\n    servicePort\n    createdAt\n  }\n": typeof types.GetDomainsDocument;
   "\n  mutation CreateDomain($input: CreateDomainInput!) {\n    createDomain(input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n": typeof types.CreateDomainDocument;
   "\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n": typeof types.UpdateDomainDocument;
   "\n  mutation DeleteDomain($id: ID!) {\n    deleteDomain(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteDomainDocument;
-  "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceEnvironmentDocument;
-  "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n": typeof types.DeployServiceDocument;
-  "\n  mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceDocument;
+  "\n  mutation UpdateServicePorts($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServicePortsDocument;
   "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteServiceDocument;
   "\n  query GetVolumes(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: VolumeOrder\n  ) {\n    service(id: $serviceId) {\n      id\n      volumes(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...VolumeItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment VolumeItem on Volume {\n    id\n    name\n    size\n    mountPath\n    createdAt\n  }\n": typeof types.GetVolumesDocument;
   "\n  mutation CreateVolume($input: CreateVolumeInput!) {\n    createVolume(input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n": typeof types.CreateVolumeDocument;
@@ -47,7 +48,7 @@ type Documents = {
   "\n  mutation DeleteVolume($id: ID!) {\n    deleteVolume(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteVolumeDocument;
   "\n  query GetProjects(\n    $workspaceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ProjectOrder\n    $query: String\n  ) {\n    workspace(id: $workspaceId) {\n      id\n      projects(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ProjectItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ProjectItem on Project {\n    id\n    name\n    cluster {\n      id\n      name\n    }\n    createdAt\n  }\n": typeof types.GetProjectsDocument;
   "\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateProjectDocument;
-  "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.UpdateWorkspaceDocument;
+  "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      ...Workspace @unmask\n    }\n  }\n": typeof types.UpdateWorkspaceDocument;
   "\n  mutation DeleteWorkspace {\n    deleteWorkspace {\n      id\n    }\n  }\n": typeof types.DeleteWorkspaceDocument;
   "\n  mutation CreateWorkspace($input: CreateWorkspaceInput!) {\n    createWorkspace(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateWorkspaceDocument;
   "\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n": typeof types.GetFirstWorkspaceDocument;
@@ -55,11 +56,13 @@ type Documents = {
 const documents: Documents = {
   "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n":
     types.GetClustersForSelectDocument,
+  "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n":
+    types.CreateServiceDialogDocument,
   "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n":
     types.WorkspaceSwitcherWorkspacesDocument,
-  "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n":
+  "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n    createdAt\n    updatedAt\n  }\n":
     types.GetCurrentUserDocument,
-  "\n  query GetWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n":
+  "\n  query GetWorkspace($id: ID!) {\n    workspace: workspace(id: $id) {\n      id\n      ...Workspace @unmask\n    }\n  }\n\n  fragment Workspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n":
     types.GetWorkspaceDocument,
   "\n  query GetCluster($id: ID!) {\n    cluster(id: $id) {\n      id\n      ...ClusterDetail @unmask\n    }\n  }\n\n  fragment ClusterDetail on Cluster {\n    id\n    name\n    server\n    createdAt\n    nodes {\n      name\n      ip\n      status\n      allocatableCpuCores\n      allocatableMemoryBytes\n      allocatableDiskBytes\n      capacityCpuCores\n      capacityMemoryBytes\n      capacityDiskBytes\n    }\n  }\n":
     types.GetClusterDocument,
@@ -79,18 +82,22 @@ const documents: Documents = {
     types.UpdateWorkspaceMemberDocument,
   "\n  mutation RemoveWorkspaceMember($id: ID!) {\n    removeWorkspaceMember(id: $id) {\n      id\n    }\n  }\n":
     types.RemoveWorkspaceMemberDocument,
-  "\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n":
+  "\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n":
     types.GetProjectDocument,
-  "\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n":
-    types.CreateServiceDocument,
   "\n  query GetServices(\n    $projectId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: ServiceOrder\n    $query: String\n  ) {\n    project(id: $projectId) {\n      id\n      services(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n        query: $query\n      ) {\n        edges {\n          node {\n            id\n            ...ServiceItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment ServiceItem on Service {\n    id\n    name\n    status\n    createdAt\n  }\n":
     types.GetServicesDocument,
   "\n  mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {\n    updateProject(id: $id, input: $input) {\n      id\n      ...ProjectDetail\n    }\n  }\n":
     types.UpdateProjectDocument,
   "\n  mutation DeleteProject($id: ID!) {\n    deleteProject(id: $id) {\n      id\n    }\n  }\n":
     types.DeleteProjectDocument,
-  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n":
+  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n":
     types.GetServiceDocument,
+  "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
+    types.UpdateServiceEnvironmentDocument,
+  "\n  mutation UpdateServiceImage($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
+    types.UpdateServiceImageDocument,
+  "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n":
+    types.DeployServiceDocument,
   "\n  query GetDomains(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: DomainOrder\n  ) {\n    service(id: $serviceId) {\n      id\n      domains(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...DomainItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment DomainItem on Domain {\n    id\n    host\n    path\n    servicePort\n    createdAt\n  }\n":
     types.GetDomainsDocument,
   "\n  mutation CreateDomain($input: CreateDomainInput!) {\n    createDomain(input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n":
@@ -99,12 +106,8 @@ const documents: Documents = {
     types.UpdateDomainDocument,
   "\n  mutation DeleteDomain($id: ID!) {\n    deleteDomain(id: $id) {\n      id\n    }\n  }\n":
     types.DeleteDomainDocument,
-  "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
-    types.UpdateServiceEnvironmentDocument,
-  "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n":
-    types.DeployServiceDocument,
-  "\n  mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
-    types.UpdateServiceDocument,
+  "\n  mutation UpdateServicePorts($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
+    types.UpdateServicePortsDocument,
   "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n":
     types.DeleteServiceDocument,
   "\n  query GetVolumes(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: VolumeOrder\n  ) {\n    service(id: $serviceId) {\n      id\n      volumes(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...VolumeItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment VolumeItem on Volume {\n    id\n    name\n    size\n    mountPath\n    createdAt\n  }\n":
@@ -119,7 +122,7 @@ const documents: Documents = {
     types.GetProjectsDocument,
   "\n  mutation CreateProject($input: CreateProjectInput!) {\n    createProject(input: $input) {\n      id\n    }\n  }\n":
     types.CreateProjectDocument,
-  "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n":
+  "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      ...Workspace @unmask\n    }\n  }\n":
     types.UpdateWorkspaceDocument,
   "\n  mutation DeleteWorkspace {\n    deleteWorkspace {\n      id\n    }\n  }\n":
     types.DeleteWorkspaceDocument,
@@ -153,20 +156,26 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n",
+): (typeof documents)["\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n",
 ): (typeof documents)["\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n",
-): (typeof documents)["\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n  }\n"];
+  source: "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n    createdAt\n    updatedAt\n  }\n",
+): (typeof documents)["\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n    createdAt\n    updatedAt\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n",
-): (typeof documents)["\n  query GetWorkspace($id: ID!) {\n    workspace(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...CurrentWorkspace @unmask\n    }\n  }\n\n  fragment CurrentWorkspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n"];
+  source: "\n  query GetWorkspace($id: ID!) {\n    workspace: workspace(id: $id) {\n      id\n      ...Workspace @unmask\n    }\n  }\n\n  fragment Workspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n",
+): (typeof documents)["\n  query GetWorkspace($id: ID!) {\n    workspace: workspace(id: $id) {\n      id\n      ...Workspace @unmask\n    }\n  }\n\n  fragment Workspace on Workspace {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -225,14 +234,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n",
-): (typeof documents)["\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
-  source: "\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation CreateService($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n    }\n  }\n"];
+  source: "\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n",
+): (typeof documents)["\n  query GetProject($id: ID!) {\n    project(id: $id) {\n      id\n      ...ProjectDetail @unmask\n    }\n  }\n\n  fragment ProjectDetail on Project {\n    id\n    name\n    createdAt\n    updatedAt\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -255,8 +258,26 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n",
-): (typeof documents)["\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      name\n      createdAt\n      updatedAt\n\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image\n    ports\n    replicas\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n"];
+  source: "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n",
+): (typeof documents)["\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    createdAt\n    updatedAt\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation UpdateServiceImage($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateServiceImage($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n",
+): (typeof documents)["\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -285,20 +306,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n",
-): (typeof documents)["\n  mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
-  source: "\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n",
-): (typeof documents)["\n  mutation DeployService($id: ID!) {\n    deployService(id: $id) {\n      id\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
-  source: "\n  mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n",
-): (typeof documents)["\n  mutation UpdateService($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n"];
+  source: "\n  mutation UpdateServicePorts($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateServicePorts($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -345,8 +354,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n",
-): (typeof documents)["\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      name\n    }\n  }\n"];
+  source: "\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      ...Workspace @unmask\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n    updateWorkspace(input: $input) {\n      id\n      ...Workspace @unmask\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

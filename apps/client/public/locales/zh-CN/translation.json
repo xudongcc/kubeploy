@@ -90,7 +90,41 @@
   },
   "createService": {
     "description": "部署一个新的服务到您的项目。",
+    "form": {
+      "description": {
+        "label": "描述",
+        "placeholder": "输入服务描述（可选）"
+      },
+      "name": {
+        "hint": "必须是小写字母或数字，可以包含连字符，且必须以字母或数字开头和结尾。",
+        "invalid": "名称必须是小写字母或数字，可以包含连字符，且必须以字母或数字开头和结尾",
+        "label": "名称",
+        "placeholder": "my-service",
+        "required": "名称是必填项"
+      }
+    },
     "title": "创建服务"
+  },
+  "network": {
+    "title": "网络",
+    "description": "管理服务的端口和域名。",
+    "ports": {
+      "title": "端口",
+      "description": "配置服务暴露的端口。",
+      "empty": "尚未配置端口。",
+      "addPort": "添加端口",
+      "form": {
+        "port": "端口",
+        "portPlaceholder": "8080",
+        "protocol": "协议"
+      }
+    },
+    "domains": {
+      "title": "域名",
+      "description": "配置服务的自定义域名。",
+      "empty": "尚未配置域名。",
+      "noPorts": "尚未配置端口。请先添加端口。"
+    }
   },
   "domain": {
     "createDomain": {
@@ -210,8 +244,59 @@
       "description": "您确定要删除服务 {{name}} 吗？此操作无法撤销，关联的 Kubernetes Deployment 和 Service 将被删除。",
       "title": "删除服务"
     },
+    "deploy": "部署",
+    "deploying": "部署中...",
     "description": "创建和管理您的服务。",
+    "image": {
+      "description": "配置服务的容器镜像。您可以在 Docker Hub 上找到镜像，或使用私有镜像仓库。",
+      "form": {
+        "name": {
+          "label": "名称",
+          "placeholder": "nginx",
+          "required": "镜像名称是必填的"
+        },
+        "password": {
+          "label": "密码",
+          "placeholder": "私有镜像仓库密码"
+        },
+        "registry": {
+          "label": "仓库",
+          "placeholder": "docker.io"
+        },
+        "tag": {
+          "label": "标签",
+          "placeholder": "latest"
+        },
+        "username": {
+          "label": "用户名",
+          "placeholder": "私有镜像仓库用户名"
+        }
+      },
+      "title": "镜像"
+    },
+    "environment": {
+      "addVariable": "添加变量",
+      "cardDescription": "配置服务运行时可用的环境变量。",
+      "description": "管理服务的环境变量。",
+      "empty": "尚未配置环境变量。",
+      "form": {
+        "key": "键",
+        "keyPlaceholder": "KEY",
+        "value": "值",
+        "valuePlaceholder": "value"
+      },
+      "rawHint": "以 KEY=VALUE 格式输入环境变量，每行一个。以 # 开头的行将被忽略。",
+      "rawPlaceholder": "# 示例：\nDATABASE_URL=postgres://localhost:5432/db\nAPI_KEY=your-api-key",
+      "tabs": {
+        "form": "表单",
+        "raw": "原始"
+      },
+      "title": "环境变量"
+    },
     "notFound": "服务未找到",
+    "overview": {
+      "description": "服务的概览和配置。"
+    },
     "settings": {
       "dangerZone": {
         "deleteButton": "删除服务",
@@ -221,24 +306,38 @@
       "description": "更新您的服务设置。",
       "form": {
         "image": {
-          "label": "镜像",
-          "placeholder": "nginx:latest",
-          "required": "镜像是必填的"
+          "name": {
+            "label": "镜像名称",
+            "placeholder": "nginx",
+            "required": "镜像名称是必填的"
+          },
+          "password": {
+            "label": "密码",
+            "placeholder": "私有镜像仓库密码"
+          },
+          "registry": {
+            "label": "镜像仓库",
+            "placeholder": "docker.io"
+          },
+          "tag": {
+            "label": "标签",
+            "placeholder": "latest"
+          },
+          "username": {
+            "label": "用户名",
+            "placeholder": "私有镜像仓库用户名"
+          }
         },
         "name": {
           "label": "名称",
           "placeholder": "my-service",
           "required": "服务名称是必填的"
-        },
-        "replicas": {
-          "label": "副本数",
-          "required": "副本数必须大于等于 0"
         }
       },
       "title": "服务设置"
     },
     "tabs": {
-      "domains": "域名",
+      "network": "网络",
       "environment": "环境变量",
       "logs": "日志",
       "metrics": "指标",

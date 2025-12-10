@@ -1,4 +1,4 @@
-import { V1Deployment, V1Service } from '@kubernetes/client-node';
+import { V1Deployment, V1Secret, V1Service } from '@kubernetes/client-node';
 import { EntityData, EntityManager } from '@mikro-orm/core';
 import { EntityService, IdOrEntity } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
@@ -12,6 +12,7 @@ import {
 } from '@/kubernetes';
 import { ProjectService } from '@/project/project.service';
 
+import { ServicePortProtocol } from './enums/service-port-protocol.enum';
 import { ServiceStatus } from './enums/service-status.enum';
 import { Service } from './service.entity';
 
@@ -56,6 +57,33 @@ export class ServiceService extends EntityService<Service> {
 
     const deploymentBody = await this.buildDeployment(service);
     const serviceBody = this.buildService(service);
+    const secretBody = this.buildRegistryCredentialSecret(service);
+
+    // Sync registry credential secret
+    if (secretBody) {
+      await coreV1Api.patchNamespacedSecret(
+        {
+          name: service.kubeRegistryCredentialSecretName,
+          namespace,
+          body: secretBody,
+          fieldManager,
+          force: true,
+        },
+        configurationOptions,
+      );
+    } else {
+      // Delete secret if no credentials are provided
+      try {
+        await coreV1Api.deleteNamespacedSecret({
+          name: service.kubeRegistryCredentialSecretName,
+          namespace,
+        });
+      } catch (error: unknown) {
+        if (!isNotFoundError(error)) {
+          throw error;
+        }
+      }
+    }
 
     // Apply Deployment using Server-Side Apply
     await appsV1Api.patchNamespacedDeployment(
@@ -131,11 +159,45 @@ export class ServiceService extends EntityService<Service> {
       }
     }
 
+    try {
+      await coreV1Api.deleteNamespacedSecret({
+        name: service.kubeRegistryCredentialSecretName,
+        namespace,
+      });
+    } catch (error: unknown) {
+      if (!isNotFoundError(error)) {
+        throw error;
+      }
+    }
+
     return await super.remove(service);
+  }
+
+  private buildImageString(image: Service['image']): string {
+    if (!image.name) {
+      throw new Error('Image name is required');
+    }
+
+    let imageString = '';
+
+    if (image.registry) {
+      imageString += `${image.registry}/`;
+    }
+
+    imageString += image.name;
+
+    if (image.digest) {
+      imageString += `@${image.digest}`;
+    } else if (image.tag) {
+      imageString += `:${image.tag}`;
+    }
+
+    return imageString;
   }
 
   private async buildDeployment(service: Service): Promise<V1Deployment> {
     const volumes = await service.volumes.loadItems();
+    const imageString = this.buildImageString(service.image);
 
     return {
       apiVersion: 'apps/v1',
@@ -149,7 +211,7 @@ export class ServiceService extends EntityService<Service> {
         },
       },
       spec: {
-        replicas: service.replicas,
+        replicas: 1,
         selector: {
           matchLabels: {
             'kubeploy.com/service-id': service.id,
@@ -165,12 +227,16 @@ export class ServiceService extends EntityService<Service> {
             containers: [
               {
                 name: 'main',
-                image: service.image,
+                image: imageString,
                 ports:
                   service.ports.length > 0
-                    ? service.ports.map((port) => ({
-                        name: `port-${port}`,
-                        containerPort: port,
+                    ? service.ports.map((p) => ({
+                        protocol:
+                          p.protocol === ServicePortProtocol.HTTP
+                            ? 'TCP'
+                            : p.protocol,
+                        name: `port-${p.port}`,
+                        containerPort: p.port,
                       }))
                     : undefined,
                 env:
@@ -194,6 +260,10 @@ export class ServiceService extends EntityService<Service> {
                   .filter((volume) => volume !== null),
               },
             ],
+            imagePullSecrets:
+              service.image.username && service.image.password
+                ? [{ name: service.kubeRegistryCredentialSecretName }]
+                : undefined,
             volumes: volumes.map((volume) => ({
               name: volume.kubePersistentVolumeClaimName,
               persistentVolumeClaim: {
@@ -202,6 +272,47 @@ export class ServiceService extends EntityService<Service> {
             })),
           },
         },
+      },
+    };
+  }
+
+  private buildRegistryCredentialSecret(service: Service): V1Secret | null {
+    const { image } = service;
+
+    // Only create secret if username and password are provided
+    if (!image.username || !image.password) {
+      return null;
+    }
+
+    const registry = image.registry ?? 'https://index.docker.io/v1/';
+    const auth = Buffer.from(`${image.username}:${image.password}`).toString(
+      'base64',
+    );
+
+    const dockerConfigJson = JSON.stringify({
+      auths: {
+        [registry]: {
+          username: image.username,
+          password: image.password,
+          auth,
+        },
+      },
+    });
+
+    return {
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: {
+        name: service.kubeRegistryCredentialSecretName,
+        labels: {
+          'managed-by': 'kubeploy',
+          'kubeploy.com/service-id': service.id,
+          'kubeploy.com/project-id': service.project.id,
+        },
+      },
+      type: 'kubernetes.io/dockerconfigjson',
+      data: {
+        '.dockerconfigjson': Buffer.from(dockerConfigJson).toString('base64'),
       },
     };
   }
@@ -222,10 +333,10 @@ export class ServiceService extends EntityService<Service> {
         selector: {
           'kubeploy.com/service-id': service.id,
         },
-        ports: service.ports.map((port) => ({
-          name: `port-${port}`,
-          port,
-          targetPort: port,
+        ports: service.ports.map((p) => ({
+          name: `port-${p.port}`,
+          port: p.port,
+          targetPort: p.port,
         })),
       },
     };

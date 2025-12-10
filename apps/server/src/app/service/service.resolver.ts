@@ -50,10 +50,7 @@ export class ServiceResolver {
   ): Promise<Service> {
     return await this.serviceService.createService({
       name: input.name,
-      image: input.image,
-      replicas: input.replicas,
-      ports: input.ports,
-      environmentVariables: input.environmentVariables,
+      description: input.description,
       project: input.projectId,
     });
   }

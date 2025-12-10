@@ -466,7 +466,7 @@ kubectl create token kubeploy -n kube-system --duration=8760h`}
                     )}
                   </form.Field>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex justify-end">
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                   >

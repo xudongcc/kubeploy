@@ -33,11 +33,10 @@ import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesSer
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
+import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
-import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains'
-import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/create'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -203,6 +202,15 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettin
         AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
     } as any,
   )
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRouteImport.update(
+    {
+      id: '/network',
+      path: '/network',
+      getParentRoute: () =>
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+    } as any,
+  )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute =
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRouteImport.update(
     {
@@ -230,24 +238,6 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnviro
         AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
     } as any,
   )
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRouteImport.update(
-    {
-      id: '/domains',
-      path: '/domains',
-      getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
-    } as any,
-  )
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRouteImport.update(
-    {
-      id: '/services/create',
-      path: '/services/create',
-      getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute,
-    } as any,
-  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -268,11 +258,10 @@ export interface FileRoutesByFullPath {
   '/workspaces/$workspaceId/projects/$projectId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteWithChildren
-  '/workspaces/$workspaceId/projects/$projectId/services/create': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute
-  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
+  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
@@ -291,11 +280,10 @@ export interface FileRoutesByTo {
   '/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/services': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute
-  '/workspaces/$workspaceId/projects/$projectId/services/create': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute
-  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
+  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
@@ -322,11 +310,10 @@ export interface FileRoutesById {
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteWithChildren
-  '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/create': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute
-  '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
+  '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute
@@ -353,11 +340,10 @@ export interface FileRouteTypes {
     | '/workspaces/$workspaceId/projects/$projectId/'
     | '/workspaces/$workspaceId/projects/$projectId/settings'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
-    | '/workspaces/$workspaceId/projects/$projectId/services/create'
-    | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
+    | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/'
@@ -376,11 +362,10 @@ export interface FileRouteTypes {
     | '/workspaces/$workspaceId/projects/$projectId'
     | '/workspaces/$workspaceId/projects/$projectId/services'
     | '/workspaces/$workspaceId/projects/$projectId/settings'
-    | '/workspaces/$workspaceId/projects/$projectId/services/create'
-    | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
+    | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
@@ -406,11 +391,10 @@ export interface FileRouteTypes {
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
-    | '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/create'
-    | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
+    | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/'
@@ -593,6 +577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRouteImport
       parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
     }
+    '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': {
+      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
+      path: '/network'
+      fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+    }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
       path: '/metrics'
@@ -613,20 +604,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRouteImport
       parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
-    }
-    '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains': {
-      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains'
-      path: '/domains'
-      fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
-    }
-    '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/create': {
-      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/create'
-      path: '/services/create'
-      fullPath: '/workspaces/$workspaceId/projects/$projectId/services/create'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute
     }
   }
 }
@@ -651,7 +628,6 @@ const AuthenticatedWorkspacesWorkspaceIdClustersRouteWithChildren =
 
 interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteChildren {
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute
 }
 
@@ -659,8 +635,6 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteChil
   {
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute,
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute:
-      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesCreateRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute,
   }
@@ -671,10 +645,10 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteWith
   )
 
 interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteChildren {
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
@@ -682,14 +656,14 @@ interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRo
 
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteChildren =
   {
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute:
-      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdDomainsRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute,
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute:
+      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute:

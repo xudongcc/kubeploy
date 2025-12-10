@@ -123,12 +123,9 @@ input CreateProjectInput {
 }
 
 input CreateServiceInput {
-  environmentVariables: [EnvironmentVariableInput!]
-  image: String!
+  description: String
   name: String!
-  ports: [Int!]
   projectId: ID!
-  replicas: Int
 }
 
 input CreateVolumeInput {
@@ -207,6 +204,21 @@ type EnvironmentVariable {
 input EnvironmentVariableInput {
   key: String!
   value: String!
+}
+
+type Image {
+  name: String
+  registry: String
+  tag: String
+  username: String
+}
+
+input ImageInput {
+  name: String!
+  password: String
+  registry: String
+  tag: String
+  username: String
 }
 
 type Mutation {
@@ -385,6 +397,7 @@ type Query {
 
 type Service {
   createdAt: DateTime!
+  description: String
   domains(
     """Returns the elements that come after the specified cursor."""
     after: String
@@ -410,11 +423,10 @@ type Service {
   ): DomainConnection!
   environmentVariables: [EnvironmentVariable!]!
   id: ID!
-  image: String!
+  image: Image!
   name: String!
-  ports: [Int!]!
+  ports: [ServicePort!]!
   project: Project!
-  replicas: Int!
   status: ServiceStatus!
   updatedAt: DateTime!
   volumes(
@@ -479,6 +491,22 @@ enum ServiceOrderField {
   ID
 }
 
+type ServicePort {
+  port: Int!
+  protocol: ServicePortProtocol!
+}
+
+input ServicePortInput {
+  port: Int!
+  protocol: ServicePortProtocol!
+}
+
+enum ServicePortProtocol {
+  HTTP
+  TCP
+  UDP
+}
+
 enum ServiceStatus {
   BUILDING
   DEPLOYING
@@ -507,11 +535,10 @@ input UpdateProjectInput {
 }
 
 input UpdateServiceInput {
+  description: String
   environmentVariables: [EnvironmentVariableInput!]
-  image: String
-  name: String
-  ports: [Int!]
-  replicas: Int
+  image: ImageInput
+  ports: [ServicePortInput!]
 }
 
 input UpdateVolumeInput {

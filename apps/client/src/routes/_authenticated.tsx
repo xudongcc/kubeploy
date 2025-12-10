@@ -1,5 +1,12 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  redirect,
+  useRouter,
+} from "@tanstack/react-router";
 import { graphql } from "@/gql";
+import { useApolloClient } from "@apollo/client/react";
+import { useEffect } from "react";
 
 const GET_CURRENT_USER_QUERY = graphql(`
   query GetCurrentUser {
@@ -13,11 +20,13 @@ const GET_CURRENT_USER_QUERY = graphql(`
     id
     name
     email
+    createdAt
+    updatedAt
   }
 `);
 
 export const Route = createFileRoute("/_authenticated")({
-  component: Outlet,
+  component: RouteComponent,
   beforeLoad: async ({ context: { apolloClient } }) => {
     try {
       const { data } = await apolloClient.query({
@@ -25,7 +34,7 @@ export const Route = createFileRoute("/_authenticated")({
       });
 
       if (data?.currentUser) {
-        return { user: data.currentUser };
+        return { currentUser: data.currentUser };
       }
     } catch {}
 
@@ -35,3 +44,31 @@ export const Route = createFileRoute("/_authenticated")({
     });
   },
 });
+
+function RouteComponent() {
+  const router = useRouter();
+  const apolloClient = useApolloClient();
+
+  const currentUser = Route.useRouteContext({
+    select: (context) => context.currentUser,
+  });
+
+  useEffect(() => {
+    const subscription = apolloClient
+      .watchQuery({
+        query: GET_CURRENT_USER_QUERY,
+        fetchPolicy: "cache-only",
+      })
+      .subscribe({
+        next(result) {
+          if (result.data?.currentUser?.updatedAt !== currentUser.updatedAt) {
+            router.invalidate();
+          }
+        },
+      });
+
+    return () => subscription.unsubscribe();
+  }, [apolloClient, currentUser]);
+
+  return <Outlet />;
+}

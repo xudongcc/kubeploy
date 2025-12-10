@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { createFileRoute } from "@tanstack/react-router";
-
 import { zodValidator } from "@tanstack/zod-adapter";
 import dayjs from "dayjs";
-import { Link } from "@/components/link";
+import { useTranslation } from "react-i18next";
 
+import { CreateServiceDialog } from "@/components/create-service-dialog";
+import { Link } from "@/components/link";
 import { Page } from "@/components/page";
 import { ServiceStatusBadge } from "@/components/service-status-badge";
 import { DataTable } from "@/components/turboost-ui/data-table";
@@ -12,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { graphql } from "@/gql";
 import { OrderDirection, ServiceOrderField } from "@/gql/graphql";
 import { createConnectionSchema } from "@/utils/create-connection-schema";
-import { t } from "i18next";
 
 const GET_SERVICES_QUERY = graphql(`
   query GetServices(
@@ -78,23 +79,30 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { workspaceId, projectId } = Route.useParams();
   const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const { t } = useTranslation();
 
-  const { data } = useQuery(GET_SERVICES_QUERY, {
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const { data, refetch } = useQuery(GET_SERVICES_QUERY, {
     variables: { projectId, ...search },
   });
+
+  const handleCreateSuccess = (serviceId: string) => {
+    refetch();
+    navigate({
+      to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId",
+      params: { workspaceId, projectId, serviceId },
+    });
+  };
 
   return (
     <Page
       title={t("service.title")}
       description={t("service.description")}
       actions={
-        <Button asChild>
-          <Link
-            to="/workspaces/$workspaceId/projects/$projectId/services/create"
-            params={{ workspaceId, projectId }}
-          >
-            {t("service.createService")}
-          </Link>
+        <Button onClick={() => setCreateOpen(true)}>
+          {t("service.createService")}
         </Button>
       }
     >
@@ -136,6 +144,13 @@ function RouteComponent() {
           },
         ]}
         data={data?.project?.services.edges.map((edge) => edge.node) || []}
+      />
+
+      <CreateServiceDialog
+        projectId={projectId}
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onSuccess={handleCreateSuccess}
       />
     </Page>
   );

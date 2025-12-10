@@ -1,9 +1,9 @@
 import {
-  ArrayType,
   Collection,
   Embeddable,
   Embedded,
   Entity,
+  Enum,
   ManyToOne,
   OneToMany,
   Opt,
@@ -13,13 +13,27 @@ import {
   t,
   Unique,
 } from '@mikro-orm/core';
-import { Field, ID, Int, ObjectType } from '@nest-boot/graphql';
+import { Field, HideField, ID, Int, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
 import { Domain } from '@/domain/domain.entity';
 import { Project } from '@/project/project.entity';
 import { Volume } from '@/volume/volume.entity';
 import { Workspace } from '@/workspace/workspace.entity';
+
+import { ServicePortProtocol } from './enums/service-port-protocol.enum';
+
+@ObjectType()
+@Embeddable()
+export class ServicePort {
+  @Field(() => Int)
+  @Property({ type: t.integer })
+  port!: number;
+
+  @Field(() => ServicePortProtocol)
+  @Enum(() => ServicePortProtocol)
+  protocol: ServicePortProtocol = ServicePortProtocol.HTTP;
+}
 
 @ObjectType()
 @Embeddable()
@@ -31,6 +45,34 @@ export class EnvironmentVariable {
   @Field(() => String)
   @Property({ type: t.string })
   value!: string;
+}
+
+@ObjectType()
+@Embeddable()
+export class Image {
+  @Field(() => String, { nullable: true })
+  @Property({ type: t.string, nullable: true })
+  registry: Opt<string> | null = null;
+
+  @Field(() => String, { nullable: true })
+  @Property({ type: t.string })
+  name: Opt<string> | null = null;
+
+  @Field(() => String, { nullable: true })
+  @Property({ type: t.string, nullable: true })
+  tag: Opt<string> | null = null;
+
+  @HideField()
+  @Property({ type: t.string, nullable: true })
+  digest: Opt<string> | null = null;
+
+  @Field(() => String, { nullable: true })
+  @Property({ type: t.string, nullable: true })
+  username: Opt<string> | null = null;
+
+  @HideField()
+  @Property({ type: t.string, nullable: true })
+  password: Opt<string> | null = null;
 }
 
 @ObjectType()
@@ -47,18 +89,19 @@ export class Service {
   @Property({ type: t.string })
   name!: string;
 
-  @Field(() => String)
-  @Property({ type: t.string })
-  image!: string;
-
-  @Field(() => Int)
-  @Property({ type: t.integer, default: 1 })
-  replicas: Opt<number> = 1;
+  @Field(() => String, { nullable: true })
+  @Property({ type: t.text, nullable: true })
+  description: Opt<string> | null = null;
 
   // eslint-disable-next-line @nest-boot/entity-property-config-from-types
-  @Field(() => [Int])
-  @Property({ type: new ArrayType((i) => +i), unsigned: true, default: [] })
-  ports: Opt<number[]> = [];
+  @Field(() => Image)
+  @Embedded(() => Image)
+  image: Opt<Image> = new Image();
+
+  // eslint-disable-next-line @nest-boot/entity-property-config-from-types
+  @Field(() => [ServicePort])
+  @Embedded(() => ServicePort, { array: true, default: [] })
+  ports: Opt<ServicePort[]> = [];
 
   // eslint-disable-next-line @nest-boot/entity-property-config-from-types
   @Field(() => [EnvironmentVariable])
@@ -95,5 +138,9 @@ export class Service {
 
   get kubeServiceName(): Opt<string> {
     return this.name;
+  }
+
+  get kubeRegistryCredentialSecretName(): Opt<string> {
+    return `kp-service-${this.id}-registry-credential`;
   }
 }

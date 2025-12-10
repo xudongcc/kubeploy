@@ -19,17 +19,13 @@ import { useEffect } from "react";
 
 const GET_WORKSPACE_QUERY = graphql(`
   query GetWorkspace($id: ID!) {
-    workspace(id: $id) {
+    workspace: workspace(id: $id) {
       id
-      name
-      createdAt
-      updatedAt
-
-      ...CurrentWorkspace @unmask
+      ...Workspace @unmask
     }
   }
 
-  fragment CurrentWorkspace on Workspace {
+  fragment Workspace on Workspace {
     id
     name
     createdAt

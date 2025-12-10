@@ -1,40 +1,30 @@
-import { Field, InputType, Int } from '@nest-boot/graphql';
+import { Field, InputType } from '@nest-boot/graphql';
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsInt,
-  IsOptional,
-  IsPositive,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { EnvironmentVariableInput } from './environment-variable.input';
+import { ImageInput } from './image.input';
+import { ServicePortInput } from './service-port.input';
 
 @InputType()
 export class UpdateServiceInput {
   @IsOptional()
   @IsString()
   @Field(() => String, { nullable: true })
-  name?: string;
+  description?: string;
 
   @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true })
-  image?: string;
-
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  @Field(() => Int, { nullable: true })
-  replicas?: number;
+  @ValidateNested()
+  @Type(() => ImageInput)
+  @Field(() => ImageInput, { nullable: true })
+  image?: ImageInput;
 
   @IsOptional()
   @IsArray()
-  @IsInt({ each: true })
-  @IsPositive({ each: true })
-  @Field(() => [Int], { nullable: true })
-  ports?: number[];
+  @ValidateNested({ each: true })
+  @Type(() => ServicePortInput)
+  @Field(() => [ServicePortInput], { nullable: true })
+  ports?: ServicePortInput[];
 
   @IsOptional()
   @IsArray()

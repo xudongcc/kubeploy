@@ -16,10 +16,6 @@ const GET_SERVICE_QUERY = graphql(`
   query GetService($id: ID!) {
     service(id: $id) {
       id
-      name
-      createdAt
-      updatedAt
-
       ...ServiceDetail @unmask
     }
   }
@@ -27,9 +23,16 @@ const GET_SERVICE_QUERY = graphql(`
   fragment ServiceDetail on Service {
     id
     name
-    image
-    ports
-    replicas
+    image {
+      registry
+      name
+      tag
+      username
+    }
+    ports {
+      port
+      protocol
+    }
     environmentVariables {
       key
       value
@@ -121,9 +124,9 @@ function RouteComponent() {
         }),
       },
       {
-        title: t("service.tabs.domains"),
+        title: t("service.tabs.network"),
         link: linkOptions({
-          to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/domains",
+          to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network",
           params: {
             workspaceId,
             projectId,

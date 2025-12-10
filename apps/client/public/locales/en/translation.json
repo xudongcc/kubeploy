@@ -90,7 +90,41 @@
   },
   "createService": {
     "description": "Deploy a new service to your project.",
+    "form": {
+      "description": {
+        "label": "Description",
+        "placeholder": "Enter service description (optional)"
+      },
+      "name": {
+        "hint": "Must be lowercase alphanumeric, may contain hyphens, and must start and end with an alphanumeric character.",
+        "invalid": "Name must be lowercase alphanumeric, may contain hyphens, and must start and end with an alphanumeric character",
+        "label": "Name",
+        "placeholder": "my-service",
+        "required": "Name is required"
+      }
+    },
     "title": "Create Service"
+  },
+  "network": {
+    "title": "Network",
+    "description": "Manage ports and domains for your service.",
+    "ports": {
+      "title": "Ports",
+      "description": "Configure the ports that your service exposes.",
+      "empty": "No ports configured.",
+      "addPort": "Add Port",
+      "form": {
+        "port": "Port",
+        "portPlaceholder": "8080",
+        "protocol": "Protocol"
+      }
+    },
+    "domains": {
+      "title": "Domains",
+      "description": "Configure custom domains for your service.",
+      "empty": "No domains configured.",
+      "noPorts": "No ports configured. Please add a port first."
+    }
   },
   "domain": {
     "createDomain": {
@@ -210,8 +244,59 @@
       "description": "Are you sure you want to delete the service {{name}}? This action cannot be undone and the associated Kubernetes Deployment and Service will be removed.",
       "title": "Delete Service"
     },
+    "deploy": "Deploy",
+    "deploying": "Deploying...",
     "description": "Create and manage your services.",
+    "image": {
+      "description": "Configure the container image for your service. You can find images on Docker Hub or use a private registry.",
+      "form": {
+        "name": {
+          "label": "Name",
+          "placeholder": "nginx",
+          "required": "Image name is required"
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "Password for private registry"
+        },
+        "registry": {
+          "label": "Registry",
+          "placeholder": "docker.io"
+        },
+        "tag": {
+          "label": "Tag",
+          "placeholder": "latest"
+        },
+        "username": {
+          "label": "Username",
+          "placeholder": "Username for private registry"
+        }
+      },
+      "title": "Image"
+    },
+    "environment": {
+      "addVariable": "Add Variable",
+      "cardDescription": "Configure environment variables that will be available to your service at runtime.",
+      "description": "Manage environment variables for your service.",
+      "empty": "No environment variables configured.",
+      "form": {
+        "key": "Key",
+        "keyPlaceholder": "KEY",
+        "value": "Value",
+        "valuePlaceholder": "value"
+      },
+      "rawHint": "Enter environment variables in KEY=VALUE format, one per line. Lines starting with # are ignored.",
+      "rawPlaceholder": "# Example:\nDATABASE_URL=postgres://localhost:5432/db\nAPI_KEY=your-api-key",
+      "tabs": {
+        "form": "Form",
+        "raw": "Raw"
+      },
+      "title": "Environment Variables"
+    },
     "notFound": "Service not found",
+    "overview": {
+      "description": "Overview and configuration of your service."
+    },
     "settings": {
       "dangerZone": {
         "deleteButton": "Delete Service",
@@ -221,24 +306,38 @@
       "description": "Update your service settings.",
       "form": {
         "image": {
-          "label": "Image",
-          "placeholder": "nginx:latest",
-          "required": "Image is required"
+          "name": {
+            "label": "Image Name",
+            "placeholder": "nginx",
+            "required": "Image name is required"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Password for private registry"
+          },
+          "registry": {
+            "label": "Registry",
+            "placeholder": "docker.io"
+          },
+          "tag": {
+            "label": "Tag",
+            "placeholder": "latest"
+          },
+          "username": {
+            "label": "Username",
+            "placeholder": "Username for private registry"
+          }
         },
         "name": {
           "label": "Name",
           "placeholder": "my-service",
           "required": "Service name is required"
-        },
-        "replicas": {
-          "label": "Replicas",
-          "required": "Replicas must be at least 0"
         }
       },
       "title": "Service Settings"
     },
     "tabs": {
-      "domains": "Domains",
+      "network": "Network",
       "environment": "Environment",
       "logs": "Logs",
       "metrics": "Metrics",

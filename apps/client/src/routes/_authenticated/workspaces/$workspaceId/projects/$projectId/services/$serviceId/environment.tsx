@@ -3,7 +3,9 @@ import { useMutation } from "@apollo/client/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
+import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { graphql } from "@/gql";
-import { Page } from "@/components/page";
 
 const UPDATE_SERVICE_MUTATION = graphql(`
   mutation UpdateServiceEnvironment($id: ID!, $input: UpdateServiceInput!) {
@@ -66,13 +67,16 @@ function serializeToRaw(envVars: Array<EnvironmentVariable>): string {
 function RouteComponent() {
   const { serviceId } = Route.useParams();
   const { service } = Route.useRouteContext();
+  const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<string>("form");
   const [rawValue, setRawValue] = useState(() =>
     serializeToRaw(service?.environmentVariables ?? []),
   );
 
-  const [updateService] = useMutation(UPDATE_SERVICE_MUTATION);
+  const [updateService, { loading: saving }] = useMutation(
+    UPDATE_SERVICE_MUTATION,
+  );
 
   const form = useForm({
     defaultValues: {
@@ -124,23 +128,26 @@ function RouteComponent() {
 
   return (
     <Page
-      title="Environment"
-      description="Manage environment variables for your service."
+      title={t("service.tabs.environment")}
+      description={t("service.environment.description")}
     >
       <Card>
         <CardHeader>
-          <CardTitle>Environment Variables</CardTitle>
+          <CardTitle>{t("service.environment.title")}</CardTitle>
           <CardDescription>
-            Configure environment variables that will be available to your
-            service at runtime.
+            {t("service.environment.cardDescription")}
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList>
-              <TabsTrigger value="form">Form</TabsTrigger>
-              <TabsTrigger value="raw">Raw</TabsTrigger>
+              <TabsTrigger value="form">
+                {t("service.environment.tabs.form")}
+              </TabsTrigger>
+              <TabsTrigger value="raw">
+                {t("service.environment.tabs.raw")}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="form" className="mt-4">
@@ -156,13 +163,13 @@ function RouteComponent() {
                     <div className="flex flex-col gap-3">
                       {field.state.value.length === 0 ? (
                         <p className="text-muted-foreground py-4 text-center text-sm">
-                          No environment variables configured.
+                          {t("service.environment.empty")}
                         </p>
                       ) : (
                         <>
                           <div className="text-muted-foreground grid grid-cols-[1fr_1fr_auto] gap-2 text-sm font-medium">
-                            <span>Key</span>
-                            <span>Value</span>
+                            <span>{t("service.environment.form.key")}</span>
+                            <span>{t("service.environment.form.value")}</span>
                             <span className="w-9" />
                           </div>
                           {field.state.value.map((_, index) => (
@@ -175,7 +182,9 @@ function RouteComponent() {
                               >
                                 {(subField) => (
                                   <Input
-                                    placeholder="KEY"
+                                    placeholder={t(
+                                      "service.environment.form.keyPlaceholder",
+                                    )}
                                     value={subField.state.value}
                                     onChange={(e) =>
                                       subField.handleChange(e.target.value)
@@ -188,7 +197,9 @@ function RouteComponent() {
                               >
                                 {(subField) => (
                                   <Input
-                                    placeholder="value"
+                                    placeholder={t(
+                                      "service.environment.form.valuePlaceholder",
+                                    )}
                                     value={subField.state.value}
                                     onChange={(e) =>
                                       subField.handleChange(e.target.value)
@@ -216,13 +227,13 @@ function RouteComponent() {
                         onClick={() => field.pushValue({ key: "", value: "" })}
                       >
                         <Plus className="mr-2 h-4 w-4" />
-                        Add Variable
+                        {t("service.environment.addVariable")}
                       </Button>
                     </div>
                   )}
                 </form.Field>
 
-                <div className="mt-4">
+                <div className="mt-4 flex justify-end">
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                   >
@@ -231,7 +242,7 @@ function RouteComponent() {
                         type="submit"
                         disabled={!canSubmit || isSubmitting}
                       >
-                        {isSubmitting ? "Saving..." : "Save Changes"}
+                        {isSubmitting ? t("common.saving") : t("common.save")}
                       </Button>
                     )}
                   </form.Subscribe>
@@ -242,23 +253,20 @@ function RouteComponent() {
             <TabsContent value="raw" className="mt-4">
               <div className="flex flex-col gap-4">
                 <p className="text-muted-foreground text-sm">
-                  Enter environment variables in KEY=VALUE format, one per line.
-                  Lines starting with # are ignored.
+                  {t("service.environment.rawHint")}
                 </p>
                 <Textarea
                   className="field-sizing-fixed min-h-[200px] overflow-x-auto font-mono whitespace-pre"
-                  placeholder={`# Example:\nDATABASE_URL=postgres://localhost:5432/db\nAPI_KEY=your-api-key`}
+                  placeholder={t("service.environment.rawPlaceholder")}
                   value={rawValue}
                   onChange={(e) => setRawValue(e.target.value)}
                   rows={rawLineCount}
                 />
-                <Button
-                  type="button"
-                  onClick={handleRawSubmit}
-                  className="w-fit"
-                >
-                  Save Changes
-                </Button>
+                <div className="flex justify-end">
+                  <Button type="button" onClick={handleRawSubmit} disabled={saving}>
+                    {saving ? t("common.saving") : t("common.save")}
+                  </Button>
+                </div>
               </div>
             </TabsContent>
           </Tabs>

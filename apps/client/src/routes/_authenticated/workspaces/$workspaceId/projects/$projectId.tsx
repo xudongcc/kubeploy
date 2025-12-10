@@ -13,10 +13,6 @@ const GET_PROJECT_QUERY = graphql(`
   query GetProject($id: ID!) {
     project(id: $id) {
       id
-      name
-      createdAt
-      updatedAt
-
       ...ProjectDetail @unmask
     }
   }
