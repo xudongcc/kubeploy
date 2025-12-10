@@ -46,8 +46,10 @@ function RouteComponent() {
       });
 
       if (data?.createWorkspace.id) {
-        localStorage.setItem("workspaceId", data.createWorkspace.id);
-        navigate({ to: "/" });
+        navigate({
+          to: "/workspaces/$workspaceId",
+          params: { workspaceId: data.createWorkspace.id },
+        });
       }
     },
   });
