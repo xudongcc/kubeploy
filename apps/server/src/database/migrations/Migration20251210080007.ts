@@ -1,6 +1,6 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20251210030043 extends Migration {
+export class Migration20251210080007 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table "user" ("id" bigserial primary key, "email_verified" boolean not null default false, "image" text null, "name" varchar(255) not null, "email" varchar(255) not null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now());`);
@@ -22,7 +22,7 @@ export class Migration20251210030043 extends Migration {
 
     this.addSql(`create table "project" ("id" bigserial primary key, "name" varchar(255) not null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "workspace_id" bigint not null, "cluster_id" bigint not null);`);
 
-    this.addSql(`create table "service" ("id" bigserial primary key, "name" varchar(255) not null, "image_registry" varchar(255) null, "image_name" varchar(255) not null, "image_tag" varchar(255) null, "image_digest" varchar(255) null, "image_username" varchar(255) null, "image_password" varchar(255) null, "replicas" int not null default 1, "ports" text[] not null default '{}', "environment_variables" jsonb not null default '[]', "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "workspace_id" bigint not null, "project_id" bigint not null);`);
+    this.addSql(`create table "service" ("id" bigserial primary key, "name" varchar(255) not null, "description" text null, "image_registry" varchar(255) null, "image_name" varchar(255) null, "image_tag" varchar(255) null, "image_digest" varchar(255) null, "image_username" varchar(255) null, "image_password" varchar(255) null, "ports" jsonb not null default '[]', "environment_variables" jsonb not null default '[]', "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "workspace_id" bigint not null, "project_id" bigint not null);`);
     this.addSql(`alter table "service" add constraint "service_project_id_name_unique" unique ("project_id", "name");`);
 
     this.addSql(`create table "volume" ("id" bigserial primary key, "name" varchar(255) not null, "size" int not null, "mount_path" varchar(255) null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "workspace_id" bigint not null, "service_id" bigint not null);`);
