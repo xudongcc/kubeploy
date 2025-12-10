@@ -50,12 +50,12 @@ const GET_CLUSTER_QUERY = graphql(`
       name
       ip
       status
-      allocatableCpuCores
-      allocatableMemoryBytes
-      allocatableDiskBytes
-      capacityCpuCores
-      capacityMemoryBytes
-      capacityDiskBytes
+      allocatableCpu
+      allocatableMemory
+      allocatableDisk
+      capacityCpu
+      capacityMemory
+      capacityDisk
     }
   }
 `);
@@ -185,43 +185,45 @@ function RouteComponent() {
     (node) => node.status === ClusterNodeStatus.ACTIVE,
   ).length;
   const totalCapacityCpu = nodes.reduce(
-    (sum, node) => sum + node.capacityCpuCores,
+    (sum, node) => sum + node.capacityCpu,
     0,
   );
   const totalReservedCpu = nodes.reduce(
-    (sum, node) => sum + (node.capacityCpuCores - node.allocatableCpuCores),
+    (sum, node) => sum + (node.capacityCpu - node.allocatableCpu),
     0,
   );
   const totalCapacityMemory = nodes.reduce(
-    (sum, node) => sum + node.capacityMemoryBytes,
+    (sum, node) => sum + node.capacityMemory,
     0,
   );
   const totalReservedMemory = nodes.reduce(
-    (sum, node) =>
-      sum + (node.capacityMemoryBytes - node.allocatableMemoryBytes),
+    (sum, node) => sum + (node.capacityMemory - node.allocatableMemory),
     0,
   );
   const totalCapacityDisk = nodes.reduce(
-    (sum, node) => sum + node.capacityDiskBytes,
+    (sum, node) => sum + node.capacityDisk,
     0,
   );
   const totalReservedDisk = nodes.reduce(
-    (sum, node) => sum + (node.capacityDiskBytes - node.allocatableDiskBytes),
+    (sum, node) => sum + (node.capacityDisk - node.allocatableDisk),
     0,
   );
 
-  const formatCpu = (cores: number) => {
+  const formatCpu = (millicores: number) => {
+    const cores = millicores / 1000;
     if (Number.isInteger(cores)) return cores.toString();
     const rounded = Math.round(cores * 100) / 100;
     return Number.isInteger(rounded) ? rounded.toString() : rounded.toString();
   };
 
-  const formatBytes = (bytes: number) => {
-    if (bytes >= 1024 ** 4) return `${(bytes / 1024 ** 4).toFixed(2)}TB`;
-    if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(2)}GB`;
-    if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(2)}MB`;
-    if (bytes >= 1024) return `${(bytes / 1024).toFixed(2)}KB`;
-    return `${bytes}B`;
+  const formatMemory = (mb: number) => {
+    if (mb >= 1024) return `${(mb / 1024).toFixed(2)} GB`;
+    return `${mb.toFixed(2)} MB`;
+  };
+
+  const formatDisk = (gb: number) => {
+    if (gb >= 1024) return `${(gb / 1024).toFixed(2)} TB`;
+    return `${gb.toFixed(2)} GB`;
   };
 
   return (
@@ -289,8 +291,8 @@ function RouteComponent() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatBytes(totalReservedMemory)} /{" "}
-                  {formatBytes(totalCapacityMemory)}
+                  {formatMemory(totalReservedMemory)} /{" "}
+                  {formatMemory(totalCapacityMemory)}
                 </div>
               </CardContent>
             </Card>
@@ -304,8 +306,8 @@ function RouteComponent() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatBytes(totalReservedDisk)} /{" "}
-                  {formatBytes(totalCapacityDisk)}
+                  {formatDisk(totalReservedDisk)} /{" "}
+                  {formatDisk(totalCapacityDisk)}
                 </div>
               </CardContent>
             </Card>

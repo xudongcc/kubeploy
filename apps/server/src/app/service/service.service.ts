@@ -1,4 +1,9 @@
-import { V1Deployment, V1Secret, V1Service } from '@kubernetes/client-node';
+import {
+  V1Deployment,
+  V1ResourceRequirements,
+  V1Secret,
+  V1Service,
+} from '@kubernetes/client-node';
 import { EntityData, EntityManager } from '@mikro-orm/core';
 import { EntityService, IdOrEntity } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
@@ -246,6 +251,7 @@ export class ServiceService extends EntityService<Service> {
                         value: env.value,
                       }))
                     : undefined,
+                resources: this.buildContainerResources(service),
                 volumeMounts: volumes
                   .map((volume) => {
                     if (!volume.mountPath) {
@@ -315,6 +321,39 @@ export class ServiceService extends EntityService<Service> {
         '.dockerconfigjson': Buffer.from(dockerConfigJson).toString('base64'),
       },
     };
+  }
+
+  private buildContainerResources(
+    service: Service,
+  ): V1ResourceRequirements | undefined {
+    const { resourceUsage } = service;
+
+    if (!resourceUsage.cpu && !resourceUsage.memory) {
+      return undefined;
+    }
+
+    const resources: V1ResourceRequirements = {};
+
+    if (resourceUsage.cpu || resourceUsage.memory) {
+      resources.limits = {};
+      resources.requests = {};
+
+      if (resourceUsage.cpu) {
+        // Convert millicores to Kubernetes format (e.g., 1000m = 1 core)
+        resources.limits.cpu = `${resourceUsage.cpu}m`;
+        // Request is half of the limit
+        resources.requests.cpu = `${Math.floor(resourceUsage.cpu / 2)}m`;
+      }
+
+      if (resourceUsage.memory) {
+        // Convert megabytes to Kubernetes format (e.g., 512Mi)
+        resources.limits.memory = `${resourceUsage.memory}Mi`;
+        // Request is half of the limit
+        resources.requests.memory = `${Math.floor(resourceUsage.memory / 2)}Mi`;
+      }
+    }
+
+    return resources;
   }
 
   private buildService(service: Service): V1Service {

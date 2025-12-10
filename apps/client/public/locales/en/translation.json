@@ -297,6 +297,24 @@
     "overview": {
       "description": "Overview and configuration of your service."
     },
+    "resources": {
+      "title": "Resources",
+      "description": "Configure CPU and memory limits for your service container.",
+      "form": {
+        "cpu": {
+          "label": "CPU",
+          "placeholder": "1",
+          "unit": "cores",
+          "hint": "CPU cores (e.g., 1.5 cores)"
+        },
+        "memory": {
+          "label": "Memory",
+          "placeholder": "512",
+          "unit": "MB",
+          "hint": "Memory limit in megabytes"
+        }
+      }
+    },
     "settings": {
       "dangerZone": {
         "deleteButton": "Delete Service",

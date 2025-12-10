@@ -297,6 +297,24 @@
     "overview": {
       "description": "服务的概览和配置。"
     },
+    "resources": {
+      "title": "资源",
+      "description": "配置服务容器的 CPU 和内存限制。",
+      "form": {
+        "cpu": {
+          "label": "CPU",
+          "placeholder": "1",
+          "unit": "核",
+          "hint": "CPU 核心数（例如：1.5 核）"
+        },
+        "memory": {
+          "label": "内存",
+          "placeholder": "512",
+          "unit": "MB",
+          "hint": "内存限制，单位为兆字节"
+        }
+      }
+    },
     "settings": {
       "dangerZone": {
         "deleteButton": "删除服务",

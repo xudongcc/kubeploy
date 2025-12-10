@@ -86,12 +86,18 @@ export type ClusterEdge = {
 
 export type ClusterNode = {
   __typename?: "ClusterNode";
-  allocatableCpuCores: Scalars["Float"]["output"];
-  allocatableDiskBytes: Scalars["Float"]["output"];
-  allocatableMemoryBytes: Scalars["Float"]["output"];
-  capacityCpuCores: Scalars["Float"]["output"];
-  capacityDiskBytes: Scalars["Float"]["output"];
-  capacityMemoryBytes: Scalars["Float"]["output"];
+  /** Allocatable CPU in millicores (1000 = 1 core) */
+  allocatableCpu: Scalars["Float"]["output"];
+  /** Allocatable disk in gigabytes */
+  allocatableDisk: Scalars["Float"]["output"];
+  /** Allocatable memory in megabytes */
+  allocatableMemory: Scalars["Float"]["output"];
+  /** Total CPU capacity in millicores (1000 = 1 core) */
+  capacityCpu: Scalars["Float"]["output"];
+  /** Total disk capacity in gigabytes */
+  capacityDisk: Scalars["Float"]["output"];
+  /** Total memory capacity in megabytes */
+  capacityMemory: Scalars["Float"]["output"];
   id: Scalars["ID"]["output"];
   ip: Scalars["String"]["output"];
   name: Scalars["String"]["output"];
@@ -492,6 +498,22 @@ export type QueryWorkspacesArgs = {
   query?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+/** Resource limits for a service container */
+export type ResourceUsage = {
+  __typename?: "ResourceUsage";
+  /** CPU limit in millicores (1000 = 1 core) */
+  cpu?: Maybe<Scalars["Int"]["output"]>;
+  /** Memory limit in megabytes */
+  memory?: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type ResourceUsageInput = {
+  /** CPU limit in millicores (1000 = 1 core) */
+  cpu?: InputMaybe<Scalars["Int"]["input"]>;
+  /** Memory limit in megabytes */
+  memory?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type Service = {
   __typename?: "Service";
   createdAt: Scalars["DateTime"]["output"];
@@ -503,6 +525,7 @@ export type Service = {
   name: Scalars["String"]["output"];
   ports: Array<ServicePort>;
   project: Project;
+  resourceUsage: ResourceUsage;
   status: ServiceStatus;
   updatedAt: Scalars["DateTime"]["output"];
   volumes: VolumeConnection;
@@ -608,6 +631,7 @@ export type UpdateServiceInput = {
   environmentVariables?: InputMaybe<Array<EnvironmentVariableInput>>;
   image?: InputMaybe<ImageInput>;
   ports?: InputMaybe<Array<ServicePortInput>>;
+  resourceUsage?: InputMaybe<ResourceUsageInput>;
 };
 
 export type UpdateVolumeInput = {
@@ -929,12 +953,12 @@ export type GetClusterQuery = {
       name: string;
       ip: string;
       status: ClusterNodeStatus;
-      allocatableCpuCores: number;
-      allocatableMemoryBytes: number;
-      allocatableDiskBytes: number;
-      capacityCpuCores: number;
-      capacityMemoryBytes: number;
-      capacityDiskBytes: number;
+      allocatableCpu: number;
+      allocatableMemory: number;
+      allocatableDisk: number;
+      capacityCpu: number;
+      capacityMemory: number;
+      capacityDisk: number;
     }>;
   } | null;
 };
@@ -950,12 +974,12 @@ export type ClusterDetailFragment = {
     name: string;
     ip: string;
     status: ClusterNodeStatus;
-    allocatableCpuCores: number;
-    allocatableMemoryBytes: number;
-    allocatableDiskBytes: number;
-    capacityCpuCores: number;
-    capacityMemoryBytes: number;
-    capacityDiskBytes: number;
+    allocatableCpu: number;
+    allocatableMemory: number;
+    allocatableDisk: number;
+    capacityCpu: number;
+    capacityMemory: number;
+    capacityDisk: number;
   }>;
 } & { " $fragmentName"?: "ClusterDetailFragment" };
 
@@ -1243,6 +1267,11 @@ export type GetServiceQuery = {
       key: string;
       value: string;
     }>;
+    resourceUsage: {
+      __typename?: "ResourceUsage";
+      cpu?: number | null;
+      memory?: number | null;
+    };
   } | null;
 };
 
@@ -1269,6 +1298,11 @@ export type ServiceDetailFragment = {
     key: string;
     value: string;
   }>;
+  resourceUsage: {
+    __typename?: "ResourceUsage";
+    cpu?: number | null;
+    memory?: number | null;
+  };
 } & { " $fragmentName"?: "ServiceDetailFragment" };
 
 export type UpdateServiceEnvironmentMutationVariables = Exact<{
@@ -1389,6 +1423,18 @@ export type UpdateServicePortsMutationVariables = Exact<{
 }>;
 
 export type UpdateServicePortsMutation = {
+  __typename?: "Mutation";
+  updateService: { __typename?: "Service"; id: string } & {
+    " $fragmentRefs"?: { ServiceDetailFragment: ServiceDetailFragment };
+  };
+};
+
+export type UpdateServiceResourcesMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: UpdateServiceInput;
+}>;
+
+export type UpdateServiceResourcesMutation = {
   __typename?: "Mutation";
   updateService: { __typename?: "Service"; id: string } & {
     " $fragmentRefs"?: { ServiceDetailFragment: ServiceDetailFragment };
@@ -1675,27 +1721,24 @@ export const ClusterDetailFragmentDoc = {
                 { kind: "Field", name: { kind: "Name", value: "status" } },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpuCores" },
+                  name: { kind: "Name", value: "allocatableCpu" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                  name: { kind: "Name", value: "allocatableMemory" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                  name: { kind: "Name", value: "allocatableDisk" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "capacityCpu" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemory" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "capacityCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDiskBytes" },
+                  name: { kind: "Name", value: "capacityDisk" },
                 },
               ],
             },
@@ -1854,6 +1897,17 @@ export const ServiceDetailFragmentDoc = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "key" } },
                 { kind: "Field", name: { kind: "Name", value: "value" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceUsage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
               ],
             },
           },
@@ -2393,27 +2447,24 @@ export const GetClusterDocument = {
                 { kind: "Field", name: { kind: "Name", value: "status" } },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpuCores" },
+                  name: { kind: "Name", value: "allocatableCpu" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                  name: { kind: "Name", value: "allocatableMemory" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                  name: { kind: "Name", value: "allocatableDisk" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "capacityCpu" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemory" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "capacityCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDiskBytes" },
+                  name: { kind: "Name", value: "capacityDisk" },
                 },
               ],
             },
@@ -2517,27 +2568,24 @@ export const UpdateClusterDocument = {
                 { kind: "Field", name: { kind: "Name", value: "status" } },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpuCores" },
+                  name: { kind: "Name", value: "allocatableCpu" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemoryBytes" },
+                  name: { kind: "Name", value: "allocatableMemory" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "allocatableDiskBytes" },
+                  name: { kind: "Name", value: "allocatableDisk" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "capacityCpu" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "capacityMemory" },
                 },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "capacityCpuCores" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemoryBytes" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDiskBytes" },
+                  name: { kind: "Name", value: "capacityDisk" },
                 },
               ],
             },
@@ -3818,6 +3866,17 @@ export const GetServiceDocument = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceUsage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -3938,6 +3997,17 @@ export const UpdateServiceEnvironmentDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "key" } },
                 { kind: "Field", name: { kind: "Name", value: "value" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceUsage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
               ],
             },
           },
@@ -4064,6 +4134,17 @@ export const UpdateServiceImageDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "key" } },
                 { kind: "Field", name: { kind: "Name", value: "value" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceUsage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
               ],
             },
           },
@@ -4671,6 +4752,17 @@ export const UpdateServicePortsDocument = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceUsage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -4680,6 +4772,143 @@ export const UpdateServicePortsDocument = {
 } as unknown as DocumentNode<
   UpdateServicePortsMutation,
   UpdateServicePortsMutationVariables
+>;
+export const UpdateServiceResourcesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UpdateServiceResources" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "UpdateServiceInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateService" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ServiceDetail" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ServiceDetail" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Service" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "image" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "registry" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "tag" } },
+                { kind: "Field", name: { kind: "Name", value: "username" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "ports" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "port" } },
+                { kind: "Field", name: { kind: "Name", value: "protocol" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "environmentVariables" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "key" } },
+                { kind: "Field", name: { kind: "Name", value: "value" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceUsage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateServiceResourcesMutation,
+  UpdateServiceResourcesMutationVariables
 >;
 export const DeleteServiceDocument = {
   kind: "Document",

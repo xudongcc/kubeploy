@@ -37,6 +37,10 @@ const GET_SERVICE_QUERY = graphql(`
       key
       value
     }
+    resourceUsage {
+      cpu
+      memory
+    }
     createdAt
     updatedAt
   }

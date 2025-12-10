@@ -58,14 +58,14 @@ export class ClusterService extends EntityService<Cluster> {
           id: node.metadata?.uid ?? '',
           name: node.metadata?.name ?? '',
           ip: internalAddress?.address ?? '',
-          allocatableCpuCores: this.parseCpu(allocatable.cpu),
-          allocatableMemoryBytes: this.parseMemory(allocatable.memory),
-          allocatableDiskBytes: this.parseMemory(
+          allocatableCpu: this.parseCpuToMillicores(allocatable.cpu),
+          allocatableMemory: this.parseMemoryToMB(allocatable.memory),
+          allocatableDisk: this.parseMemoryToGB(
             allocatable['ephemeral-storage'],
           ),
-          capacityCpuCores: this.parseCpu(capacity.cpu),
-          capacityMemoryBytes: this.parseMemory(capacity.memory),
-          capacityDiskBytes: this.parseMemory(capacity['ephemeral-storage']),
+          capacityCpu: this.parseCpuToMillicores(capacity.cpu),
+          capacityMemory: this.parseMemoryToMB(capacity.memory),
+          capacityDisk: this.parseMemoryToGB(capacity['ephemeral-storage']),
           status,
         };
       });
@@ -74,17 +74,61 @@ export class ClusterService extends EntityService<Cluster> {
     }
   }
 
-  private parseCpu(cpu?: string): number {
+  /**
+   * Parse CPU from Kubernetes format to millicores
+   * Examples: "1" -> 1000, "500m" -> 500
+   */
+  private parseCpuToMillicores(cpu?: string): number {
     if (!cpu) return 0;
     if (cpu.endsWith('m')) {
-      return parseFloat(cpu.slice(0, -1)) / 1000;
+      return parseFloat(cpu.slice(0, -1));
     }
-    return parseFloat(cpu);
+    return parseFloat(cpu) * 1000;
   }
 
-  private parseMemory(memory?: string): number {
+  /**
+   * Parse memory from Kubernetes format to MB (megabytes)
+   * Examples: "128Mi" -> 128, "1Gi" -> 1024, "512Ki" -> 0.5
+   */
+  private parseMemoryToMB(memory?: string): number {
     if (!memory) return 0;
 
+    // Parse Kubernetes memory format with binary units (Ki, Mi, Gi, Ti)
+    const units: Record<string, number> = {
+      Ki: 1024, // 1 KiB = 1024 bytes
+      Mi: 1024 ** 2, // 1 MiB = 1024^2 bytes
+      Gi: 1024 ** 3, // 1 GiB = 1024^3 bytes
+      Ti: 1024 ** 4, // 1 TiB = 1024^4 bytes
+      Pi: 1024 ** 5, // 1 PiB = 1024^5 bytes
+      Ei: 1024 ** 6, // 1 EiB = 1024^6 bytes
+      K: 1000, // 1 KB = 1000 bytes (decimal)
+      M: 1000 ** 2, // 1 MB = 1000^2 bytes
+      G: 1000 ** 3, // 1 GB = 1000^3 bytes
+      T: 1000 ** 4, // 1 TB = 1000^4 bytes
+      P: 1000 ** 5, // 1 PB = 1000^5 bytes
+      E: 1000 ** 6, // 1 EB = 1000^6 bytes
+    };
+
+    for (const [unit, multiplier] of Object.entries(units)) {
+      if (memory.endsWith(unit)) {
+        const value = parseFloat(memory.slice(0, -unit.length));
+        const bytes = value * multiplier;
+        return bytes / (1024 * 1024); // Convert to MB
+      }
+    }
+
+    // No unit, assume bytes
+    return parseFloat(memory) / (1024 * 1024);
+  }
+
+  /**
+   * Parse memory from Kubernetes format to GB (gigabytes)
+   * Examples: "1Gi" -> 1, "512Mi" -> 0.5, "1Ti" -> 1024
+   */
+  private parseMemoryToGB(memory?: string): number {
+    if (!memory) return 0;
+
+    // Parse Kubernetes memory format with binary units (Ki, Mi, Gi, Ti)
     const units: Record<string, number> = {
       Ki: 1024,
       Mi: 1024 ** 2,
@@ -102,10 +146,13 @@ export class ClusterService extends EntityService<Cluster> {
 
     for (const [unit, multiplier] of Object.entries(units)) {
       if (memory.endsWith(unit)) {
-        return parseInt(memory.slice(0, -unit.length), 10) * multiplier;
+        const value = parseFloat(memory.slice(0, -unit.length));
+        const bytes = value * multiplier;
+        return bytes / (1024 * 1024 * 1024); // Convert to GB
       }
     }
 
-    return parseInt(memory, 10);
+    // No unit, assume bytes
+    return parseFloat(memory) / (1024 * 1024 * 1024);
   }
 }

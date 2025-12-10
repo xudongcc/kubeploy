@@ -70,12 +70,23 @@ type ClusterEdge {
 }
 
 type ClusterNode {
-  allocatableCpuCores: Float!
-  allocatableDiskBytes: Float!
-  allocatableMemoryBytes: Float!
-  capacityCpuCores: Float!
-  capacityDiskBytes: Float!
-  capacityMemoryBytes: Float!
+  """Allocatable CPU in millicores (1000 = 1 core)"""
+  allocatableCpu: Float!
+
+  """Allocatable disk in gigabytes"""
+  allocatableDisk: Float!
+
+  """Allocatable memory in megabytes"""
+  allocatableMemory: Float!
+
+  """Total CPU capacity in millicores (1000 = 1 core)"""
+  capacityCpu: Float!
+
+  """Total disk capacity in gigabytes"""
+  capacityDisk: Float!
+
+  """Total memory capacity in megabytes"""
+  capacityMemory: Float!
   id: ID!
   ip: String!
   name: String!
@@ -395,6 +406,23 @@ type Query {
   ): WorkspaceConnection!
 }
 
+"""Resource limits for a service container"""
+type ResourceUsage {
+  """CPU limit in millicores (1000 = 1 core)"""
+  cpu: Int
+
+  """Memory limit in megabytes"""
+  memory: Int
+}
+
+input ResourceUsageInput {
+  """CPU limit in millicores (1000 = 1 core)"""
+  cpu: Int
+
+  """Memory limit in megabytes"""
+  memory: Int
+}
+
 type Service {
   createdAt: DateTime!
   description: String
@@ -427,6 +455,7 @@ type Service {
   name: String!
   ports: [ServicePort!]!
   project: Project!
+  resourceUsage: ResourceUsage!
   status: ServiceStatus!
   updatedAt: DateTime!
   volumes(
@@ -539,6 +568,7 @@ input UpdateServiceInput {
   environmentVariables: [EnvironmentVariableInput!]
   image: ImageInput
   ports: [ServicePortInput!]
+  resourceUsage: ResourceUsageInput
 }
 
 input UpdateVolumeInput {
