@@ -117,7 +117,10 @@ export class ClusterClientFactory {
       const response = await this.axios.get<{
         items: {
           metadata: { name: string };
-          containers: { name: string; usage: { cpu: string; memory: string } }[];
+          containers: {
+            name: string;
+            usage: { cpu: string; memory: string };
+          }[];
         }[];
       }>(url, {
         headers: {
