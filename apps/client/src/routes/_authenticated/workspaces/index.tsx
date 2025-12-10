@@ -1,5 +1,8 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { graphql } from "@/gql";
+import { useQuery } from "@apollo/client/react";
+import { Spinner } from "@/components/ui/spinner";
+import { useEffect } from "react";
 
 const GET_FIRST_WORKSPACE_QUERY = graphql(`
   query GetFirstWorkspace {
@@ -14,22 +17,38 @@ const GET_FIRST_WORKSPACE_QUERY = graphql(`
 `);
 
 export const Route = createFileRoute("/_authenticated/workspaces/")({
-  beforeLoad: async ({ context: { apolloClient } }) => {
-    const { data } = await apolloClient.query({
-      query: GET_FIRST_WORKSPACE_QUERY,
-    });
-
-    if (data?.workspaces.edges && data.workspaces.edges.length > 0) {
-      throw redirect({
-        to: "/workspaces/$workspaceId",
-        params: {
-          workspaceId: data.workspaces.edges[0].node.id,
-        },
-      });
-    } else {
-      throw redirect({
-        to: "/workspaces/create",
-      });
-    }
-  },
+  component: RouteComponent,
 });
+
+function RouteComponent() {
+  const navigate = Route.useNavigate();
+
+  const { data } = useQuery(GET_FIRST_WORKSPACE_QUERY, {
+    fetchPolicy: "network-only",
+  });
+
+  useEffect(() => {
+    if (data?.workspaces.edges) {
+      const workspace = data.workspaces.edges[0]?.node;
+
+      if (workspace) {
+        navigate({
+          to: "/workspaces/$workspaceId",
+          params: {
+            workspaceId: workspace.id,
+          },
+        });
+      } else {
+        navigate({
+          to: "/workspaces/create",
+        });
+      }
+    }
+  }, [data]);
+
+  return (
+    <div className="flex h-full items-center justify-center">
+      <Spinner />
+    </div>
+  );
+}
