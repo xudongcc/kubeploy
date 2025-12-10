@@ -86,22 +86,18 @@ export type ClusterEdge = {
 
 export type ClusterNode = {
   __typename?: "ClusterNode";
-  /** Allocatable CPU in millicores (1000 = 1 core) */
-  allocatableCpu: Scalars["Float"]["output"];
-  /** Allocatable disk in gigabytes */
-  allocatableDisk: Scalars["Float"]["output"];
-  /** Allocatable memory in megabytes */
-  allocatableMemory: Scalars["Float"]["output"];
-  /** Total CPU capacity in millicores (1000 = 1 core) */
-  capacityCpu: Scalars["Float"]["output"];
-  /** Total disk capacity in gigabytes */
-  capacityDisk: Scalars["Float"]["output"];
-  /** Total memory capacity in megabytes */
-  capacityMemory: Scalars["Float"]["output"];
   id: Scalars["ID"]["output"];
   ip: Scalars["String"]["output"];
   name: Scalars["String"]["output"];
   status: ClusterNodeStatus;
+  /** Total CPU capacity in millicores (1000 = 1 core) */
+  totalCpu: Scalars["Float"]["output"];
+  /** Total memory capacity in megabytes */
+  totalMemory: Scalars["Float"]["output"];
+  /** Used CPU in millicores (1000 = 1 core) */
+  usedCpu: Scalars["Float"]["output"];
+  /** Used memory in megabytes */
+  usedMemory: Scalars["Float"]["output"];
 };
 
 export enum ClusterNodeStatus {
@@ -953,12 +949,10 @@ export type GetClusterQuery = {
       name: string;
       ip: string;
       status: ClusterNodeStatus;
-      allocatableCpu: number;
-      allocatableMemory: number;
-      allocatableDisk: number;
-      capacityCpu: number;
-      capacityMemory: number;
-      capacityDisk: number;
+      usedCpu: number;
+      usedMemory: number;
+      totalCpu: number;
+      totalMemory: number;
     }>;
   } | null;
 };
@@ -974,12 +968,10 @@ export type ClusterDetailFragment = {
     name: string;
     ip: string;
     status: ClusterNodeStatus;
-    allocatableCpu: number;
-    allocatableMemory: number;
-    allocatableDisk: number;
-    capacityCpu: number;
-    capacityMemory: number;
-    capacityDisk: number;
+    usedCpu: number;
+    usedMemory: number;
+    totalCpu: number;
+    totalMemory: number;
   }>;
 } & { " $fragmentName"?: "ClusterDetailFragment" };
 
@@ -1719,27 +1711,10 @@ export const ClusterDetailFragmentDoc = {
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "ip" } },
                 { kind: "Field", name: { kind: "Name", value: "status" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpu" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemory" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableDisk" },
-                },
-                { kind: "Field", name: { kind: "Name", value: "capacityCpu" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemory" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDisk" },
-                },
+                { kind: "Field", name: { kind: "Name", value: "usedCpu" } },
+                { kind: "Field", name: { kind: "Name", value: "usedMemory" } },
+                { kind: "Field", name: { kind: "Name", value: "totalCpu" } },
+                { kind: "Field", name: { kind: "Name", value: "totalMemory" } },
               ],
             },
           },
@@ -2445,27 +2420,10 @@ export const GetClusterDocument = {
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "ip" } },
                 { kind: "Field", name: { kind: "Name", value: "status" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpu" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemory" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableDisk" },
-                },
-                { kind: "Field", name: { kind: "Name", value: "capacityCpu" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemory" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDisk" },
-                },
+                { kind: "Field", name: { kind: "Name", value: "usedCpu" } },
+                { kind: "Field", name: { kind: "Name", value: "usedMemory" } },
+                { kind: "Field", name: { kind: "Name", value: "totalCpu" } },
+                { kind: "Field", name: { kind: "Name", value: "totalMemory" } },
               ],
             },
           },
@@ -2566,27 +2524,10 @@ export const UpdateClusterDocument = {
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "ip" } },
                 { kind: "Field", name: { kind: "Name", value: "status" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableCpu" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableMemory" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "allocatableDisk" },
-                },
-                { kind: "Field", name: { kind: "Name", value: "capacityCpu" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityMemory" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "capacityDisk" },
-                },
+                { kind: "Field", name: { kind: "Name", value: "usedCpu" } },
+                { kind: "Field", name: { kind: "Name", value: "usedMemory" } },
+                { kind: "Field", name: { kind: "Name", value: "totalCpu" } },
+                { kind: "Field", name: { kind: "Name", value: "totalMemory" } },
               ],
             },
           },

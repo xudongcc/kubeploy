@@ -14,34 +14,24 @@ export class ClusterNode {
   ip!: string;
 
   @Field(() => Float, {
-    description: 'Allocatable CPU in millicores (1000 = 1 core)',
+    description: 'Used CPU in millicores (1000 = 1 core)',
   })
-  allocatableCpu!: number;
+  usedCpu!: number;
 
   @Field(() => Float, {
-    description: 'Allocatable memory in megabytes',
+    description: 'Used memory in megabytes',
   })
-  allocatableMemory!: number;
-
-  @Field(() => Float, {
-    description: 'Allocatable disk in gigabytes',
-  })
-  allocatableDisk!: number;
+  usedMemory!: number;
 
   @Field(() => Float, {
     description: 'Total CPU capacity in millicores (1000 = 1 core)',
   })
-  capacityCpu!: number;
+  totalCpu!: number;
 
   @Field(() => Float, {
     description: 'Total memory capacity in megabytes',
   })
-  capacityMemory!: number;
-
-  @Field(() => Float, {
-    description: 'Total disk capacity in gigabytes',
-  })
-  capacityDisk!: number;
+  totalMemory!: number;
 
   @Field(() => ClusterNodeStatus)
   status!: ClusterNodeStatus;

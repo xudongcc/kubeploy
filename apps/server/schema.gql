@@ -70,27 +70,22 @@ type ClusterEdge {
 }
 
 type ClusterNode {
-  """Allocatable CPU in millicores (1000 = 1 core)"""
-  allocatableCpu: Float!
-
-  """Allocatable disk in gigabytes"""
-  allocatableDisk: Float!
-
-  """Allocatable memory in megabytes"""
-  allocatableMemory: Float!
-
-  """Total CPU capacity in millicores (1000 = 1 core)"""
-  capacityCpu: Float!
-
-  """Total disk capacity in gigabytes"""
-  capacityDisk: Float!
-
-  """Total memory capacity in megabytes"""
-  capacityMemory: Float!
   id: ID!
   ip: String!
   name: String!
   status: ClusterNodeStatus!
+
+  """Total CPU capacity in millicores (1000 = 1 core)"""
+  totalCpu: Float!
+
+  """Total memory capacity in megabytes"""
+  totalMemory: Float!
+
+  """Used CPU in millicores (1000 = 1 core)"""
+  usedCpu: Float!
+
+  """Used memory in megabytes"""
+  usedMemory: Float!
 }
 
 enum ClusterNodeStatus {

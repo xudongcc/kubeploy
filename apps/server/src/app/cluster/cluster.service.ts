@@ -38,9 +38,14 @@ export class ClusterService extends EntityService<Cluster> {
       const coreV1Api = this.clusterClientFactory.getCoreV1Api(cluster);
       const { items: nodes } = await coreV1Api.listNode();
 
+      // Fetch node metrics from metrics-server
+      const nodeMetrics =
+        await this.clusterClientFactory.getNodeMetrics(cluster);
+
       return nodes.map((node) => {
-        const allocatable = node.status?.allocatable ?? {};
         const capacity = node.status?.capacity ?? {};
+        const nodeName = node.metadata?.name ?? '';
+        const metrics = nodeMetrics[nodeName];
 
         const internalAddress = node.status?.addresses?.find(
           (addr) => addr.type === 'InternalIP',
@@ -56,16 +61,12 @@ export class ClusterService extends EntityService<Cluster> {
 
         return {
           id: node.metadata?.uid ?? '',
-          name: node.metadata?.name ?? '',
+          name: nodeName,
           ip: internalAddress?.address ?? '',
-          allocatableCpu: this.parseCpuToMillicores(allocatable.cpu),
-          allocatableMemory: this.parseMemoryToMB(allocatable.memory),
-          allocatableDisk: this.parseMemoryToGB(
-            allocatable['ephemeral-storage'],
-          ),
-          capacityCpu: this.parseCpuToMillicores(capacity.cpu),
-          capacityMemory: this.parseMemoryToMB(capacity.memory),
-          capacityDisk: this.parseMemoryToGB(capacity['ephemeral-storage']),
+          usedCpu: metrics ? this.parseCpuToMillicores(metrics.cpu) : 0,
+          usedMemory: metrics ? this.parseMemoryToMB(metrics.memory) : 0,
+          totalCpu: this.parseCpuToMillicores(capacity.cpu),
+          totalMemory: this.parseMemoryToMB(capacity.memory),
           status,
         };
       });
@@ -76,13 +77,23 @@ export class ClusterService extends EntityService<Cluster> {
 
   /**
    * Parse CPU from Kubernetes format to millicores
-   * Examples: "1" -> 1000, "500m" -> 500
+   * Examples: "1" -> 1000, "500m" -> 500, "123456789n" -> 123.456789
    */
   private parseCpuToMillicores(cpu?: string): number {
     if (!cpu) return 0;
+
+    // Handle nanocores (n) - used by metrics-server
+    if (cpu.endsWith('n')) {
+      const nanocores = parseFloat(cpu.slice(0, -1));
+      return nanocores / 1000000; // Convert nanocores to millicores
+    }
+
+    // Handle millicores (m)
     if (cpu.endsWith('m')) {
       return parseFloat(cpu.slice(0, -1));
     }
+
+    // Handle cores (no unit) - convert to millicores
     return parseFloat(cpu) * 1000;
   }
 
@@ -121,38 +132,4 @@ export class ClusterService extends EntityService<Cluster> {
     return parseFloat(memory) / (1024 * 1024);
   }
 
-  /**
-   * Parse memory from Kubernetes format to GB (gigabytes)
-   * Examples: "1Gi" -> 1, "512Mi" -> 0.5, "1Ti" -> 1024
-   */
-  private parseMemoryToGB(memory?: string): number {
-    if (!memory) return 0;
-
-    // Parse Kubernetes memory format with binary units (Ki, Mi, Gi, Ti)
-    const units: Record<string, number> = {
-      Ki: 1024,
-      Mi: 1024 ** 2,
-      Gi: 1024 ** 3,
-      Ti: 1024 ** 4,
-      Pi: 1024 ** 5,
-      Ei: 1024 ** 6,
-      K: 1000,
-      M: 1000 ** 2,
-      G: 1000 ** 3,
-      T: 1000 ** 4,
-      P: 1000 ** 5,
-      E: 1000 ** 6,
-    };
-
-    for (const [unit, multiplier] of Object.entries(units)) {
-      if (memory.endsWith(unit)) {
-        const value = parseFloat(memory.slice(0, -unit.length));
-        const bytes = value * multiplier;
-        return bytes / (1024 * 1024 * 1024); // Convert to GB
-      }
-    }
-
-    // No unit, assume bytes
-    return parseFloat(memory) / (1024 * 1024 * 1024);
-  }
 }

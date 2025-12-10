@@ -5,11 +5,19 @@ import {
   NetworkingV1Api,
 } from '@kubernetes/client-node';
 import { Injectable, Scope } from '@nestjs/common';
+import axios from 'axios';
+import https from 'https';
 
 import { Cluster } from './cluster.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClusterClientFactory {
+  private readonly axios = axios.create({
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: false,
+    }),
+  });
+
   private configCache = new Map<string, KubeConfig>();
 
   private getKubeConfig(cluster: Cluster): KubeConfig {
@@ -63,5 +71,33 @@ export class ClusterClientFactory {
   getNetworkingV1Api(cluster: Cluster): NetworkingV1Api {
     const kubeConfig = this.getKubeConfig(cluster);
     return kubeConfig.makeApiClient(NetworkingV1Api);
+  }
+
+  getKubeConfigPublic(cluster: Cluster): KubeConfig {
+    return this.getKubeConfig(cluster);
+  }
+
+  async getNodeMetrics(
+    cluster: Cluster,
+  ): Promise<Record<string, { cpu: string; memory: string }>> {
+    try {
+      const response = await this.axios.get<{
+        items: {
+          metadata: { name: string };
+          usage: { cpu: string; memory: string };
+        }[];
+      }>(`${cluster.server}/apis/metrics.k8s.io/v1beta1/nodes`, {
+        headers: {
+          Authorization: `Bearer ${cluster.token}`,
+        },
+      });
+
+      return Object.fromEntries(
+        response.data.items.map((item) => [item.metadata.name, item.usage]),
+      );
+    } catch {
+      // If metrics-server is not available, return empty object
+      return {};
+    }
   }
 }

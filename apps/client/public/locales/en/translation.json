@@ -54,10 +54,8 @@
     },
     "notFound": "Cluster not found",
     "overview": {
-      "cpu": "CPU (Cores)",
-      "disk": "Disk",
-      "memory": "Memory",
-      "nodes": "Nodes"
+      "cpu": "CPU",
+      "memory": "Memory"
     },
     "settings": {
       "dangerZone": {
@@ -105,27 +103,6 @@
     },
     "title": "Create Service"
   },
-  "network": {
-    "title": "Network",
-    "description": "Manage ports and domains for your service.",
-    "ports": {
-      "title": "Ports",
-      "description": "Configure the ports that your service exposes.",
-      "empty": "No ports configured.",
-      "addPort": "Add Port",
-      "form": {
-        "port": "Port",
-        "portPlaceholder": "8080",
-        "protocol": "Protocol"
-      }
-    },
-    "domains": {
-      "title": "Domains",
-      "description": "Configure custom domains for your service.",
-      "empty": "No domains configured.",
-      "noPorts": "No ports configured. Please add a port first."
-    }
-  },
   "domain": {
     "createDomain": {
       "description": "Add a new domain to your service.",
@@ -137,7 +114,6 @@
       "description": "Are you sure you want to delete the domain {{host}}? This action cannot be undone.",
       "title": "Delete Domain"
     },
-    "description": "Manage your service domains.",
     "form": {
       "host": {
         "label": "Host",
@@ -154,8 +130,6 @@
         "required": "Port is required"
       }
     },
-    "noPorts": "No ports configured for this service. Please add a port in the service settings first.",
-    "title": "Domains",
     "updateDomain": {
       "description": "Update the domain configuration.",
       "title": "Update Domain"
@@ -200,6 +174,27 @@
       "status": "Status"
     },
     "title": "Members"
+  },
+  "network": {
+    "description": "Manage ports and domains for your service.",
+    "domains": {
+      "description": "Configure custom domains for your service.",
+      "empty": "No domains configured.",
+      "noPorts": "No ports configured. Please add a port first.",
+      "title": "Domains"
+    },
+    "ports": {
+      "addPort": "Add Port",
+      "description": "Configure the ports that your service exposes.",
+      "empty": "No ports configured.",
+      "form": {
+        "port": "Port",
+        "portPlaceholder": "8080",
+        "protocol": "Protocol"
+      },
+      "title": "Ports"
+    },
+    "title": "Network"
   },
   "project": {
     "createProject": "Create Project",
@@ -247,6 +242,25 @@
     "deploy": "Deploy",
     "deploying": "Deploying...",
     "description": "Create and manage your services.",
+    "environment": {
+      "addVariable": "Add Variable",
+      "cardDescription": "Configure environment variables that will be available to your service at runtime.",
+      "description": "Manage environment variables for your service.",
+      "empty": "No environment variables configured.",
+      "form": {
+        "key": "Key",
+        "keyPlaceholder": "KEY",
+        "value": "Value",
+        "valuePlaceholder": "value"
+      },
+      "rawHint": "Enter environment variables in KEY=VALUE format, one per line. Lines starting with # are ignored.",
+      "rawPlaceholder": "# Example:\nDATABASE_URL=postgres://localhost:5432/db\nAPI_KEY=your-api-key",
+      "tabs": {
+        "form": "Form",
+        "raw": "Raw"
+      },
+      "title": "Environment Variables"
+    },
     "image": {
       "description": "Configure the container image for your service. You can find images on Docker Hub or use a private registry.",
       "form": {
@@ -274,46 +288,27 @@
       },
       "title": "Image"
     },
-    "environment": {
-      "addVariable": "Add Variable",
-      "cardDescription": "Configure environment variables that will be available to your service at runtime.",
-      "description": "Manage environment variables for your service.",
-      "empty": "No environment variables configured.",
-      "form": {
-        "key": "Key",
-        "keyPlaceholder": "KEY",
-        "value": "Value",
-        "valuePlaceholder": "value"
-      },
-      "rawHint": "Enter environment variables in KEY=VALUE format, one per line. Lines starting with # are ignored.",
-      "rawPlaceholder": "# Example:\nDATABASE_URL=postgres://localhost:5432/db\nAPI_KEY=your-api-key",
-      "tabs": {
-        "form": "Form",
-        "raw": "Raw"
-      },
-      "title": "Environment Variables"
-    },
     "notFound": "Service not found",
     "overview": {
       "description": "Overview and configuration of your service."
     },
     "resources": {
-      "title": "Resources",
       "description": "Configure CPU and memory limits for your service container.",
       "form": {
         "cpu": {
+          "hint": "CPU cores (e.g., 1.5 cores)",
           "label": "CPU",
           "placeholder": "1",
-          "unit": "cores",
-          "hint": "CPU cores (e.g., 1.5 cores)"
+          "unit": "cores"
         },
         "memory": {
+          "hint": "Memory limit in megabytes",
           "label": "Memory",
           "placeholder": "512",
-          "unit": "MB",
-          "hint": "Memory limit in megabytes"
+          "unit": "MB"
         }
-      }
+      },
+      "title": "Resources"
     },
     "settings": {
       "dangerZone": {
@@ -321,44 +316,13 @@
         "description": "Once you delete a service, there is no going back. This will permanently delete the service and its associated Kubernetes resources.",
         "title": "Danger Zone"
       },
-      "description": "Update your service settings.",
-      "form": {
-        "image": {
-          "name": {
-            "label": "Image Name",
-            "placeholder": "nginx",
-            "required": "Image name is required"
-          },
-          "password": {
-            "label": "Password",
-            "placeholder": "Password for private registry"
-          },
-          "registry": {
-            "label": "Registry",
-            "placeholder": "docker.io"
-          },
-          "tag": {
-            "label": "Tag",
-            "placeholder": "latest"
-          },
-          "username": {
-            "label": "Username",
-            "placeholder": "Username for private registry"
-          }
-        },
-        "name": {
-          "label": "Name",
-          "placeholder": "my-service",
-          "required": "Service name is required"
-        }
-      },
-      "title": "Service Settings"
+      "description": "Update your service settings."
     },
     "tabs": {
-      "network": "Network",
       "environment": "Environment",
       "logs": "Logs",
       "metrics": "Metrics",
+      "network": "Network",
       "overview": "Overview",
       "settings": "Settings",
       "volumes": "Volumes"

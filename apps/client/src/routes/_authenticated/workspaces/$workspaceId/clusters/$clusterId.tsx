@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { t } from "i18next";
-import { Cpu, HardDrive, HelpCircle, MemoryStick, Server } from "lucide-react";
+import { Cpu, HelpCircle, MemoryStick } from "lucide-react";
 
 import {
   DeleteClusterDialog,
@@ -26,6 +26,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { ClusterNodeStatus } from "@/gql/graphql";
@@ -50,12 +51,10 @@ const GET_CLUSTER_QUERY = graphql(`
       name
       ip
       status
-      allocatableCpu
-      allocatableMemory
-      allocatableDisk
-      capacityCpu
-      capacityMemory
-      capacityDisk
+      usedCpu
+      usedMemory
+      totalCpu
+      totalMemory
     }
   }
 `);
@@ -181,33 +180,10 @@ function RouteComponent() {
   }
 
   const nodes = cluster.nodes ?? [];
-  const activeNodeCount = nodes.filter(
-    (node) => node.status === ClusterNodeStatus.ACTIVE,
-  ).length;
-  const totalCapacityCpu = nodes.reduce(
-    (sum, node) => sum + node.capacityCpu,
-    0,
-  );
-  const totalReservedCpu = nodes.reduce(
-    (sum, node) => sum + (node.capacityCpu - node.allocatableCpu),
-    0,
-  );
-  const totalCapacityMemory = nodes.reduce(
-    (sum, node) => sum + node.capacityMemory,
-    0,
-  );
-  const totalReservedMemory = nodes.reduce(
-    (sum, node) => sum + (node.capacityMemory - node.allocatableMemory),
-    0,
-  );
-  const totalCapacityDisk = nodes.reduce(
-    (sum, node) => sum + node.capacityDisk,
-    0,
-  );
-  const totalReservedDisk = nodes.reduce(
-    (sum, node) => sum + (node.capacityDisk - node.allocatableDisk),
-    0,
-  );
+  const totalCpu = nodes.reduce((sum, node) => sum + node.totalCpu, 0);
+  const usedCpu = nodes.reduce((sum, node) => sum + node.usedCpu, 0);
+  const totalMemory = nodes.reduce((sum, node) => sum + node.totalMemory, 0);
+  const usedMemory = nodes.reduce((sum, node) => sum + node.usedMemory, 0);
 
   const formatCpu = (millicores: number) => {
     const cores = millicores / 1000;
@@ -219,11 +195,6 @@ function RouteComponent() {
   const formatMemory = (mb: number) => {
     if (mb >= 1024) return `${(mb / 1024).toFixed(2)} GB`;
     return `${mb.toFixed(2)} MB`;
-  };
-
-  const formatDisk = (gb: number) => {
-    if (gb >= 1024) return `${(gb / 1024).toFixed(2)} TB`;
-    return `${gb.toFixed(2)} GB`;
   };
 
   return (
@@ -253,21 +224,7 @@ function RouteComponent() {
         </TabsList>
 
         <TabsContent value="overview">
-          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t("cluster.overview.nodes")}
-                </CardTitle>
-                <Server className="text-muted-foreground h-4 w-4" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {activeNodeCount} / {nodes.length}
-                </div>
-              </CardContent>
-            </Card>
-
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -275,10 +232,13 @@ function RouteComponent() {
                 </CardTitle>
                 <Cpu className="text-muted-foreground h-4 w-4" />
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatCpu(totalReservedCpu)} / {formatCpu(totalCapacityCpu)}
+              <CardContent className="space-y-2">
+                <div className="text-xl font-bold">
+                  {formatCpu(usedCpu)} / {formatCpu(totalCpu)}
                 </div>
+                <Progress
+                  value={totalCpu > 0 ? (usedCpu / totalCpu) * 100 : 0}
+                />
               </CardContent>
             </Card>
 
@@ -289,26 +249,13 @@ function RouteComponent() {
                 </CardTitle>
                 <MemoryStick className="text-muted-foreground h-4 w-4" />
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatMemory(totalReservedMemory)} /{" "}
-                  {formatMemory(totalCapacityMemory)}
+              <CardContent className="space-y-2">
+                <div className="text-xl font-bold">
+                  {formatMemory(usedMemory)} / {formatMemory(totalMemory)}
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t("cluster.overview.disk")}
-                </CardTitle>
-                <HardDrive className="text-muted-foreground h-4 w-4" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatDisk(totalReservedDisk)} /{" "}
-                  {formatDisk(totalCapacityDisk)}
-                </div>
+                <Progress
+                  value={totalMemory > 0 ? (usedMemory / totalMemory) * 100 : 0}
+                />
               </CardContent>
             </Card>
           </div>
