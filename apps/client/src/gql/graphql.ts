@@ -819,6 +819,7 @@ export enum WorkspacePermission {
 
 export type GetClustersForSelectQueryVariables = Exact<{
   workspaceId: Scalars["ID"]["input"];
+  query?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
 export type GetClustersForSelectQuery = {
@@ -1960,6 +1961,14 @@ export const GetClustersForSelectDocument = {
             type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
           },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "query" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -1984,6 +1993,14 @@ export const GetClustersForSelectDocument = {
                   kind: "Field",
                   name: { kind: "Name", value: "clusters" },
                   arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "query" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "query" },
+                      },
+                    },
                     {
                       kind: "Argument",
                       name: { kind: "Name", value: "first" },

@@ -89,7 +89,10 @@ function RouteComponent() {
       })
       .subscribe({
         next(result) {
-          if (result.data?.service?.updatedAt !== service.updatedAt) {
+          if (
+            result.data?.service?.updatedAt &&
+            result.data?.service?.updatedAt !== service.updatedAt
+          ) {
             router.invalidate();
           }
         },

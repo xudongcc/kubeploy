@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-  "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetClustersForSelectDocument;
+  "\n  query GetClustersForSelect($workspaceId: ID!, $query: String) {\n    workspace(id: $workspaceId) {\n      clusters(query: $query, first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetClustersForSelectDocument;
   "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.CreateServiceDialogDocument;
   "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n": typeof types.WorkspaceSwitcherWorkspacesDocument;
   "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n    createdAt\n    updatedAt\n  }\n": typeof types.GetCurrentUserDocument;
@@ -54,7 +54,7 @@ type Documents = {
   "\n  query GetFirstWorkspace {\n    workspaces(first: 1, orderBy: { field: CREATED_AT, direction: DESC }) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n  }\n": typeof types.GetFirstWorkspaceDocument;
 };
 const documents: Documents = {
-  "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n":
+  "\n  query GetClustersForSelect($workspaceId: ID!, $query: String) {\n    workspace(id: $workspaceId) {\n      clusters(query: $query, first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n":
     types.GetClustersForSelectDocument,
   "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n":
     types.CreateServiceDialogDocument,
@@ -150,8 +150,8 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n",
-): (typeof documents)["\n  query GetClustersForSelect($workspaceId: ID!) {\n    workspace(id: $workspaceId) {\n      clusters(first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n"];
+  source: "\n  query GetClustersForSelect($workspaceId: ID!, $query: String) {\n    workspace(id: $workspaceId) {\n      clusters(query: $query, first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n",
+): (typeof documents)["\n  query GetClustersForSelect($workspaceId: ID!, $query: String) {\n    workspace(id: $workspaceId) {\n      clusters(query: $query, first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

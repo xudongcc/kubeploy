@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client/react";
+import { useParams } from "@tanstack/react-router";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,12 +19,11 @@ import {
 } from "@/components/ui/popover";
 import { graphql } from "@/gql";
 import { cn } from "@/lib/utils";
-import { useParams } from "@tanstack/react-router";
 
 const GET_CLUSTERS_QUERY = graphql(`
-  query GetClustersForSelect($workspaceId: ID!) {
+  query GetClustersForSelect($workspaceId: ID!, $query: String) {
     workspace(id: $workspaceId) {
-      clusters(first: 20) {
+      clusters(query: $query, first: 20) {
         edges {
           node {
             id
@@ -47,20 +47,32 @@ export function ClusterSelect({
   placeholder = "Select cluster...",
 }: ClusterSelectProps) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
   const workspaceId = useParams({
     from: "/_authenticated/workspaces/$workspaceId",
     select: (params) => params.workspaceId,
   });
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
   const { data } = useQuery(GET_CLUSTERS_QUERY, {
     variables: {
       workspaceId: workspaceId,
+      query: debouncedQuery || undefined,
     },
+    fetchPolicy: "cache-and-network",
   });
 
   const clusters =
-    data?.workspace?.clusters?.edges.map((edge) => edge.node) || [];
+    data?.workspace?.clusters?.edges.map((edge) => edge.node) ?? [];
   const selectedCluster = clusters.find((cluster) => cluster.id === value);
 
   return (
@@ -77,8 +89,12 @@ export function ClusterSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" align="start">
-        <Command>
-          <CommandInput placeholder="Search cluster..." />
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder="Search cluster..."
+            value={query}
+            onValueChange={setQuery}
+          />
           <CommandList>
             <CommandEmpty>No cluster found.</CommandEmpty>
             <CommandGroup>

@@ -70,7 +70,10 @@ function RouteComponent() {
       })
       .subscribe({
         next(result) {
-          if (result.data?.project?.updatedAt !== project.updatedAt) {
+          if (
+            result.data?.project?.updatedAt &&
+            result.data?.project?.updatedAt !== project.updatedAt
+          ) {
             router.invalidate();
           }
         },

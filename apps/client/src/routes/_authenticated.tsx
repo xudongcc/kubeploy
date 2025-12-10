@@ -61,7 +61,10 @@ function RouteComponent() {
       })
       .subscribe({
         next(result) {
-          if (result.data?.currentUser?.updatedAt !== currentUser.updatedAt) {
+          if (
+            result.data?.currentUser?.updatedAt &&
+            result.data?.currentUser?.updatedAt !== currentUser.updatedAt
+          ) {
             router.invalidate();
           }
         },

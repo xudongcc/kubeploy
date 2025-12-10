@@ -75,7 +75,10 @@ function RouteComponent() {
       })
       .subscribe({
         next(result) {
-          if (result.data?.workspace?.updatedAt !== workspace.updatedAt) {
+          if (
+            result.data?.workspace?.updatedAt &&
+            result.data?.workspace?.updatedAt !== workspace.updatedAt
+          ) {
             router.invalidate();
           }
         },
