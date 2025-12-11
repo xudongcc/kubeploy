@@ -18,7 +18,6 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  const { serviceId, workspaceId } = Route.useParams();
   const { service } = Route.useRouteContext();
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +28,12 @@ function RouteComponent() {
 
   useEffect(() => {
     if (!service || !instance) return;
+
+    instance.options.theme = {
+      ...instance.options.theme,
+      background: "#000",
+      foreground: "#fff",
+    };
 
     // Connect to Socket.IO
     const socket = io("/terminal", {
@@ -43,7 +48,7 @@ function RouteComponent() {
       setError(null);
 
       // Start terminal session
-      socket.emit("start", { serviceId, workspaceId });
+      socket.emit("start", { serviceId: service.id });
     });
 
     socket.on("started", () => {
@@ -83,7 +88,7 @@ function RouteComponent() {
     return () => {
       socket.disconnect();
     };
-  }, [serviceId, workspaceId, service, instance]);
+  }, [service, instance]);
 
   if (!service) {
     return <div>{t("service.notFound")}</div>;
@@ -117,11 +122,7 @@ function RouteComponent() {
               {error}
             </div>
           )}
-          <div
-            ref={ref}
-            style={{ width: "100%", height: "600px" }}
-            className="rounded-md bg-black p-2"
-          />
+          <div ref={ref} className="h-full w-full rounded-md bg-black p-2" />
         </CardContent>
       </Card>
     </Page>
