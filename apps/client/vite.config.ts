@@ -41,9 +41,14 @@ const config = defineConfig(({ mode }) => {
     ],
     server: {
       proxy: {
-        "/api": {
+        "/api/": {
           target: env.API_URL,
           changeOrigin: true,
+        },
+        "/socket.io/": {
+          target: env.API_URL,
+          changeOrigin: true,
+          ws: true,
         },
       },
     },

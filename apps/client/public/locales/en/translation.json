@@ -344,7 +344,14 @@
       "network": "Network",
       "overview": "Overview",
       "settings": "Settings",
+      "terminal": "Terminal",
       "volumes": "Volumes"
+    },
+    "terminal": {
+      "connected": "Connected",
+      "description": "Access an interactive terminal in your service container.",
+      "disconnected": "Disconnected",
+      "title": "Terminal"
     },
     "title": "Services"
   },

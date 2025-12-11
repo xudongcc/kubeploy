@@ -344,7 +344,14 @@
       "network": "网络",
       "overview": "概览",
       "settings": "设置",
+      "terminal": "终端",
       "volumes": "硬盘"
+    },
+    "terminal": {
+      "connected": "已连接",
+      "description": "访问服务容器的交互式终端。",
+      "disconnected": "已断开",
+      "title": "终端"
     },
     "title": "服务"
   },

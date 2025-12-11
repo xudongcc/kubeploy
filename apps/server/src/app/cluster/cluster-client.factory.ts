@@ -6,13 +6,13 @@ import {
   Log,
   NetworkingV1Api,
 } from '@kubernetes/client-node';
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import https from 'https';
 
 import { Cluster } from './cluster.entity';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class ClusterClientFactory {
   private readonly axios = axios.create({
     httpsAgent: new https.Agent({

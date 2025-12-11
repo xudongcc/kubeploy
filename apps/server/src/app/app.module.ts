@@ -6,6 +6,7 @@ import { DomainModule } from '@/domain/domain.module';
 import { ProjectModule } from '@/project/project.module';
 import { RuntimeLogModule } from '@/runtime-log/runtime-log.module';
 import { ServiceModule } from '@/service/service.module';
+import { TerminalModule } from '@/terminal/terminal.module';
 import { UserModule } from '@/user/user.module';
 import { VolumeModule } from '@/volume/volume.module';
 import { WorkspaceModule } from '@/workspace/workspace.module';
@@ -21,6 +22,7 @@ import { WorkspaceMemberModule } from '@/workspace-member/workspace-member.modul
     ProjectModule,
     ServiceModule,
     RuntimeLogModule,
+    TerminalModule,
     DomainModule,
     VolumeModule,
   ],

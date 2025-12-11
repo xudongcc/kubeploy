@@ -32,6 +32,7 @@ import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_lay
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
+import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
@@ -193,6 +194,15 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolume
         AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
     } as any,
   )
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRouteImport.update(
+    {
+      id: '/terminal',
+      path: '/terminal',
+      getParentRoute: () =>
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+    } as any,
+  )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute =
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRouteImport.update(
     {
@@ -263,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
+  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
 }
@@ -285,6 +296,7 @@ export interface FileRoutesByTo {
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
+  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
 }
@@ -315,6 +327,7 @@ export interface FileRoutesById {
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
+  '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
@@ -345,6 +358,7 @@ export interface FileRouteTypes {
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
+    | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/'
   fileRoutesByTo: FileRoutesByTo
@@ -367,6 +381,7 @@ export interface FileRouteTypes {
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
+    | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
   id:
@@ -396,6 +411,7 @@ export interface FileRouteTypes {
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
+    | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/'
@@ -570,6 +586,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRouteImport
       parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
     }
+    '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal': {
+      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
+      path: '/terminal'
+      fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+    }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
       path: '/settings'
@@ -650,6 +673,7 @@ interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRo
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
 }
@@ -666,6 +690,8 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteC
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute,
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute:
+      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute:

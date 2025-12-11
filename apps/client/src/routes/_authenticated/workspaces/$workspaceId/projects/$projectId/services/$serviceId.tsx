@@ -153,6 +153,17 @@ function RouteComponent() {
         }),
       },
       {
+        title: t("service.tabs.terminal"),
+        link: linkOptions({
+          to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal",
+          params: {
+            workspaceId,
+            projectId,
+            serviceId,
+          },
+        }),
+      },
+      {
         title: t("service.tabs.logs"),
         link: linkOptions({
           to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs",

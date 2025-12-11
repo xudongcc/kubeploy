@@ -1,6 +1,6 @@
 import { EntityManager } from '@mikro-orm/postgresql';
 import { Controller, MessageEvent, Param, Query, Sse } from '@nestjs/common';
-import { finalize, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { RuntimeLogService } from './runtime-log.service';
 
