@@ -1,3 +1,4 @@
+import { Logger } from '@nest-boot/logger';
 import { RequestContext } from '@nest-boot/request-context';
 import { UseGuards } from '@nestjs/common';
 import {
@@ -16,7 +17,6 @@ import { PassThrough, Writable } from 'stream';
 import { ClusterClientFactory } from '@/cluster';
 import { ServiceService } from '@/service/service.service';
 import { User } from '@/user/user.entity';
-import { UserService } from '@/user/user.service';
 
 import { TerminalGuard } from './terminal.guard';
 
@@ -43,16 +43,22 @@ export class TerminalGateway
   private readonly sessions = new Map<string, TerminalSession>();
 
   constructor(
-    private readonly userService: UserService,
+    private readonly logger: Logger,
     private readonly serviceService: ServiceService,
     private readonly clusterClientFactory: ClusterClientFactory,
   ) {}
 
-  handleConnection(_client: Socket) {
-    // WebSocket 连接建立时，不进行任何操作
+  handleConnection(client: Socket) {
+    this.logger.log('WebSocket connection connected', {
+      clientId: client.id,
+    });
   }
 
   handleDisconnect(client: Socket) {
+    this.logger.log('WebSocket connection disconnected', {
+      clientId: client.id,
+    });
+
     // WebSocket 连接断开时，关闭终端会话
     this.closeSession(client.id);
   }
@@ -148,14 +154,23 @@ export class TerminalGateway
             stdin,
             true, // tty
             (status) => {
-              console.log('Terminal status:', status);
+              this.logger.debug('Terminal status changed', { status });
             },
           )
           .then(() => {
+            this.logger.log('Terminal session started', {
+              serviceId,
+              userId: user.id,
+              clientId: client.id,
+            });
             client.emit('started');
           })
           .catch((error: unknown) => {
-            console.error('Exec error:', error);
+            this.logger.error('Terminal exec error', {
+              serviceId,
+              userId: user.id,
+              error: error instanceof Error ? error.message : 'Unknown error',
+            });
             client.emit('error', {
               message: error instanceof Error ? error.message : 'Exec failed',
             });
@@ -167,7 +182,11 @@ export class TerminalGateway
           serviceId,
         });
       } catch (error) {
-        console.error('Terminal start error:', error);
+        this.logger.error('Terminal start error', {
+          serviceId,
+          userId: user?.id,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
         client.emit('error', {
           message: error instanceof Error ? error.message : 'Unknown error',
         });
@@ -193,7 +212,7 @@ export class TerminalGateway
   ) {
     // Terminal resize would require sending escape sequences
     // or using a different approach with node-pty
-    console.log('Terminal resize:', data);
+    this.logger.debug('Terminal resize', { rows: data.rows, cols: data.cols });
   }
 
   private closeSession(clientId: string) {
@@ -202,6 +221,11 @@ export class TerminalGateway
     }
     const session = this.sessions.get(clientId);
     if (session) {
+      this.logger.log('Terminal session closed', {
+        clientId,
+        serviceId: session.serviceId,
+      });
+
       if (session.stdin) {
         session.stdin.end();
       }
