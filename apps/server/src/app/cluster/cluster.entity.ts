@@ -1,6 +1,8 @@
 import {
+  Collection,
   Entity,
   ManyToOne,
+  OneToMany,
   Opt,
   PrimaryKey,
   Property,
@@ -10,6 +12,7 @@ import {
 import { Field, HideField, ID, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
+import { Project } from '@/project/project.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
 @ObjectType()
@@ -51,4 +54,7 @@ export class Cluster {
 
   @ManyToOne(() => Workspace)
   workspace!: Ref<Workspace>;
+
+  @OneToMany(() => Project, (project) => project.cluster)
+  projects = new Collection<Project>(this);
 }

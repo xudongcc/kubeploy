@@ -288,6 +288,15 @@
       },
       "title": "Image"
     },
+    "logs": {
+      "connected": "Connected",
+      "connecting": "Connecting...",
+      "connectionError": "Connection error. Please try refreshing the page.",
+      "description": "View real-time logs from your service container.",
+      "disconnected": "Disconnected",
+      "title": "Container Logs",
+      "waiting": "Waiting for logs..."
+    },
     "metrics": {
       "cpu": {
         "title": "CPU"

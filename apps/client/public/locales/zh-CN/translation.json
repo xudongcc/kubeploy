@@ -288,6 +288,15 @@
       },
       "title": "镜像"
     },
+    "logs": {
+      "connected": "已连接",
+      "connecting": "正在连接...",
+      "connectionError": "连接错误。请尝试刷新页面。",
+      "description": "查看服务容器的实时日志。",
+      "disconnected": "已断开",
+      "title": "容器日志",
+      "waiting": "等待日志..."
+    },
     "metrics": {
       "cpu": {
         "title": "CPU"

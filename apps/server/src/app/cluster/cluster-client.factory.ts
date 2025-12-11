@@ -1,7 +1,9 @@
 import {
   AppsV1Api,
   CoreV1Api,
+  Exec,
   KubeConfig,
+  Log,
   NetworkingV1Api,
 } from '@kubernetes/client-node';
 import { Injectable, Scope } from '@nestjs/common';
@@ -73,8 +75,14 @@ export class ClusterClientFactory {
     return kubeConfig.makeApiClient(NetworkingV1Api);
   }
 
-  getKubeConfigPublic(cluster: Cluster): KubeConfig {
-    return this.getKubeConfig(cluster);
+  getLog(cluster: Cluster): Log {
+    const kubeConfig = this.getKubeConfig(cluster);
+    return new Log(kubeConfig);
+  }
+
+  getExec(cluster: Cluster): Exec {
+    const kubeConfig = this.getKubeConfig(cluster);
+    return new Exec(kubeConfig);
   }
 
   async getNodeMetrics(

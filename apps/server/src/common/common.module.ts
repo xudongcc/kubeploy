@@ -26,7 +26,11 @@ import { PermissionModule } from '@/common/modules/permission.module';
     AuthRlsModule,
     ConfigModule,
     MikroOrmModule,
-    GraphQLModule,
+    GraphQLModule.forRoot({
+      subscriptions: {
+        'graphql-ws': true,
+      },
+    }),
     GraphQLConnectionModule,
     BullModule,
     RedisModule,
