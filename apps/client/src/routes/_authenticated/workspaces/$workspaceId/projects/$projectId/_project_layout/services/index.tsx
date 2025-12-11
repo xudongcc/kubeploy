@@ -13,7 +13,11 @@ import { DataTable } from "@/components/turboost-ui/data-table";
 import { Button } from "@/components/ui/button";
 import { graphql } from "@/gql";
 import { OrderDirection, ServiceOrderField } from "@/gql/graphql";
-import { createConnectionSchema } from "@/utils/create-connection-schema";
+import {
+  createConnectionSearchSchema,
+  getNextPageSearch,
+  getPreviousPageSearch,
+} from "@/lib/connection-search";
 
 const GET_SERVICES_QUERY = graphql(`
   query GetServices(
@@ -64,7 +68,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
-    createConnectionSchema({
+    createConnectionSearchSchema({
       pageSize: 20,
       orderField: ServiceOrderField,
       defaultOrderField: ServiceOrderField.CREATED_AT,
@@ -144,6 +148,53 @@ function RouteComponent() {
           },
         ]}
         data={data?.project?.services.edges.map((edge) => edge.node) || []}
+        pagination={{
+          hasPreviousPage:
+            data?.project?.services?.pageInfo.hasPreviousPage || false,
+          hasNextPage: data?.project?.services?.pageInfo.hasNextPage || false,
+          onPreviousPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/projects/$projectId/services",
+              search: (prev) =>
+                getPreviousPageSearch(
+                  prev,
+                  data?.project?.services?.pageInfo
+                    ? {
+                        startCursor:
+                          data.project.services.pageInfo.startCursor ??
+                          undefined,
+                        endCursor:
+                          data.project.services.pageInfo.endCursor ?? undefined,
+                        hasNextPage: data.project.services.pageInfo.hasNextPage,
+                        hasPreviousPage:
+                          data.project.services.pageInfo.hasPreviousPage,
+                      }
+                    : undefined,
+                ),
+            });
+          },
+          onNextPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/projects/$projectId/services",
+              search: (prev) =>
+                getNextPageSearch(
+                  prev,
+                  data?.project?.services?.pageInfo
+                    ? {
+                        startCursor:
+                          data.project.services.pageInfo.startCursor ??
+                          undefined,
+                        endCursor:
+                          data.project.services.pageInfo.endCursor ?? undefined,
+                        hasNextPage: data.project.services.pageInfo.hasNextPage,
+                        hasPreviousPage:
+                          data.project.services.pageInfo.hasPreviousPage,
+                      }
+                    : undefined,
+                ),
+            });
+          },
+        }}
       />
 
       <CreateServiceDialog

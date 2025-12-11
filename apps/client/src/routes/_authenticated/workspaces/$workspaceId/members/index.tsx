@@ -41,7 +41,11 @@ import {
   WorkspaceMemberOrderField,
   WorkspaceMemberRole,
 } from "@/gql/graphql";
-import { createConnectionSchema } from "@/utils/create-connection-schema";
+import {
+  createConnectionSearchSchema,
+  getNextPageSearch,
+  getPreviousPageSearch,
+} from "@/lib/connection-search";
 
 const GET_WORKSPACE_MEMBERS_QUERY = graphql(`
   query GetWorkspaceMembers(
@@ -123,7 +127,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
-    createConnectionSchema({
+    createConnectionSearchSchema({
       pageSize: 20,
       orderField: WorkspaceMemberOrderField,
       defaultOrderField: WorkspaceMemberOrderField.CREATED_AT,
@@ -144,6 +148,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { t } = useTranslation();
   const search = Route.useSearch();
+  const navigate = Route.useNavigate();
 
   const [inviteOpen, setInviteOpen] = useState(false);
 
@@ -269,12 +274,16 @@ function RouteComponent() {
                   name="email"
                   validators={{
                     onChange: ({ value }) =>
-                      !value.trim() ? t("members.form.email.required") : undefined,
+                      !value.trim()
+                        ? t("members.form.email.required")
+                        : undefined,
                   }}
                 >
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="email">{t("members.form.email.label")}</FieldLabel>
+                      <FieldLabel htmlFor="email">
+                        {t("members.form.email.label")}
+                      </FieldLabel>
                       <Input
                         id="email"
                         type="email"
@@ -295,7 +304,9 @@ function RouteComponent() {
                 <inviteForm.Field name="role">
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="role">{t("members.form.role.label")}</FieldLabel>
+                      <FieldLabel htmlFor="role">
+                        {t("members.form.role.label")}
+                      </FieldLabel>
                       <Select
                         value={field.state.value}
                         onValueChange={(value) =>
@@ -303,7 +314,9 @@ function RouteComponent() {
                         }
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder={t("members.form.role.placeholder")} />
+                          <SelectValue
+                            placeholder={t("members.form.role.placeholder")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value={WorkspaceMemberRole.MEMBER}>
@@ -331,7 +344,9 @@ function RouteComponent() {
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                      {isSubmitting ? t("members.invite.sending") : t("members.invite.submit")}
+                      {isSubmitting
+                        ? t("members.invite.sending")
+                        : t("members.invite.submit")}
                     </Button>
                   )}
                 </inviteForm.Subscribe>
@@ -400,7 +415,11 @@ function RouteComponent() {
             cell: ({ row }) => {
               const status = row.original.inviteStatus;
               if (!status)
-                return <span className="text-muted-foreground">{t("members.status.active")}</span>;
+                return (
+                  <span className="text-muted-foreground">
+                    {t("members.status.active")}
+                  </span>
+                );
               return (
                 <span
                   className={
@@ -451,6 +470,53 @@ function RouteComponent() {
           },
         ]}
         data={members}
+        pagination={{
+          hasPreviousPage:
+            data?.workspaceMembers?.pageInfo.hasPreviousPage || false,
+          hasNextPage: data?.workspaceMembers?.pageInfo.hasNextPage || false,
+          onPreviousPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/members",
+              search: (prev) =>
+                getPreviousPageSearch(
+                  prev,
+                  data?.workspaceMembers?.pageInfo
+                    ? {
+                        startCursor:
+                          data.workspaceMembers.pageInfo.startCursor ??
+                          undefined,
+                        endCursor:
+                          data.workspaceMembers.pageInfo.endCursor ?? undefined,
+                        hasNextPage: data.workspaceMembers.pageInfo.hasNextPage,
+                        hasPreviousPage:
+                          data.workspaceMembers.pageInfo.hasPreviousPage,
+                      }
+                    : undefined,
+                ),
+            });
+          },
+          onNextPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/members",
+              search: (prev) =>
+                getNextPageSearch(
+                  prev,
+                  data?.workspaceMembers?.pageInfo
+                    ? {
+                        startCursor:
+                          data.workspaceMembers.pageInfo.startCursor ??
+                          undefined,
+                        endCursor:
+                          data.workspaceMembers.pageInfo.endCursor ?? undefined,
+                        hasNextPage: data.workspaceMembers.pageInfo.hasNextPage,
+                        hasPreviousPage:
+                          data.workspaceMembers.pageInfo.hasPreviousPage,
+                      }
+                    : undefined,
+                ),
+            });
+          },
+        }}
       />
     </Page>
   );

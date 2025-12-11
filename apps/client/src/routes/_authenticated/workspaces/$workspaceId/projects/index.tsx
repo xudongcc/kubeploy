@@ -23,7 +23,11 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { graphql } from "@/gql";
 import { OrderDirection, ProjectOrderField } from "@/gql/graphql";
-import { createConnectionSchema } from "@/utils/create-connection-schema";
+import {
+  createConnectionSearchSchema,
+  getNextPageSearch,
+  getPreviousPageSearch,
+} from "@/lib/connection-search";
 import { t } from "i18next";
 
 const GET_PROJECTS_QUERY = graphql(`
@@ -86,7 +90,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
-    createConnectionSchema({
+    createConnectionSearchSchema({
       pageSize: 20,
       orderField: ProjectOrderField,
       defaultOrderField: ProjectOrderField.CREATED_AT,
@@ -291,6 +295,29 @@ function RouteComponent() {
           },
         ]}
         data={projects}
+        pagination={{
+          hasPreviousPage:
+            data?.workspace?.projects?.pageInfo.hasPreviousPage || false,
+          hasNextPage: data?.workspace?.projects?.pageInfo.hasNextPage || false,
+          onPreviousPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/projects",
+              search: getPreviousPageSearch(
+                search,
+                data?.workspace?.projects?.pageInfo,
+              ),
+            });
+          },
+          onNextPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/projects",
+              search: getNextPageSearch(
+                search,
+                data?.workspace?.projects?.pageInfo,
+              ),
+            });
+          },
+        }}
       />
     </Page>
   );

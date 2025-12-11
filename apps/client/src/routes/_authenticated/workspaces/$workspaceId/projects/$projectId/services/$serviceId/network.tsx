@@ -42,7 +42,11 @@ import {
   OrderDirection,
   ServicePortProtocol,
 } from "@/gql/graphql";
-import { createConnectionSchema } from "@/utils/create-connection-schema";
+import {
+  createConnectionSearchSchema,
+  getNextPageSearch,
+  getPreviousPageSearch,
+} from "@/lib/connection-search";
 
 const GET_DOMAINS_QUERY = graphql(`
   query GetDomains(
@@ -132,7 +136,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
-    createConnectionSchema({
+    createConnectionSearchSchema({
       pageSize: 20,
       orderField: DomainOrderField,
       defaultOrderField: DomainOrderField.CREATED_AT,
@@ -148,6 +152,7 @@ function RouteComponent() {
   const { serviceId } = Route.useParams();
   const { service } = Route.useRouteContext();
   const search = Route.useSearch();
+  const navigate = Route.useNavigate();
   const { t } = useTranslation();
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -242,18 +247,14 @@ function RouteComponent() {
     setDeletingDomain(null);
   };
 
-  const domains =
-    data?.service?.domains.edges.map((edge) => edge.node) ?? [];
+  const domains = data?.service?.domains.edges.map((edge) => edge.node) ?? [];
   const validPorts = useMemo(
     () => form.state.values.ports.filter((p) => p.port > 0),
     [form.state.values.ports],
   );
 
   return (
-    <Page
-      title={t("network.title")}
-      description={t("network.description")}
-    >
+    <Page title={t("network.title")} description={t("network.description")}>
       <div className="flex flex-col gap-6">
         <form
           onSubmit={(e) => {
@@ -322,7 +323,9 @@ function RouteComponent() {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value={ServicePortProtocol.HTTP}>
+                                    <SelectItem
+                                      value={ServicePortProtocol.HTTP}
+                                    >
                                       HTTP
                                     </SelectItem>
                                     <SelectItem value={ServicePortProtocol.TCP}>
@@ -482,6 +485,58 @@ function RouteComponent() {
                   },
                 ]}
                 data={domains}
+                pagination={{
+                  hasPreviousPage:
+                    data?.service?.domains?.pageInfo.hasPreviousPage || false,
+                  hasNextPage:
+                    data?.service?.domains?.pageInfo.hasNextPage || false,
+                  onPreviousPage: () => {
+                    navigate({
+                      to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network",
+                      search: (prev) =>
+                        getPreviousPageSearch(
+                          prev,
+                          data?.service?.domains?.pageInfo
+                            ? {
+                                startCursor:
+                                  data.service.domains.pageInfo.startCursor ??
+                                  undefined,
+                                endCursor:
+                                  data.service.domains.pageInfo.endCursor ??
+                                  undefined,
+                                hasNextPage:
+                                  data.service.domains.pageInfo.hasNextPage,
+                                hasPreviousPage:
+                                  data.service.domains.pageInfo.hasPreviousPage,
+                              }
+                            : undefined,
+                        ),
+                    });
+                  },
+                  onNextPage: () => {
+                    navigate({
+                      to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network",
+                      search: (prev) =>
+                        getNextPageSearch(
+                          prev,
+                          data?.service?.domains?.pageInfo
+                            ? {
+                                startCursor:
+                                  data.service.domains.pageInfo.startCursor ??
+                                  undefined,
+                                endCursor:
+                                  data.service.domains.pageInfo.endCursor ??
+                                  undefined,
+                                hasNextPage:
+                                  data.service.domains.pageInfo.hasNextPage,
+                                hasPreviousPage:
+                                  data.service.domains.pageInfo.hasPreviousPage,
+                              }
+                            : undefined,
+                        ),
+                    });
+                  },
+                }}
               />
             )}
           </CardContent>

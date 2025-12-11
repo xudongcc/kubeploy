@@ -12,7 +12,11 @@ import { DataTable } from "@/components/turboost-ui/data-table";
 import { Button } from "@/components/ui/button";
 import { graphql } from "@/gql";
 import { ClusterOrderField, OrderDirection } from "@/gql/graphql";
-import { createConnectionSchema } from "@/utils/create-connection-schema";
+import {
+  createConnectionSearchSchema,
+  getNextPageSearch,
+  getPreviousPageSearch,
+} from "@/lib/connection-search";
 
 const GET_CLUSTERS_QUERY = graphql(`
   query GetClusters(
@@ -71,7 +75,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
-    createConnectionSchema({
+    createConnectionSearchSchema({
       pageSize: 20,
       orderField: ClusterOrderField,
       defaultOrderField: ClusterOrderField.CREATED_AT,
@@ -170,6 +174,29 @@ function RouteComponent() {
           },
         ]}
         data={clusters}
+        pagination={{
+          hasPreviousPage:
+            data?.workspace?.clusters?.pageInfo.hasPreviousPage || false,
+          hasNextPage: data?.workspace?.clusters?.pageInfo.hasNextPage || false,
+          onPreviousPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/clusters",
+              search: getPreviousPageSearch(
+                search,
+                data?.workspace?.clusters?.pageInfo,
+              ),
+            });
+          },
+          onNextPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/clusters",
+              search: getNextPageSearch(
+                search,
+                data?.workspace?.clusters?.pageInfo,
+              ),
+            });
+          },
+        }}
       />
     </Page>
   );

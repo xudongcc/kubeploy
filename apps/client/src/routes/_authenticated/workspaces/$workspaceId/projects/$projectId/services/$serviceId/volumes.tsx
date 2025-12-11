@@ -23,7 +23,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { graphql } from "@/gql";
 import { OrderDirection, VolumeOrderField } from "@/gql/graphql";
-import { createConnectionSchema } from "@/utils/create-connection-schema";
+import {
+  createConnectionSearchSchema,
+  getNextPageSearch,
+  getPreviousPageSearch,
+} from "@/lib/connection-search";
 
 const GET_VOLUMES_QUERY = graphql(`
   query GetVolumes(
@@ -99,7 +103,7 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: zodValidator(
-    createConnectionSchema({
+    createConnectionSearchSchema({
       pageSize: 20,
       orderField: VolumeOrderField,
       defaultOrderField: VolumeOrderField.CREATED_AT,
@@ -114,6 +118,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { serviceId } = Route.useParams();
   const search = Route.useSearch();
+  const navigate = Route.useNavigate();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editingVolume, setEditingVolume] = useState<VolumeItem | null>(null);
@@ -267,6 +272,53 @@ function RouteComponent() {
           },
         ]}
         data={volumes}
+        pagination={{
+          hasPreviousPage:
+            data?.service?.volumes?.pageInfo.hasPreviousPage || false,
+          hasNextPage: data?.service?.volumes?.pageInfo.hasNextPage || false,
+          onPreviousPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes",
+              search: (prev) =>
+                getPreviousPageSearch(
+                  prev,
+                  data?.service?.volumes?.pageInfo
+                    ? {
+                        startCursor:
+                          data.service.volumes.pageInfo.startCursor ??
+                          undefined,
+                        endCursor:
+                          data.service.volumes.pageInfo.endCursor ?? undefined,
+                        hasNextPage: data.service.volumes.pageInfo.hasNextPage,
+                        hasPreviousPage:
+                          data.service.volumes.pageInfo.hasPreviousPage,
+                      }
+                    : undefined,
+                ),
+            });
+          },
+          onNextPage: () => {
+            navigate({
+              to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes",
+              search: (prev) =>
+                getNextPageSearch(
+                  prev,
+                  data?.service?.volumes?.pageInfo
+                    ? {
+                        startCursor:
+                          data.service.volumes.pageInfo.startCursor ??
+                          undefined,
+                        endCursor:
+                          data.service.volumes.pageInfo.endCursor ?? undefined,
+                        hasNextPage: data.service.volumes.pageInfo.hasNextPage,
+                        hasPreviousPage:
+                          data.service.volumes.pageInfo.hasPreviousPage,
+                      }
+                    : undefined,
+                ),
+            });
+          },
+        }}
       />
 
       <UpdateVolumeDialog

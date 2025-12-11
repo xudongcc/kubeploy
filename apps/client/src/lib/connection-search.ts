@@ -1,17 +1,29 @@
 import { z } from "zod";
 import type { EnumLike } from "zod";
 
-import { OrderDirection } from "@/gql/graphql";
+export enum OrderDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
 
-export interface CreateConnectionSchemaOptions<OrderField extends EnumLike> {
+export interface PageInfo {
+  endCursor?: string | null;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor?: string | null;
+}
+
+export interface CreateConnectionSearchSchemaOptions<
+  OrderField extends EnumLike,
+> {
   pageSize: number;
   orderField: OrderField;
   defaultOrderField: OrderField[keyof OrderField];
   defaultOrderDirection: OrderDirection;
 }
 
-export function createConnectionSchema<OrderField extends EnumLike>(
-  options: CreateConnectionSchemaOptions<OrderField>,
+export function createConnectionSearchSchema<OrderField extends EnumLike>(
+  options: CreateConnectionSearchSchemaOptions<OrderField>,
 ) {
   return z
     .object({
@@ -55,4 +67,32 @@ export function createConnectionSchema<OrderField extends EnumLike>(
         first: options.pageSize,
       };
     });
+}
+
+export type ConnectionSearch<OrderField extends EnumLike> = z.infer<
+  ReturnType<typeof createConnectionSearchSchema<OrderField>>
+>;
+
+export function getPreviousPageSearch<
+  Search extends ConnectionSearch<EnumLike> = ConnectionSearch<EnumLike>,
+>(search: Search, pageInfo?: PageInfo) {
+  return {
+    ...search,
+    first: undefined,
+    last: "last" in search ? search.last : search.first,
+    before: pageInfo?.startCursor ?? undefined,
+    after: undefined,
+  };
+}
+
+export function getNextPageSearch<
+  Search extends ConnectionSearch<EnumLike> = ConnectionSearch<EnumLike>,
+>(search: Search, pageInfo?: PageInfo) {
+  return {
+    ...search,
+    first: "first" in search ? search.first : search.last,
+    last: undefined,
+    before: undefined,
+    after: pageInfo?.endCursor ?? undefined,
+  };
 }
