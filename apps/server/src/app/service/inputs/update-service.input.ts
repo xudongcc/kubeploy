@@ -4,7 +4,7 @@ import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { EnvironmentVariableInput } from './environment-variable.input';
 import { ImageInput } from './image.input';
-import { ResourceUsageInput } from './resource-usage.input';
+import { ResourceLimitsInput } from './resource-limits.input';
 import { ServicePortInput } from './service-port.input';
 
 @InputType()
@@ -36,7 +36,7 @@ export class UpdateServiceInput {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ResourceUsageInput)
-  @Field(() => ResourceUsageInput, { nullable: true })
-  resourceUsage?: ResourceUsageInput;
+  @Type(() => ResourceLimitsInput)
+  @Field(() => ResourceLimitsInput, { nullable: true })
+  resourceLimits?: ResourceLimitsInput;
 }

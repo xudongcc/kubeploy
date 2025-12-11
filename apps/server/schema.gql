@@ -410,7 +410,7 @@ type ResourceLimits {
   memory: Int
 }
 
-input ResourceUsageInput {
+input ResourceLimitsInput {
   """CPU limit in millicores (1000 = 1 core)"""
   cpu: Int
 
@@ -579,7 +579,7 @@ input UpdateServiceInput {
   environmentVariables: [EnvironmentVariableInput!]
   image: ImageInput
   ports: [ServicePortInput!]
-  resourceUsage: ResourceUsageInput
+  resourceLimits: ResourceLimitsInput
 }
 
 input UpdateVolumeInput {

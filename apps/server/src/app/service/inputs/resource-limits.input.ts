@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nest-boot/graphql';
 import { IsInt, IsOptional, IsPositive } from 'class-validator';
 
 @InputType()
-export class ResourceUsageInput {
+export class ResourceLimitsInput {
   @IsOptional()
   @IsInt()
   @IsPositive()

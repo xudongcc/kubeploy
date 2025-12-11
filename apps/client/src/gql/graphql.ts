@@ -503,7 +503,7 @@ export type ResourceLimits = {
   memory?: Maybe<Scalars["Int"]["output"]>;
 };
 
-export type ResourceUsageInput = {
+export type ResourceLimitsInput = {
   /** CPU limit in millicores (1000 = 1 core) */
   cpu?: InputMaybe<Scalars["Int"]["input"]>;
   /** Memory limit in megabytes */
@@ -641,7 +641,7 @@ export type UpdateServiceInput = {
   environmentVariables?: InputMaybe<Array<EnvironmentVariableInput>>;
   image?: InputMaybe<ImageInput>;
   ports?: InputMaybe<Array<ServicePortInput>>;
-  resourceUsage?: InputMaybe<ResourceUsageInput>;
+  resourceLimits?: InputMaybe<ResourceLimitsInput>;
 };
 
 export type UpdateVolumeInput = {
