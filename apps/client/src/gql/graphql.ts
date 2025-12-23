@@ -27,8 +27,43 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
+  /**
+   * A filter for Cluster that accepts MongoDB query syntax.
+   * Supported fields: name, created_at
+   */
+  ClusterFilter: { input: any; output: any };
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any };
+  /**
+   * A filter for Domain that accepts MongoDB query syntax.
+   * Supported fields: host, created_at
+   */
+  DomainFilter: { input: any; output: any };
+  /**
+   * A filter for Project that accepts MongoDB query syntax.
+   * Supported fields: name, created_at
+   */
+  ProjectFilter: { input: any; output: any };
+  /**
+   * A filter for Service that accepts MongoDB query syntax.
+   * Supported fields: name, created_at
+   */
+  ServiceFilter: { input: any; output: any };
+  /**
+   * A filter for Volume that accepts MongoDB query syntax.
+   * Supported fields: name, created_at
+   */
+  VolumeFilter: { input: any; output: any };
+  /**
+   * A filter for Workspace that accepts MongoDB query syntax.
+   * Supported fields: name, created_at
+   */
+  WorkspaceFilter: { input: any; output: any };
+  /**
+   * A filter for WorkspaceMember that accepts MongoDB query syntax.
+   * Supported fields: name, role, email, created_at
+   */
+  WorkspaceMemberFilter: { input: any; output: any };
 };
 
 export type AcceptWorkspaceInviteInput = {
@@ -59,6 +94,7 @@ export type Cluster = {
 export type ClusterProjectsArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["ProjectFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<ProjectOrder>;
@@ -388,6 +424,7 @@ export type Project = {
 export type ProjectServicesArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["ServiceFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<ServiceOrder>;
@@ -479,6 +516,7 @@ export type QueryWorkspaceMemberByTokenArgs = {
 export type QueryWorkspaceMembersArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["WorkspaceMemberFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<WorkspaceMemberOrder>;
@@ -488,6 +526,7 @@ export type QueryWorkspaceMembersArgs = {
 export type QueryWorkspacesArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["WorkspaceFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<WorkspaceOrder>;
@@ -531,6 +570,7 @@ export type Service = {
 export type ServiceDomainsArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["DomainFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<DomainOrder>;
@@ -540,6 +580,7 @@ export type ServiceDomainsArgs = {
 export type ServiceVolumesArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["VolumeFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<VolumeOrder>;
@@ -729,6 +770,7 @@ export type Workspace = {
 export type WorkspaceClustersArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["ClusterFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<ClusterOrder>;
@@ -738,6 +780,7 @@ export type WorkspaceClustersArgs = {
 export type WorkspaceProjectsArgs = {
   after?: InputMaybe<Scalars["String"]["input"]>;
   before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["ProjectFilter"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<ProjectOrder>;
@@ -922,29 +965,6 @@ export type CurrentUserFragment = {
   createdAt: any;
   updatedAt: any;
 } & { " $fragmentName"?: "CurrentUserFragment" };
-
-export type GetWorkspaceQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
-}>;
-
-export type GetWorkspaceQuery = {
-  __typename?: "Query";
-  workspace?: {
-    __typename?: "Workspace";
-    id: string;
-    name: string;
-    createdAt: any;
-    updatedAt: any;
-  } | null;
-};
-
-export type WorkspaceFragment = {
-  __typename?: "Workspace";
-  id: string;
-  name: string;
-  createdAt: any;
-  updatedAt: any;
-} & { " $fragmentName"?: "WorkspaceFragment" };
 
 export type GetClusterQueryVariables = Exact<{
   id: Scalars["ID"]["input"];
@@ -1154,29 +1174,6 @@ export type RemoveWorkspaceMemberMutation = {
   removeWorkspaceMember: { __typename?: "WorkspaceMember"; id: string };
 };
 
-export type GetProjectQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
-}>;
-
-export type GetProjectQuery = {
-  __typename?: "Query";
-  project?: {
-    __typename?: "Project";
-    id: string;
-    name: string;
-    createdAt: any;
-    updatedAt: any;
-  } | null;
-};
-
-export type ProjectDetailFragment = {
-  __typename?: "Project";
-  id: string;
-  name: string;
-  createdAt: any;
-  updatedAt: any;
-} & { " $fragmentName"?: "ProjectDetailFragment" };
-
 export type GetServicesQueryVariables = Exact<{
   projectId: Scalars["ID"]["input"];
   after?: InputMaybe<Scalars["String"]["input"]>;
@@ -1244,72 +1241,28 @@ export type DeleteProjectMutation = {
   deleteProject: { __typename?: "Project"; id: string };
 };
 
-export type GetServiceQueryVariables = Exact<{
+export type GetProjectQueryVariables = Exact<{
   id: Scalars["ID"]["input"];
 }>;
 
-export type GetServiceQuery = {
+export type GetProjectQuery = {
   __typename?: "Query";
-  service?: {
-    __typename?: "Service";
+  project?: {
+    __typename?: "Project";
     id: string;
     name: string;
     createdAt: any;
     updatedAt: any;
-    image: {
-      __typename?: "Image";
-      registry?: string | null;
-      name?: string | null;
-      tag?: string | null;
-      username?: string | null;
-    };
-    ports: Array<{
-      __typename?: "ServicePort";
-      port: number;
-      protocol: ServicePortProtocol;
-    }>;
-    environmentVariables: Array<{
-      __typename?: "EnvironmentVariable";
-      key: string;
-      value: string;
-    }>;
-    resourceLimits: {
-      __typename?: "ResourceLimits";
-      cpu?: number | null;
-      memory?: number | null;
-    };
   } | null;
 };
 
-export type ServiceDetailFragment = {
-  __typename?: "Service";
+export type ProjectDetailFragment = {
+  __typename?: "Project";
   id: string;
   name: string;
   createdAt: any;
   updatedAt: any;
-  image: {
-    __typename?: "Image";
-    registry?: string | null;
-    name?: string | null;
-    tag?: string | null;
-    username?: string | null;
-  };
-  ports: Array<{
-    __typename?: "ServicePort";
-    port: number;
-    protocol: ServicePortProtocol;
-  }>;
-  environmentVariables: Array<{
-    __typename?: "EnvironmentVariable";
-    key: string;
-    value: string;
-  }>;
-  resourceLimits: {
-    __typename?: "ResourceLimits";
-    cpu?: number | null;
-    memory?: number | null;
-  };
-} & { " $fragmentName"?: "ServiceDetailFragment" };
+} & { " $fragmentName"?: "ProjectDetailFragment" };
 
 export type UpdateServiceEnvironmentMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
@@ -1453,6 +1406,73 @@ export type UpdateServicePortsMutation = {
     " $fragmentRefs"?: { ServiceDetailFragment: ServiceDetailFragment };
   };
 };
+
+export type GetServiceQueryVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type GetServiceQuery = {
+  __typename?: "Query";
+  service?: {
+    __typename?: "Service";
+    id: string;
+    name: string;
+    createdAt: any;
+    updatedAt: any;
+    image: {
+      __typename?: "Image";
+      registry?: string | null;
+      name?: string | null;
+      tag?: string | null;
+      username?: string | null;
+    };
+    ports: Array<{
+      __typename?: "ServicePort";
+      port: number;
+      protocol: ServicePortProtocol;
+    }>;
+    environmentVariables: Array<{
+      __typename?: "EnvironmentVariable";
+      key: string;
+      value: string;
+    }>;
+    resourceLimits: {
+      __typename?: "ResourceLimits";
+      cpu?: number | null;
+      memory?: number | null;
+    };
+  } | null;
+};
+
+export type ServiceDetailFragment = {
+  __typename?: "Service";
+  id: string;
+  name: string;
+  createdAt: any;
+  updatedAt: any;
+  image: {
+    __typename?: "Image";
+    registry?: string | null;
+    name?: string | null;
+    tag?: string | null;
+    username?: string | null;
+  };
+  ports: Array<{
+    __typename?: "ServicePort";
+    port: number;
+    protocol: ServicePortProtocol;
+  }>;
+  environmentVariables: Array<{
+    __typename?: "EnvironmentVariable";
+    key: string;
+    value: string;
+  }>;
+  resourceLimits: {
+    __typename?: "ResourceLimits";
+    cpu?: number | null;
+    memory?: number | null;
+  };
+} & { " $fragmentName"?: "ServiceDetailFragment" };
 
 export type UpdateServiceResourcesMutationVariables = Exact<{
   id: Scalars["ID"]["input"];
@@ -1609,6 +1629,29 @@ export type CreateProjectMutation = {
   createProject: { __typename?: "Project"; id: string };
 };
 
+export type GetWorkspaceQueryVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type GetWorkspaceQuery = {
+  __typename?: "Query";
+  workspace?: {
+    __typename?: "Workspace";
+    id: string;
+    name: string;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
+export type WorkspaceFragment = {
+  __typename?: "Workspace";
+  id: string;
+  name: string;
+  createdAt: any;
+  updatedAt: any;
+} & { " $fragmentName"?: "WorkspaceFragment" };
+
 export type UpdateWorkspaceMutationVariables = Exact<{
   input: UpdateWorkspaceInput;
 }>;
@@ -1696,28 +1739,6 @@ export const CurrentUserFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<CurrentUserFragment, unknown>;
-export const WorkspaceFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "Workspace" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Workspace" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<WorkspaceFragment, unknown>;
 export const ClusterDetailFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -1814,28 +1835,6 @@ export const WorkspaceMemberItemFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<WorkspaceMemberItemFragment, unknown>;
-export const ProjectDetailFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ProjectDetail" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Project" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<ProjectDetailFragment, unknown>;
 export const ServiceItemFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -1858,6 +1857,51 @@ export const ServiceItemFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<ServiceItemFragment, unknown>;
+export const ProjectDetailFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ProjectDetail" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Project" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ProjectDetailFragment, unknown>;
+export const DomainItemFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "DomainItem" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Domain" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "host" } },
+          { kind: "Field", name: { kind: "Name", value: "path" } },
+          { kind: "Field", name: { kind: "Name", value: "servicePort" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<DomainItemFragment, unknown>;
 export const ServiceDetailFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -1926,29 +1970,6 @@ export const ServiceDetailFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<ServiceDetailFragment, unknown>;
-export const DomainItemFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "DomainItem" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Domain" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "host" } },
-          { kind: "Field", name: { kind: "Name", value: "path" } },
-          { kind: "Field", name: { kind: "Name", value: "servicePort" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<DomainItemFragment, unknown>;
 export const VolumeItemFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -2004,6 +2025,28 @@ export const ProjectItemFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<ProjectItemFragment, unknown>;
+export const WorkspaceFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "Workspace" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Workspace" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<WorkspaceFragment, unknown>;
 export const GetClustersForSelectDocument = {
   kind: "Document",
   definitions: [
@@ -2304,79 +2347,6 @@ export const GetCurrentUserDocument = {
     },
   ],
 } as unknown as DocumentNode<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
-export const GetWorkspaceDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetWorkspace" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            alias: { kind: "Name", value: "workspace" },
-            name: { kind: "Name", value: "workspace" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                {
-                  kind: "FragmentSpread",
-                  name: { kind: "Name", value: "Workspace" },
-                  directives: [
-                    {
-                      kind: "Directive",
-                      name: { kind: "Name", value: "unmask" },
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "Workspace" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Workspace" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetWorkspaceQuery, GetWorkspaceQueryVariables>;
 export const GetClusterDocument = {
   kind: "Document",
   definitions: [
@@ -3297,78 +3267,6 @@ export const RemoveWorkspaceMemberDocument = {
   RemoveWorkspaceMemberMutation,
   RemoveWorkspaceMemberMutationVariables
 >;
-export const GetProjectDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetProject" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "project" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                {
-                  kind: "FragmentSpread",
-                  name: { kind: "Name", value: "ProjectDetail" },
-                  directives: [
-                    {
-                      kind: "Directive",
-                      name: { kind: "Name", value: "unmask" },
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ProjectDetail" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "Project" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "name" } },
-          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetProjectQuery, GetProjectQueryVariables>;
 export const GetServicesDocument = {
   kind: "Document",
   definitions: [
@@ -3740,13 +3638,13 @@ export const DeleteProjectDocument = {
   DeleteProjectMutation,
   DeleteProjectMutationVariables
 >;
-export const GetServiceDocument = {
+export const GetProjectDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "query",
-      name: { kind: "Name", value: "GetService" },
+      name: { kind: "Name", value: "GetProject" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -3762,7 +3660,7 @@ export const GetServiceDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "service" },
+            name: { kind: "Name", value: "project" },
             arguments: [
               {
                 kind: "Argument",
@@ -3779,7 +3677,7 @@ export const GetServiceDocument = {
                 { kind: "Field", name: { kind: "Name", value: "id" } },
                 {
                   kind: "FragmentSpread",
-                  name: { kind: "Name", value: "ServiceDetail" },
+                  name: { kind: "Name", value: "ProjectDetail" },
                   directives: [
                     {
                       kind: "Directive",
@@ -3795,69 +3693,23 @@ export const GetServiceDocument = {
     },
     {
       kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ServiceDetail" },
+      name: { kind: "Name", value: "ProjectDetail" },
       typeCondition: {
         kind: "NamedType",
-        name: { kind: "Name", value: "Service" },
+        name: { kind: "Name", value: "Project" },
       },
       selectionSet: {
         kind: "SelectionSet",
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "name" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "image" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "registry" } },
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "tag" } },
-                { kind: "Field", name: { kind: "Name", value: "username" } },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "ports" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "port" } },
-                { kind: "Field", name: { kind: "Name", value: "protocol" } },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "environmentVariables" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "key" } },
-                { kind: "Field", name: { kind: "Name", value: "value" } },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "resourceLimits" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "cpu" } },
-                { kind: "Field", name: { kind: "Name", value: "memory" } },
-              ],
-            },
-          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
       },
     },
   ],
-} as unknown as DocumentNode<GetServiceQuery, GetServiceQueryVariables>;
+} as unknown as DocumentNode<GetProjectQuery, GetProjectQueryVariables>;
 export const UpdateServiceEnvironmentDocument = {
   kind: "Document",
   definitions: [
@@ -4817,6 +4669,124 @@ export const UpdateServicePortsDocument = {
   UpdateServicePortsMutation,
   UpdateServicePortsMutationVariables
 >;
+export const GetServiceDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetService" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "service" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ServiceDetail" },
+                  directives: [
+                    {
+                      kind: "Directive",
+                      name: { kind: "Name", value: "unmask" },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ServiceDetail" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Service" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "image" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "registry" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "tag" } },
+                { kind: "Field", name: { kind: "Name", value: "username" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "ports" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "port" } },
+                { kind: "Field", name: { kind: "Name", value: "protocol" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "environmentVariables" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "key" } },
+                { kind: "Field", name: { kind: "Name", value: "value" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceLimits" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetServiceQuery, GetServiceQueryVariables>;
 export const UpdateServiceResourcesDocument = {
   kind: "Document",
   definitions: [
@@ -5728,6 +5698,79 @@ export const CreateProjectDocument = {
   CreateProjectMutation,
   CreateProjectMutationVariables
 >;
+export const GetWorkspaceDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetWorkspace" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            alias: { kind: "Name", value: "workspace" },
+            name: { kind: "Name", value: "workspace" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "Workspace" },
+                  directives: [
+                    {
+                      kind: "Directive",
+                      name: { kind: "Name", value: "unmask" },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "Workspace" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Workspace" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetWorkspaceQuery, GetWorkspaceQueryVariables>;
 export const UpdateWorkspaceDocument = {
   kind: "Document",
   definitions: [

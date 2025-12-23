@@ -27,13 +27,16 @@ type Cluster {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter projects using MongoDB query syntax."""
+    filter: ProjectFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned projects."""
     orderBy: ProjectOrder
 
     """
@@ -68,6 +71,12 @@ type ClusterEdge {
   """The item at the end of ClusterEdge."""
   node: Cluster!
 }
+
+"""
+A filter for Cluster that accepts MongoDB query syntax.
+Supported fields: name, created_at
+"""
+scalar ClusterFilter
 
 type ClusterNode {
   id: ID!
@@ -187,6 +196,12 @@ type DomainEdge {
   node: Domain!
 }
 
+"""
+A filter for Domain that accepts MongoDB query syntax.
+Supported fields: host, created_at
+"""
+scalar DomainFilter
+
 """Ordering options for domain connections"""
 input DomainOrder {
   """The ordering direction."""
@@ -285,13 +300,16 @@ type Project {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter services using MongoDB query syntax."""
+    filter: ServiceFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned services."""
     orderBy: ServiceOrder
 
     """
@@ -325,6 +343,12 @@ type ProjectEdge {
   """The item at the end of ProjectEdge."""
   node: Project!
 }
+
+"""
+A filter for Project that accepts MongoDB query syntax.
+Supported fields: name, created_at
+"""
+scalar ProjectFilter
 
 """Ordering options for project connections"""
 input ProjectOrder {
@@ -360,13 +384,16 @@ type Query {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter workspacemembers using MongoDB query syntax."""
+    filter: WorkspaceMemberFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned workspacemembers."""
     orderBy: WorkspaceMemberOrder
 
     """
@@ -383,19 +410,22 @@ type Query {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter workspaces using MongoDB query syntax."""
+    filter: WorkspaceFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned workspaces."""
     orderBy: WorkspaceOrder
 
     """
     Apply one or multiple filters to the query.
     Supported filter parameters:
-    `created_at`
+    `name`, `created_at`
     """
     query: String
   ): WorkspaceConnection!
@@ -428,13 +458,16 @@ type Service {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter domains using MongoDB query syntax."""
+    filter: DomainFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned domains."""
     orderBy: DomainOrder
 
     """
@@ -461,19 +494,22 @@ type Service {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter volumes using MongoDB query syntax."""
+    filter: VolumeFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned volumes."""
     orderBy: VolumeOrder
 
     """
     Apply one or multiple filters to the query.
     Supported filter parameters:
-    `created_at`
+    `name`, `created_at`
     """
     query: String
   ): VolumeConnection!
@@ -500,6 +536,12 @@ type ServiceEdge {
   """The item at the end of ServiceEdge."""
   node: Service!
 }
+
+"""
+A filter for Service that accepts MongoDB query syntax.
+Supported fields: name, created_at
+"""
+scalar ServiceFilter
 
 """Service resource metrics"""
 type ServiceMetrics {
@@ -639,6 +681,12 @@ type VolumeEdge {
   node: Volume!
 }
 
+"""
+A filter for Volume that accepts MongoDB query syntax.
+Supported fields: name, created_at
+"""
+scalar VolumeFilter
+
 """Ordering options for volume connections"""
 input VolumeOrder {
   """The ordering direction."""
@@ -662,19 +710,22 @@ type Workspace {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter clusters using MongoDB query syntax."""
+    filter: ClusterFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned clusters."""
     orderBy: ClusterOrder
 
     """
     Apply one or multiple filters to the query.
     Supported filter parameters:
-    `created_at`
+    `name`, `created_at`
     """
     query: String
   ): ClusterConnection!
@@ -690,13 +741,16 @@ type Workspace {
     """Returns the elements that come before the specified cursor."""
     before: String
 
+    """Filter projects using MongoDB query syntax."""
+    filter: ProjectFilter
+
     """Returns up to the first `n` elements from the list."""
     first: Int
 
     """Returns up to the last `n` elements from the list."""
     last: Int
 
-    """Ordering options for the returned topics."""
+    """Ordering options for the returned projects."""
     orderBy: ProjectOrder
 
     """
@@ -735,6 +789,12 @@ enum WorkspaceFeature {
   AI
 }
 
+"""
+A filter for Workspace that accepts MongoDB query syntax.
+Supported fields: name, created_at
+"""
+scalar WorkspaceFilter
+
 type WorkspaceMember {
   createdAt: DateTime!
   email: String
@@ -772,6 +832,12 @@ type WorkspaceMemberEdge {
   """The item at the end of WorkspaceMemberEdge."""
   node: WorkspaceMember!
 }
+
+"""
+A filter for WorkspaceMember that accepts MongoDB query syntax.
+Supported fields: name, role, email, created_at
+"""
+scalar WorkspaceMemberFilter
 
 enum WorkspaceMemberInviteStatus {
   ACCEPTED

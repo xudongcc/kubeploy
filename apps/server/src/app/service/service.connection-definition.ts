@@ -5,10 +5,12 @@ import { Service } from './service.entity';
 
 export const { Connection, ConnectionArgs } = new ConnectionBuilder(Service)
   .addField({
+    type: 'string',
     field: 'name',
     searchable: true,
   })
   .addField({
+    type: 'date',
     field: 'created_at',
     replacement: 'createdAt',
     filterable: true,

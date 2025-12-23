@@ -33,30 +33,28 @@ const GET_WORKSPACE_QUERY = graphql(`
   }
 `);
 
-export const Route = createFileRoute("/_authenticated/workspaces/$workspaceId")(
-  {
-    component: RouteComponent,
-    beforeLoad: async ({
-      context: { apolloClient },
-      params: { workspaceId },
-    }) => {
-      try {
-        const { data } = await apolloClient.query({
-          query: GET_WORKSPACE_QUERY,
-          variables: { id: workspaceId },
-        });
-
-        if (data?.workspace) {
-          return { workspace: data.workspace };
-        }
-      } catch {}
-
-      throw redirect({
-        to: "/workspaces",
+export const Route = createFileRoute("/_authenticated/workspaces/$workspaceId")({
+  component: RouteComponent,
+  beforeLoad: async ({
+    context: { apolloClient },
+    params: { workspaceId },
+  }) => {
+    try {
+      const { data } = await apolloClient.query({
+        query: GET_WORKSPACE_QUERY,
+        variables: { id: workspaceId },
       });
-    },
+
+      if (data?.workspace) {
+        return { workspace: data.workspace };
+      }
+    } catch {}
+
+    throw redirect({
+      to: "/workspaces",
+    });
   },
-);
+});
 
 function RouteComponent() {
   const router = useRouter();

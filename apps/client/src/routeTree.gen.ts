@@ -9,26 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthenticatedWorkspacesIndexRouteImport } from './routes/_authenticated/workspaces/index'
 import { Route as AuthenticatedWorkspacesCreateRouteImport } from './routes/_authenticated/workspaces/create'
-import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId'
+import { Route as AuthenticatedWorkspacesWorkspaceIdRouteRouteImport } from './routes/_authenticated/workspaces/$workspaceId/route'
 import { Route as AuthenticatedWorkspacesWorkspaceIdIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdSettingsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/settings'
-import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects'
-import { Route as AuthenticatedWorkspacesWorkspaceIdClustersRouteImport } from './routes/_authenticated/workspaces/$workspaceId/clusters'
+import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/route'
+import { Route as AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteImport } from './routes/_authenticated/workspaces/$workspaceId/clusters/route'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdMembersIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/members/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdClustersIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/clusters/index'
-import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId'
 import { Route as AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId/clusters/$clusterId'
+import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/route'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/index'
-import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services'
-import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout'
-import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
+import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/route'
+import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/route'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings'
+import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/route'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
@@ -39,7 +39,7 @@ import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesSer
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
 import { Route as AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRouteImport } from './routes/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
 
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -57,105 +57,96 @@ const AuthenticatedWorkspacesIndexRoute =
   AuthenticatedWorkspacesIndexRouteImport.update({
     id: '/workspaces/',
     path: '/workspaces/',
-    getParentRoute: () => AuthenticatedRoute,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedWorkspacesCreateRoute =
   AuthenticatedWorkspacesCreateRouteImport.update({
     id: '/workspaces/create',
     path: '/workspaces/create',
-    getParentRoute: () => AuthenticatedRoute,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedWorkspacesWorkspaceIdRoute =
-  AuthenticatedWorkspacesWorkspaceIdRouteImport.update({
+const AuthenticatedWorkspacesWorkspaceIdRouteRoute =
+  AuthenticatedWorkspacesWorkspaceIdRouteRouteImport.update({
     id: '/workspaces/$workspaceId',
     path: '/workspaces/$workspaceId',
-    getParentRoute: () => AuthenticatedRoute,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRouteRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdSettingsRoute =
   AuthenticatedWorkspacesWorkspaceIdSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRouteRoute,
   } as any)
-const AuthenticatedWorkspacesWorkspaceIdProjectsRoute =
-  AuthenticatedWorkspacesWorkspaceIdProjectsRouteImport.update({
+const AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute =
+  AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteImport.update({
     id: '/projects',
     path: '/projects',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRouteRoute,
   } as any)
-const AuthenticatedWorkspacesWorkspaceIdClustersRoute =
-  AuthenticatedWorkspacesWorkspaceIdClustersRouteImport.update({
+const AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute =
+  AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteImport.update({
     id: '/clusters',
     path: '/clusters',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRouteRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdProjectsIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdProjectsRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdMembersIndexRouteImport.update({
     id: '/members/',
     path: '/members/',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdRouteRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdClustersIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdClustersRoute,
-  } as any)
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteImport.update({
-    id: '/$projectId',
-    path: '/$projectId',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdProjectsRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute =
   AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRouteImport.update({
     id: '/$clusterId',
     path: '/$clusterId',
-    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdClustersRoute,
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute,
+  } as any)
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteImport.update({
+    id: '/$projectId',
+    path: '/$projectId',
+    getParentRoute: () => AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute,
   } as any)
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute =
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () =>
-      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute,
+      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute,
   } as any)
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRoute =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteImport.update(
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRoute =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteImport.update(
     {
       id: '/services',
       path: '/services',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute,
     } as any,
   )
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteImport.update(
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteImport.update(
     {
       id: '/_project_layout',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute,
-    } as any,
-  )
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteImport.update(
-    {
-      id: '/$serviceId',
-      path: '/$serviceId',
-      getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute =
@@ -164,7 +155,16 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsR
       id: '/settings',
       path: '/settings',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute,
+    } as any,
+  )
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteImport.update(
+    {
+      id: '/$serviceId',
+      path: '/$serviceId',
+      getParentRoute: () =>
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute =
@@ -173,7 +173,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexR
       id: '/',
       path: '/',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute =
@@ -182,7 +182,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesI
       id: '/services/',
       path: '/services/',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRoute =
@@ -191,7 +191,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolume
       id: '/volumes',
       path: '/volumes',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRoute =
@@ -200,7 +200,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTermin
       id: '/terminal',
       path: '/terminal',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRoute =
@@ -209,7 +209,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettin
       id: '/settings',
       path: '/settings',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRoute =
@@ -218,7 +218,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetwor
       id: '/network',
       path: '/network',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute =
@@ -227,7 +227,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetric
       id: '/metrics',
       path: '/metrics',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute =
@@ -236,7 +236,7 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRo
       id: '/logs',
       path: '/logs',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute =
@@ -245,29 +245,29 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnviro
       id: '/environment',
       path: '/environment',
       getParentRoute: () =>
-        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute,
+        AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute,
     } as any,
   )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/login': typeof AuthLoginRoute
-  '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRouteWithChildren
+  '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRouteRouteWithChildren
   '/workspaces/create': typeof AuthenticatedWorkspacesCreateRoute
   '/workspaces': typeof AuthenticatedWorkspacesIndexRoute
-  '/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteWithChildren
-  '/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren
+  '/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteWithChildren
+  '/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteWithChildren
   '/workspaces/$workspaceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdSettingsRoute
   '/workspaces/$workspaceId/': typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  '/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteWithChildren
   '/workspaces/$workspaceId/clusters/$clusterId': typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute
-  '/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteWithChildren
   '/workspaces/$workspaceId/clusters/': typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute
   '/workspaces/$workspaceId/members': typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute
   '/workspaces/$workspaceId/projects/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/services': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute
   '/workspaces/$workspaceId/projects/$projectId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
+  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteWithChildren
   '/workspaces/$workspaceId/projects/$projectId/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute
-  '/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteWithChildren
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute
   '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
@@ -303,25 +303,25 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
-  '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRouteWithChildren
+  '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRouteRouteWithChildren
   '/_authenticated/workspaces/create': typeof AuthenticatedWorkspacesCreateRoute
   '/_authenticated/workspaces/': typeof AuthenticatedWorkspacesIndexRoute
-  '/_authenticated/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteWithChildren
-  '/_authenticated/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren
+  '/_authenticated/workspaces/$workspaceId/clusters': typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteWithChildren
+  '/_authenticated/workspaces/$workspaceId/projects': typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/settings': typeof AuthenticatedWorkspacesWorkspaceIdSettingsRoute
   '/_authenticated/workspaces/$workspaceId/': typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
+  '/_authenticated/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/clusters/$clusterId': typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute
-  '/_authenticated/workspaces/$workspaceId/projects/$projectId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/clusters/': typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute
   '/_authenticated/workspaces/$workspaceId/members/': typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute
   '/_authenticated/workspaces/$workspaceId/projects/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute
-  '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteWithChildren
-  '/_authenticated/workspaces/$workspaceId/projects/$projectId/services': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteWithChildren
+  '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteWithChildren
+  '/_authenticated/workspaces/$workspaceId/projects/$projectId/services': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
+  '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute
-  '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteWithChildren
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute
   '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
@@ -344,15 +344,15 @@ export interface FileRouteTypes {
     | '/workspaces/$workspaceId/projects'
     | '/workspaces/$workspaceId/settings'
     | '/workspaces/$workspaceId/'
-    | '/workspaces/$workspaceId/clusters/$clusterId'
     | '/workspaces/$workspaceId/projects/$projectId'
+    | '/workspaces/$workspaceId/clusters/$clusterId'
     | '/workspaces/$workspaceId/clusters/'
     | '/workspaces/$workspaceId/members'
     | '/workspaces/$workspaceId/projects/'
     | '/workspaces/$workspaceId/projects/$projectId/services'
     | '/workspaces/$workspaceId/projects/$projectId/'
-    | '/workspaces/$workspaceId/projects/$projectId/settings'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
+    | '/workspaces/$workspaceId/projects/$projectId/settings'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
     | '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
@@ -396,16 +396,16 @@ export interface FileRouteTypes {
     | '/_authenticated/workspaces/$workspaceId/projects'
     | '/_authenticated/workspaces/$workspaceId/settings'
     | '/_authenticated/workspaces/$workspaceId/'
-    | '/_authenticated/workspaces/$workspaceId/clusters/$clusterId'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId'
+    | '/_authenticated/workspaces/$workspaceId/clusters/$clusterId'
     | '/_authenticated/workspaces/$workspaceId/clusters/'
     | '/_authenticated/workspaces/$workspaceId/members/'
     | '/_authenticated/workspaces/$workspaceId/projects/'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/'
-    | '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
+    | '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
     | '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
@@ -419,7 +419,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
 }
 
@@ -429,7 +429,7 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -451,192 +451,192 @@ declare module '@tanstack/react-router' {
       path: '/workspaces'
       fullPath: '/workspaces'
       preLoaderRoute: typeof AuthenticatedWorkspacesIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/workspaces/create': {
       id: '/_authenticated/workspaces/create'
       path: '/workspaces/create'
       fullPath: '/workspaces/create'
       preLoaderRoute: typeof AuthenticatedWorkspacesCreateRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId': {
       id: '/_authenticated/workspaces/$workspaceId'
       path: '/workspaces/$workspaceId'
       fullPath: '/workspaces/$workspaceId'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/': {
       id: '/_authenticated/workspaces/$workspaceId/'
       path: '/'
       fullPath: '/workspaces/$workspaceId/'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/settings': {
       id: '/_authenticated/workspaces/$workspaceId/settings'
       path: '/settings'
       fullPath: '/workspaces/$workspaceId/settings'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdSettingsRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects': {
       id: '/_authenticated/workspaces/$workspaceId/projects'
       path: '/projects'
       fullPath: '/workspaces/$workspaceId/projects'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/clusters': {
       id: '/_authenticated/workspaces/$workspaceId/clusters'
       path: '/clusters'
       fullPath: '/workspaces/$workspaceId/clusters'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/': {
       id: '/_authenticated/workspaces/$workspaceId/projects/'
       path: '/'
       fullPath: '/workspaces/$workspaceId/projects/'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/members/': {
       id: '/_authenticated/workspaces/$workspaceId/members/'
       path: '/members'
       fullPath: '/workspaces/$workspaceId/members'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/clusters/': {
       id: '/_authenticated/workspaces/$workspaceId/clusters/'
       path: '/'
       fullPath: '/workspaces/$workspaceId/clusters/'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRoute
-    }
-    '/_authenticated/workspaces/$workspaceId/projects/$projectId': {
-      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId'
-      path: '/$projectId'
-      fullPath: '/workspaces/$workspaceId/projects/$projectId'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/clusters/$clusterId': {
       id: '/_authenticated/workspaces/$workspaceId/clusters/$clusterId'
       path: '/$clusterId'
       fullPath: '/workspaces/$workspaceId/clusters/$clusterId'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute
+    }
+    '/_authenticated/workspaces/$workspaceId/projects/$projectId': {
+      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId'
+      path: '/$projectId'
+      fullPath: '/workspaces/$workspaceId/projects/$projectId'
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/'
       path: '/'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services'
       path: '/services'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout'
       path: ''
       fullPath: '/workspaces/$workspaceId/projects/$projectId'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute
-    }
-    '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId': {
-      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
-      path: '/$serviceId'
-      fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRoute
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/settings'
       path: '/settings'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/settings'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute
+    }
+    '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId': {
+      id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
+      path: '/$serviceId'
+      fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId'
+      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteImport
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/'
       path: '/'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/_project_layout/services/'
       path: '/services'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
       path: '/volumes'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/volumes'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdVolumesRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
       path: '/terminal'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/terminal'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdTerminalRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
       path: '/settings'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/settings'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdSettingsRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
       path: '/network'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/network'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdNetworkRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
       path: '/metrics'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/metrics'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
       path: '/logs'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/logs'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
     '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment': {
       id: '/_authenticated/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
       path: '/environment'
       fullPath: '/workspaces/$workspaceId/projects/$projectId/services/$serviceId/environment'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRouteImport
-      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute
+      parentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute
     }
   }
 }
 
-interface AuthenticatedWorkspacesWorkspaceIdClustersRouteChildren {
+interface AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteChildren {
   AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute
   AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute
 }
 
-const AuthenticatedWorkspacesWorkspaceIdClustersRouteChildren: AuthenticatedWorkspacesWorkspaceIdClustersRouteChildren =
+const AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteChildren: AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteChildren =
   {
     AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute:
       AuthenticatedWorkspacesWorkspaceIdClustersClusterIdRoute,
@@ -644,17 +644,17 @@ const AuthenticatedWorkspacesWorkspaceIdClustersRouteChildren: AuthenticatedWork
       AuthenticatedWorkspacesWorkspaceIdClustersIndexRoute,
   }
 
-const AuthenticatedWorkspacesWorkspaceIdClustersRouteWithChildren =
-  AuthenticatedWorkspacesWorkspaceIdClustersRoute._addFileChildren(
-    AuthenticatedWorkspacesWorkspaceIdClustersRouteChildren,
+const AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteChildren,
   )
 
-interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteChildren {
+interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteChildren {
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute
 }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteChildren =
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteChildren =
   {
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutSettingsRoute,
@@ -662,12 +662,12 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteChil
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutServicesIndexRoute,
   }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteWithChildren =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute._addFileChildren(
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteChildren,
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteChildren,
   )
 
-interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteChildren {
+interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteChildren {
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdLogsRoute
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdMetricsRoute
@@ -678,7 +678,7 @@ interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRo
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute
 }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteChildren =
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteChildren =
   {
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdEnvironmentRoute,
@@ -698,79 +698,79 @@ const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteC
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdIndexRoute,
   }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteWithChildren =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute._addFileChildren(
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteChildren,
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteChildren,
   )
 
-interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteChildren {
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteWithChildren
+interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteChildren {
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteWithChildren
 }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteChildren =
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteChildren =
   {
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRoute:
-      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteWithChildren,
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRoute:
+      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesServiceIdRouteRouteWithChildren,
   }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteWithChildren =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRoute._addFileChildren(
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteChildren,
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteChildren,
   )
 
-interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteChildren {
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteWithChildren
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteWithChildren
+interface AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteChildren {
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteWithChildren
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteWithChildren
   AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute
 }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteChildren =
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteChildren =
   {
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRoute:
-      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteWithChildren,
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRoute:
-      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteWithChildren,
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRoute:
+      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdProject_layoutRouteRouteWithChildren,
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRoute:
+      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdServicesRouteRouteWithChildren,
     AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdIndexRoute,
   }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteWithChildren =
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute._addFileChildren(
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteChildren,
+const AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteChildren,
   )
 
-interface AuthenticatedWorkspacesWorkspaceIdProjectsRouteChildren {
-  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteWithChildren
+interface AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteChildren {
+  AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteWithChildren
   AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute
 }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsRouteChildren =
+const AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteChildren: AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteChildren =
   {
-    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRoute:
-      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteWithChildren,
+    AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRoute:
+      AuthenticatedWorkspacesWorkspaceIdProjectsProjectIdRouteRouteWithChildren,
     AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute:
       AuthenticatedWorkspacesWorkspaceIdProjectsIndexRoute,
   }
 
-const AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren =
-  AuthenticatedWorkspacesWorkspaceIdProjectsRoute._addFileChildren(
-    AuthenticatedWorkspacesWorkspaceIdProjectsRouteChildren,
+const AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteChildren,
   )
 
-interface AuthenticatedWorkspacesWorkspaceIdRouteChildren {
-  AuthenticatedWorkspacesWorkspaceIdClustersRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteWithChildren
-  AuthenticatedWorkspacesWorkspaceIdProjectsRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren
+interface AuthenticatedWorkspacesWorkspaceIdRouteRouteChildren {
+  AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute: typeof AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteWithChildren
+  AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute: typeof AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteWithChildren
   AuthenticatedWorkspacesWorkspaceIdSettingsRoute: typeof AuthenticatedWorkspacesWorkspaceIdSettingsRoute
   AuthenticatedWorkspacesWorkspaceIdIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdIndexRoute
   AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute: typeof AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute
 }
 
-const AuthenticatedWorkspacesWorkspaceIdRouteChildren: AuthenticatedWorkspacesWorkspaceIdRouteChildren =
+const AuthenticatedWorkspacesWorkspaceIdRouteRouteChildren: AuthenticatedWorkspacesWorkspaceIdRouteRouteChildren =
   {
-    AuthenticatedWorkspacesWorkspaceIdClustersRoute:
-      AuthenticatedWorkspacesWorkspaceIdClustersRouteWithChildren,
-    AuthenticatedWorkspacesWorkspaceIdProjectsRoute:
-      AuthenticatedWorkspacesWorkspaceIdProjectsRouteWithChildren,
+    AuthenticatedWorkspacesWorkspaceIdClustersRouteRoute:
+      AuthenticatedWorkspacesWorkspaceIdClustersRouteRouteWithChildren,
+    AuthenticatedWorkspacesWorkspaceIdProjectsRouteRoute:
+      AuthenticatedWorkspacesWorkspaceIdProjectsRouteRouteWithChildren,
     AuthenticatedWorkspacesWorkspaceIdSettingsRoute:
       AuthenticatedWorkspacesWorkspaceIdSettingsRoute,
     AuthenticatedWorkspacesWorkspaceIdIndexRoute:
@@ -779,31 +779,30 @@ const AuthenticatedWorkspacesWorkspaceIdRouteChildren: AuthenticatedWorkspacesWo
       AuthenticatedWorkspacesWorkspaceIdMembersIndexRoute,
   }
 
-const AuthenticatedWorkspacesWorkspaceIdRouteWithChildren =
-  AuthenticatedWorkspacesWorkspaceIdRoute._addFileChildren(
-    AuthenticatedWorkspacesWorkspaceIdRouteChildren,
+const AuthenticatedWorkspacesWorkspaceIdRouteRouteWithChildren =
+  AuthenticatedWorkspacesWorkspaceIdRouteRoute._addFileChildren(
+    AuthenticatedWorkspacesWorkspaceIdRouteRouteChildren,
   )
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedWorkspacesWorkspaceIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteWithChildren
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedWorkspacesWorkspaceIdRouteRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteRouteWithChildren
   AuthenticatedWorkspacesCreateRoute: typeof AuthenticatedWorkspacesCreateRoute
   AuthenticatedWorkspacesIndexRoute: typeof AuthenticatedWorkspacesIndexRoute
 }
 
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedWorkspacesWorkspaceIdRoute:
-    AuthenticatedWorkspacesWorkspaceIdRouteWithChildren,
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedWorkspacesWorkspaceIdRouteRoute:
+    AuthenticatedWorkspacesWorkspaceIdRouteRouteWithChildren,
   AuthenticatedWorkspacesCreateRoute: AuthenticatedWorkspacesCreateRoute,
   AuthenticatedWorkspacesIndexRoute: AuthenticatedWorkspacesIndexRoute,
 }
 
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
-)
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
 }
 export const routeTree = rootRouteImport

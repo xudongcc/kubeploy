@@ -5,10 +5,12 @@ import { Domain } from './domain.entity';
 
 export const { Connection, ConnectionArgs } = new ConnectionBuilder(Domain)
   .addField({
+    type: 'string',
     field: 'host',
     searchable: true,
   })
   .addField({
+    type: 'date',
     field: 'created_at',
     replacement: 'createdAt',
     filterable: true,
