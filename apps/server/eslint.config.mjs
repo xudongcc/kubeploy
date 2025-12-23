@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /** @type {import('eslint').Linter.Config[]} */
-export default [
+const config = [
   {
     ignores: ['eslint.config.mjs', 'src/database/migrations/**'],
   },
@@ -35,3 +35,5 @@ export default [
     },
   },
 ];
+
+export default config;
