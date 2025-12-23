@@ -227,6 +227,32 @@ input EnvironmentVariableInput {
   value: String!
 }
 
+"""Health check configuration for a service"""
+type HealthCheck {
+  """HTTP path to probe (required for HTTP type)"""
+  path: String
+
+  """Port to probe"""
+  port: Int!
+  type: HealthCheckType!
+}
+
+input HealthCheckInput {
+  """HTTP path to probe (required for HTTP type)"""
+  path: String
+
+  """Port to probe (1-65535)"""
+  port: Int!
+
+  """Type of health check: HTTP or TCP"""
+  type: HealthCheckType!
+}
+
+enum HealthCheckType {
+  HTTP
+  TCP
+}
+
 type Image {
   name: String
   registry: String
@@ -478,6 +504,11 @@ type Service {
     query: String
   ): DomainConnection!
   environmentVariables: [EnvironmentVariable!]!
+
+  """
+  Health check configuration applied to liveness, readiness, and startup probes
+  """
+  healthCheck: HealthCheck
   id: ID!
   image: Image!
   metrics: ServiceMetrics!
@@ -619,6 +650,7 @@ input UpdateProjectInput {
 input UpdateServiceInput {
   description: String
   environmentVariables: [EnvironmentVariableInput!]
+  healthCheck: HealthCheckInput
   image: ImageInput
   ports: [ServicePortInput!]
   resourceLimits: ResourceLimitsInput

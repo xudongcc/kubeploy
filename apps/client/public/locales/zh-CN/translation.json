@@ -84,6 +84,7 @@
     "name": "名称",
     "save": "保存",
     "saving": "保存中...",
+    "seconds": "秒",
     "status": "状态"
   },
   "createService": {
@@ -242,6 +243,27 @@
     "deploy": "部署",
     "deploying": "部署中...",
     "description": "创建和管理您的服务。",
+    "healthCheck": {
+      "description": "配置健康检查以监控服务的可用性。相同的配置将应用于存活探针、就绪探针和启动探针。",
+      "form": {
+        "enabled": {
+          "label": "启用健康检查"
+        },
+        "path": {
+          "hint": "HTTP 探测路径，例如 /health 或 /healthz",
+          "label": "路径",
+          "placeholder": "/health"
+        },
+        "port": {
+          "label": "端口",
+          "placeholder": "80"
+        },
+        "type": {
+          "label": "探针类型"
+        }
+      },
+      "title": "健康检查"
+    },
     "environment": {
       "addVariable": "添加变量",
       "cardDescription": "配置服务运行时可用的环境变量。",

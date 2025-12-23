@@ -1,5 +1,6 @@
 import {
   V1Deployment,
+  V1Probe,
   V1ResourceRequirements,
   V1Secret,
   V1Service,
@@ -17,6 +18,7 @@ import {
 } from '@/kubernetes';
 import { ProjectService } from '@/project/project.service';
 
+import { HealthCheckType } from './enums/health-check-type.enum';
 import { ServicePortProtocol } from './enums/service-port-protocol.enum';
 import { ServiceStatus } from './enums/service-status.enum';
 import { ServiceMetrics } from './objects/service-metrics.object';
@@ -253,6 +255,9 @@ export class ServiceService extends EntityService<Service> {
                       }))
                     : undefined,
                 resources: this.buildContainerResources(service),
+                livenessProbe: this.buildLivenessProbe(service),
+                readinessProbe: this.buildReadinessProbe(service),
+                startupProbe: this.buildStartupProbe(service),
                 volumeMounts: volumes
                   .map((volume) => {
                     if (!volume.mountPath) {
@@ -355,6 +360,84 @@ export class ServiceService extends EntityService<Service> {
     }
 
     return resources;
+  }
+
+  private buildProbeAction(healthCheck: Service['healthCheck']): Partial<V1Probe> {
+    if (!healthCheck) {
+      return {};
+    }
+
+    if (healthCheck.type === HealthCheckType.HTTP) {
+      return {
+        httpGet: {
+          path: healthCheck.path ?? '/',
+          port: healthCheck.port,
+        },
+      };
+    } else if (healthCheck.type === HealthCheckType.TCP) {
+      return {
+        tcpSocket: {
+          port: healthCheck.port,
+        },
+      };
+    }
+
+    return {};
+  }
+
+  private buildStartupProbe(service: Service): V1Probe | undefined {
+    const { healthCheck } = service;
+
+    if (!healthCheck) {
+      return undefined;
+    }
+
+    // Startup probe: more lenient, allows time for slow-starting containers
+    // failureThreshold * periodSeconds = 30 * 10 = 300s (5 minutes) max startup time
+    return {
+      ...this.buildProbeAction(healthCheck),
+      initialDelaySeconds: 0,
+      timeoutSeconds: 3,
+      periodSeconds: 10,
+      successThreshold: 1,
+      failureThreshold: 30,
+    };
+  }
+
+  private buildLivenessProbe(service: Service): V1Probe | undefined {
+    const { healthCheck } = service;
+
+    if (!healthCheck) {
+      return undefined;
+    }
+
+    // Liveness probe: checks if container is alive, restarts on failure
+    return {
+      ...this.buildProbeAction(healthCheck),
+      initialDelaySeconds: 0,
+      timeoutSeconds: 3,
+      periodSeconds: 10,
+      successThreshold: 1,
+      failureThreshold: 3,
+    };
+  }
+
+  private buildReadinessProbe(service: Service): V1Probe | undefined {
+    const { healthCheck } = service;
+
+    if (!healthCheck) {
+      return undefined;
+    }
+
+    // Readiness probe: checks if container is ready to receive traffic
+    return {
+      ...this.buildProbeAction(healthCheck),
+      initialDelaySeconds: 0,
+      timeoutSeconds: 3,
+      periodSeconds: 5,
+      successThreshold: 1,
+      failureThreshold: 3,
+    };
   }
 
   private buildService(service: Service): V1Service {

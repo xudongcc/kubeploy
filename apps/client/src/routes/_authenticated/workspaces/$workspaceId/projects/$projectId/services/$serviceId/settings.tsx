@@ -16,12 +16,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { graphql } from "@/gql";
+import { HealthCheckType } from "@/gql/graphql";
 
 const UPDATE_SERVICE_MUTATION = graphql(`
   mutation UpdateServiceResources($id: ID!, $input: UpdateServiceInput!) {
@@ -71,7 +81,7 @@ function RouteComponent() {
     },
   );
 
-  const form = useForm({
+  const resourceForm = useForm({
     defaultValues: {
       // Convert millicores to cores for display (e.g., 1500 -> 1.5)
       cpu: service.resourceLimits?.cpu
@@ -89,6 +99,31 @@ function RouteComponent() {
               cpu: value.cpu ? Math.round(value.cpu * 1000) : null,
               memory: value.memory || null,
             },
+          },
+        },
+      });
+    },
+  });
+
+  const healthCheckForm = useForm({
+    defaultValues: {
+      enabled: !!service.healthCheck,
+      type: service.healthCheck?.type ?? HealthCheckType.HTTP,
+      path: service.healthCheck?.path ?? "/",
+      port: service.healthCheck?.port ?? 8080,
+    },
+    onSubmit: async ({ value }) => {
+      await updateService({
+        variables: {
+          id: serviceId,
+          input: {
+            healthCheck: value.enabled
+              ? {
+                  type: value.type,
+                  path: value.type === HealthCheckType.HTTP ? value.path : null,
+                  port: value.port,
+                }
+              : null,
           },
         },
       });
@@ -119,7 +154,7 @@ function RouteComponent() {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            form.handleSubmit();
+            resourceForm.handleSubmit();
           }}
         >
           <Card>
@@ -131,12 +166,12 @@ function RouteComponent() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2">
-                <form.Field name="cpu">
+                <resourceForm.Field name="cpu">
                   {(field) => (
                     <div className="flex flex-col gap-2">
                       <label
                         htmlFor="cpu"
-                        className="text-sm font-medium leading-none"
+                        className="text-sm leading-none font-medium"
                       >
                         {t("service.resources.form.cpu.label")}
                       </label>
@@ -167,14 +202,14 @@ function RouteComponent() {
                       </p>
                     </div>
                   )}
-                </form.Field>
+                </resourceForm.Field>
 
-                <form.Field name="memory">
+                <resourceForm.Field name="memory">
                   {(field) => (
                     <div className="flex flex-col gap-2">
                       <label
                         htmlFor="memory"
-                        className="text-sm font-medium leading-none"
+                        className="text-sm leading-none font-medium"
                       >
                         {t("service.resources.form.memory.label")}
                       </label>
@@ -204,11 +239,11 @@ function RouteComponent() {
                       </p>
                     </div>
                   )}
-                </form.Field>
+                </resourceForm.Field>
               </div>
             </CardContent>
             <CardFooter className="flex justify-end">
-              <form.Subscribe
+              <resourceForm.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}
               >
                 {([canSubmit, isSubmitting]) => (
@@ -216,7 +251,185 @@ function RouteComponent() {
                     {isSubmitting ? t("common.saving") : t("common.save")}
                   </Button>
                 )}
-              </form.Subscribe>
+              </resourceForm.Subscribe>
+            </CardFooter>
+          </Card>
+        </form>
+
+        {/* Health Check Configuration */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            healthCheckForm.handleSubmit();
+          }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("service.healthCheck.title")}</CardTitle>
+              <CardDescription>
+                {t("service.healthCheck.description")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4">
+                {/* Enable Health Check */}
+                <healthCheckForm.Field name="enabled">
+                  {(field) => (
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="healthCheckEnabled"
+                        checked={field.state.value}
+                        onCheckedChange={(checked) =>
+                          field.handleChange(checked === true)
+                        }
+                      />
+                      <label
+                        htmlFor="healthCheckEnabled"
+                        className="text-sm leading-none font-medium"
+                      >
+                        {t("service.healthCheck.form.enabled.label")}
+                      </label>
+                    </div>
+                  )}
+                </healthCheckForm.Field>
+
+                <healthCheckForm.Subscribe
+                  selector={(state) => state.values.enabled}
+                >
+                  {(enabled) =>
+                    enabled && (
+                      <div className="flex flex-col gap-4">
+                        {/* Probe Type and Port */}
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <healthCheckForm.Field name="type">
+                            {(field) => (
+                              <div className="flex flex-col gap-2">
+                                <label
+                                  htmlFor="probeType"
+                                  className="text-sm leading-none font-medium"
+                                >
+                                  {t("service.healthCheck.form.type.label")}
+                                </label>
+                                <Select
+                                  value={field.state.value}
+                                  onValueChange={(value) =>
+                                    field.handleChange(value as HealthCheckType)
+                                  }
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value={HealthCheckType.HTTP}>
+                                      HTTP
+                                    </SelectItem>
+                                    <SelectItem value={HealthCheckType.TCP}>
+                                      TCP
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
+                          </healthCheckForm.Field>
+
+                          <healthCheckForm.Field
+                            name="port"
+                            validators={{
+                              onChange: ({ value }) => {
+                                if (value < 1 || value > 65535) {
+                                  return "Port must be between 1 and 65535";
+                                }
+                                return undefined;
+                              },
+                            }}
+                          >
+                            {(field) => (
+                              <div className="flex flex-col gap-2">
+                                <label
+                                  htmlFor="probePort"
+                                  className="text-sm leading-none font-medium"
+                                >
+                                  {t("service.healthCheck.form.port.label")}
+                                </label>
+                                <Input
+                                  id="probePort"
+                                  type="number"
+                                  min={1}
+                                  max={65535}
+                                  placeholder={t(
+                                    "service.healthCheck.form.port.placeholder",
+                                  )}
+                                  value={field.state.value ?? ""}
+                                  onChange={(e) =>
+                                    field.handleChange(
+                                      e.target.value
+                                        ? parseInt(e.target.value, 10)
+                                        : 8080,
+                                    )
+                                  }
+                                />
+                                {field.state.meta.errors.length > 0 && (
+                                  <p className="text-destructive text-xs">
+                                    {field.state.meta.errors[0]}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </healthCheckForm.Field>
+                        </div>
+
+                        {/* HTTP Path (only for HTTP type) */}
+                        <healthCheckForm.Subscribe
+                          selector={(state) => state.values.type}
+                        >
+                          {(type) =>
+                            type === HealthCheckType.HTTP && (
+                              <healthCheckForm.Field name="path">
+                                {(field) => (
+                                  <div className="flex flex-col gap-2">
+                                    <label
+                                      htmlFor="probePath"
+                                      className="text-sm leading-none font-medium"
+                                    >
+                                      {t("service.healthCheck.form.path.label")}
+                                    </label>
+                                    <Input
+                                      id="probePath"
+                                      type="text"
+                                      placeholder={t(
+                                        "service.healthCheck.form.path.placeholder",
+                                      )}
+                                      value={field.state.value ?? ""}
+                                      onChange={(e) =>
+                                        field.handleChange(e.target.value)
+                                      }
+                                    />
+                                    <p className="text-muted-foreground text-xs">
+                                      {t("service.healthCheck.form.path.hint")}
+                                    </p>
+                                  </div>
+                                )}
+                              </healthCheckForm.Field>
+                            )
+                          }
+                        </healthCheckForm.Subscribe>
+                      </div>
+                    )
+                  }
+                </healthCheckForm.Subscribe>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <healthCheckForm.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+              >
+                {([canSubmit, isSubmitting]) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                    {isSubmitting ? t("common.saving") : t("common.save")}
+                  </Button>
+                )}
+              </healthCheckForm.Subscribe>
             </CardFooter>
           </Card>
         </form>

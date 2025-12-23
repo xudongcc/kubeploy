@@ -252,6 +252,30 @@ export type EnvironmentVariableInput = {
   value: Scalars["String"]["input"];
 };
 
+/** Health check configuration for a service */
+export type HealthCheck = {
+  __typename?: "HealthCheck";
+  /** HTTP path to probe (required for HTTP type) */
+  path?: Maybe<Scalars["String"]["output"]>;
+  /** Port to probe */
+  port: Scalars["Int"]["output"];
+  type: HealthCheckType;
+};
+
+export type HealthCheckInput = {
+  /** HTTP path to probe (required for HTTP type) */
+  path?: InputMaybe<Scalars["String"]["input"]>;
+  /** Port to probe (1-65535) */
+  port: Scalars["Int"]["input"];
+  /** Type of health check: HTTP or TCP */
+  type: HealthCheckType;
+};
+
+export enum HealthCheckType {
+  HTTP = "HTTP",
+  TCP = "TCP",
+}
+
 export type Image = {
   __typename?: "Image";
   name?: Maybe<Scalars["String"]["output"]>;
@@ -555,6 +579,8 @@ export type Service = {
   description?: Maybe<Scalars["String"]["output"]>;
   domains: DomainConnection;
   environmentVariables: Array<EnvironmentVariable>;
+  /** Health check configuration applied to liveness, readiness, and startup probes */
+  healthCheck?: Maybe<HealthCheck>;
   id: Scalars["ID"]["output"];
   image: Image;
   metrics: ServiceMetrics;
@@ -680,6 +706,7 @@ export type UpdateProjectInput = {
 export type UpdateServiceInput = {
   description?: InputMaybe<Scalars["String"]["input"]>;
   environmentVariables?: InputMaybe<Array<EnvironmentVariableInput>>;
+  healthCheck?: InputMaybe<HealthCheckInput>;
   image?: InputMaybe<ImageInput>;
   ports?: InputMaybe<Array<ServicePortInput>>;
   resourceLimits?: InputMaybe<ResourceLimitsInput>;
@@ -1441,6 +1468,12 @@ export type GetServiceQuery = {
       cpu?: number | null;
       memory?: number | null;
     };
+    healthCheck?: {
+      __typename?: "HealthCheck";
+      type: HealthCheckType;
+      path?: string | null;
+      port: number;
+    } | null;
   } | null;
 };
 
@@ -1472,6 +1505,12 @@ export type ServiceDetailFragment = {
     cpu?: number | null;
     memory?: number | null;
   };
+  healthCheck?: {
+    __typename?: "HealthCheck";
+    type: HealthCheckType;
+    path?: string | null;
+    port: number;
+  } | null;
 } & { " $fragmentName"?: "ServiceDetailFragment" };
 
 export type UpdateServiceResourcesMutationVariables = Exact<{
@@ -1960,6 +1999,18 @@ export const ServiceDetailFragmentDoc = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "cpu" } },
                 { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "healthCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+                { kind: "Field", name: { kind: "Name", value: "port" } },
               ],
             },
           },
@@ -3837,6 +3888,18 @@ export const UpdateServiceEnvironmentDocument = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "healthCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+                { kind: "Field", name: { kind: "Name", value: "port" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -3971,6 +4034,18 @@ export const UpdateServiceImageDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "cpu" } },
                 { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "healthCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+                { kind: "Field", name: { kind: "Name", value: "port" } },
               ],
             },
           },
@@ -4659,6 +4734,18 @@ export const UpdateServicePortsDocument = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "healthCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+                { kind: "Field", name: { kind: "Name", value: "port" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -4777,6 +4864,18 @@ export const GetServiceDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "cpu" } },
                 { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "healthCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+                { kind: "Field", name: { kind: "Name", value: "port" } },
               ],
             },
           },
@@ -4911,6 +5010,18 @@ export const UpdateServiceResourcesDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "cpu" } },
                 { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "healthCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+                { kind: "Field", name: { kind: "Name", value: "port" } },
               ],
             },
           },

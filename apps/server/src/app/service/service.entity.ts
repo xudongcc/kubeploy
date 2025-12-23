@@ -21,6 +21,7 @@ import { Project } from '@/project/project.entity';
 import { Volume } from '@/volume/volume.entity';
 import { Workspace } from '@/workspace/workspace.entity';
 
+import { HealthCheckType } from './enums/health-check-type.enum';
 import { ServicePortProtocol } from './enums/service-port-protocol.enum';
 
 @ObjectType()
@@ -63,6 +64,25 @@ export class ResourceLimits {
   })
   @Property({ type: t.integer, nullable: true })
   memory: Opt<number> | null = null;
+}
+
+@ObjectType({ description: 'Health check configuration for a service' })
+@Embeddable()
+export class HealthCheck {
+  @Field(() => HealthCheckType)
+  @Enum(() => HealthCheckType)
+  type!: HealthCheckType;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'HTTP path to probe (required for HTTP type)',
+  })
+  @Property({ type: t.string, nullable: true })
+  path: Opt<string> | null = null;
+
+  @Field(() => Int, { description: 'Port to probe' })
+  @Property({ type: t.integer })
+  port!: number;
 }
 
 @ObjectType()
@@ -130,6 +150,15 @@ export class Service {
   @Field(() => ResourceLimits)
   @Embedded(() => ResourceLimits)
   resourceLimits: Opt<ResourceLimits> = new ResourceLimits();
+
+  // eslint-disable-next-line @nest-boot/entity-property-config-from-types
+  @Field(() => HealthCheck, {
+    nullable: true,
+    description:
+      'Health check configuration applied to liveness, readiness, and startup probes',
+  })
+  @Embedded(() => HealthCheck, { nullable: true })
+  healthCheck: Opt<HealthCheck> | null = null;
 
   @Field(() => Date)
   @Property({ type: t.datetime, defaultRaw: 'now()' })

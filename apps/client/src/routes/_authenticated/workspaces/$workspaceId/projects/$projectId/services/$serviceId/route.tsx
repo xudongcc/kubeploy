@@ -41,6 +41,11 @@ const GET_SERVICE_QUERY = graphql(`
       cpu
       memory
     }
+    healthCheck {
+      type
+      path
+      port
+    }
     createdAt
     updatedAt
   }

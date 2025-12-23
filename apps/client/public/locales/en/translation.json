@@ -84,6 +84,7 @@
     "name": "Name",
     "save": "Save",
     "saving": "Saving...",
+    "seconds": "s",
     "status": "Status"
   },
   "createService": {
@@ -242,6 +243,27 @@
     "deploy": "Deploy",
     "deploying": "Deploying...",
     "description": "Create and manage your services.",
+    "healthCheck": {
+      "description": "Configure health checks to monitor your service's availability. The same configuration is applied to liveness, readiness, and startup probes.",
+      "form": {
+        "enabled": {
+          "label": "Enable Health Check"
+        },
+        "path": {
+          "hint": "The HTTP path to probe, e.g., /health or /healthz",
+          "label": "Path",
+          "placeholder": "/health"
+        },
+        "port": {
+          "label": "Port",
+          "placeholder": "80"
+        },
+        "type": {
+          "label": "Probe Type"
+        }
+      },
+      "title": "Health Check"
+    },
     "environment": {
       "addVariable": "Add Variable",
       "cardDescription": "Configure environment variables that will be available to your service at runtime.",

@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { EnvironmentVariableInput } from './environment-variable.input';
+import { HealthCheckInput } from './health-check.input';
 import { ImageInput } from './image.input';
 import { ResourceLimitsInput } from './resource-limits.input';
 import { ServicePortInput } from './service-port.input';
@@ -39,4 +40,10 @@ export class UpdateServiceInput {
   @Type(() => ResourceLimitsInput)
   @Field(() => ResourceLimitsInput, { nullable: true })
   resourceLimits?: ResourceLimitsInput;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => HealthCheckInput)
+  @Field(() => HealthCheckInput, { nullable: true })
+  healthCheck?: HealthCheckInput | null;
 }
