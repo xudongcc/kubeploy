@@ -362,7 +362,9 @@ export class ServiceService extends EntityService<Service> {
     return resources;
   }
 
-  private buildProbeAction(healthCheck: Service['healthCheck']): Partial<V1Probe> {
+  private buildProbeAction(
+    healthCheck: Service['healthCheck'],
+  ): Partial<V1Probe> {
     if (!healthCheck) {
       return {};
     }

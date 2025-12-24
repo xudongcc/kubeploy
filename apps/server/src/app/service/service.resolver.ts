@@ -14,6 +14,7 @@ import {
   DomainConnectionArgs,
 } from '@/domain/domain.connection-definition';
 import { Domain } from '@/domain/domain.entity';
+import { GitProviderService } from '@/git-provider/git-provider.service';
 import { Can, PermissionAction } from '@/lib/permission';
 import { Project } from '@/project/project.entity';
 import {
@@ -28,11 +29,15 @@ import { UpdateServiceInput } from './inputs/update-service.input';
 import { ServiceMetrics } from './objects/service-metrics.object';
 import { Service } from './service.entity';
 import { ServiceService } from './service.service';
+import { User } from '@/user/user.entity';
+import { CurrentUser } from '@nest-boot/auth';
+import { GitProviderAccountService } from '@/git-provider/git-provider-account.service';
 
 @Resolver(() => Service)
 export class ServiceResolver {
   constructor(
     private readonly serviceService: ServiceService,
+    private readonly gitProviderAccountService: GitProviderAccountService,
     private readonly cm: ConnectionManager,
   ) {}
 
@@ -67,10 +72,26 @@ export class ServiceResolver {
   @Can(PermissionAction.UPDATE, Service)
   @Mutation(() => Service)
   async updateService(
+    @CurrentUser() user: User,
     @Args({ name: 'id', type: () => ID }) id: string,
     @Args('input') input: UpdateServiceInput,
   ): Promise<Service> {
-    return await this.serviceService.update(id, input);
+    return await this.serviceService.update(id, {
+      ...input,
+      ...(input.gitSource
+        ? {
+            gitSource: {
+              account: await this.gitProviderAccountService.findOneOrFail({
+                provider: {
+                  id: input.gitSource.providerId,
+                },
+                user,
+              }),
+              ...input.gitSource,
+            },
+          }
+        : {}),
+    });
   }
 
   @Can(PermissionAction.DELETE, Service)

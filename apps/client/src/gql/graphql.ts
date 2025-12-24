@@ -257,29 +257,28 @@ export type EnvironmentVariableInput = {
   value: Scalars["String"]["input"];
 };
 
-export type GitAccountObject = {
-  __typename?: "GitAccountObject";
-  accountId: Scalars["String"]["output"];
-  id: Scalars["ID"]["output"];
-  providerId: Scalars["String"]["output"];
-  username?: Maybe<Scalars["String"]["output"]>;
-};
-
-export type GitBranchObject = {
-  __typename?: "GitBranchObject";
-  name: Scalars["String"]["output"];
-  protected: Scalars["Boolean"]["output"];
-  sha: Scalars["String"]["output"];
-};
-
 export type GitProvider = {
   __typename?: "GitProvider";
+  authorized: Scalars["Boolean"]["output"];
   createdAt: Scalars["DateTime"]["output"];
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
+  repositories: Array<GitRepository>;
+  repository?: Maybe<GitRepository>;
   type: GitProviderType;
   /** Base URL (e.g., https://github.com or https://gitlab.com) */
   url: Scalars["String"]["output"];
+};
+
+export type GitProviderRepositoriesArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  perPage?: InputMaybe<Scalars["Int"]["input"]>;
+  search?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type GitProviderRepositoryArgs = {
+  owner: Scalars["String"]["input"];
+  repo: Scalars["String"]["input"];
 };
 
 export type GitProviderConnection = {
@@ -321,43 +320,41 @@ export enum GitProviderType {
   GITLAB = "GITLAB",
 }
 
-/** Git repository configuration for a service */
 export type GitRepository = {
   __typename?: "GitRepository";
-  /** OAuth Account ID */
-  accountId: Scalars["String"]["output"];
-  branch: Scalars["String"]["output"];
-  /** GitProvider ID */
-  gitProviderId: Scalars["ID"]["output"];
-  owner: Scalars["String"]["output"];
-  /** Subdirectory path within the repository */
-  path?: Maybe<Scalars["String"]["output"]>;
-  repo: Scalars["String"]["output"];
-};
-
-export type GitRepositoryInput = {
-  /** OAuth Account ID */
-  accountId: Scalars["String"]["input"];
-  branch: Scalars["String"]["input"];
-  /** GitProvider ID */
-  gitProviderId: Scalars["ID"]["input"];
-  owner: Scalars["String"]["input"];
-  /** Subdirectory path within the repository */
-  path?: InputMaybe<Scalars["String"]["input"]>;
-  repo: Scalars["String"]["input"];
-};
-
-export type GitRepositoryObject = {
-  __typename?: "GitRepositoryObject";
+  branches: Array<Scalars["String"]["output"]>;
   cloneUrl: Scalars["String"]["output"];
   defaultBranch: Scalars["String"]["output"];
-  description?: Maybe<Scalars["String"]["output"]>;
   fullName: Scalars["String"]["output"];
   htmlUrl: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
   owner: Scalars["String"]["output"];
-  private: Scalars["Boolean"]["output"];
+};
+
+export type GitRepositoryBranchesArgs = {
+  search?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+/** Git source configuration for a service */
+export type GitSource = {
+  __typename?: "GitSource";
+  branch: Scalars["String"]["output"];
+  owner: Scalars["String"]["output"];
+  /** Subdirectory path within the repository */
+  path?: Maybe<Scalars["String"]["output"]>;
+  provider: GitProvider;
+  repo: Scalars["String"]["output"];
+};
+
+export type GitSourceInput = {
+  branch: Scalars["String"]["input"];
+  owner: Scalars["String"]["input"];
+  /** Subdirectory path within the repository */
+  path?: InputMaybe<Scalars["String"]["input"]>;
+  /** GitProvider ID */
+  providerId: Scalars["ID"]["input"];
+  repo: Scalars["String"]["input"];
 };
 
 /** Health check configuration for a service */
@@ -603,11 +600,8 @@ export type Query = {
   currentWorkspace: Workspace;
   currentWorkspaceMember: WorkspaceMember;
   domain?: Maybe<Domain>;
-  gitAccounts: Array<GitAccountObject>;
-  gitBranches: Array<GitBranchObject>;
   gitProvider?: Maybe<GitProvider>;
   gitProviders: GitProviderConnection;
-  gitRepositories: Array<GitRepositoryObject>;
   project?: Maybe<Project>;
   service?: Maybe<Service>;
   volume?: Maybe<Volume>;
@@ -626,17 +620,6 @@ export type QueryDomainArgs = {
   id: Scalars["ID"]["input"];
 };
 
-export type QueryGitAccountsArgs = {
-  gitProviderId: Scalars["ID"]["input"];
-};
-
-export type QueryGitBranchesArgs = {
-  accountId: Scalars["String"]["input"];
-  gitProviderId: Scalars["ID"]["input"];
-  owner: Scalars["String"]["input"];
-  repo: Scalars["String"]["input"];
-};
-
 export type QueryGitProviderArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -649,14 +632,6 @@ export type QueryGitProvidersArgs = {
   last?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<GitProviderOrder>;
   query?: InputMaybe<Scalars["String"]["input"]>;
-};
-
-export type QueryGitRepositoriesArgs = {
-  accountId: Scalars["String"]["input"];
-  gitProviderId: Scalars["ID"]["input"];
-  page?: InputMaybe<Scalars["Int"]["input"]>;
-  perPage?: InputMaybe<Scalars["Int"]["input"]>;
-  search?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type QueryProjectArgs = {
@@ -725,8 +700,8 @@ export type Service = {
   description?: Maybe<Scalars["String"]["output"]>;
   domains: DomainConnection;
   environmentVariables: Array<EnvironmentVariable>;
-  /** Git repository configuration for source code */
-  gitRepository?: Maybe<GitRepository>;
+  /** Git source configuration for source code */
+  gitSource?: Maybe<GitSource>;
   /** Health check configuration applied to liveness, readiness, and startup probes */
   healthCheck?: Maybe<HealthCheck>;
   id: Scalars["ID"]["output"];
@@ -854,7 +829,7 @@ export type UpdateProjectInput = {
 export type UpdateServiceInput = {
   description?: InputMaybe<Scalars["String"]["input"]>;
   environmentVariables?: InputMaybe<Array<EnvironmentVariableInput>>;
-  gitRepository?: InputMaybe<GitRepositoryInput>;
+  gitSource?: InputMaybe<GitSourceInput>;
   healthCheck?: InputMaybe<HealthCheckInput>;
   image?: InputMaybe<ImageInput>;
   ports?: InputMaybe<Array<ServicePortInput>>;
@@ -1096,6 +1071,69 @@ export type CreateServiceDialogMutationVariables = Exact<{
 export type CreateServiceDialogMutation = {
   __typename?: "Mutation";
   createService: { __typename?: "Service"; id: string; name: string };
+};
+
+export type GetGitBranchesForSelectQueryVariables = Exact<{
+  gitProviderId: Scalars["ID"]["input"];
+  owner: Scalars["String"]["input"];
+  repo: Scalars["String"]["input"];
+}>;
+
+export type GetGitBranchesForSelectQuery = {
+  __typename?: "Query";
+  gitProvider?: {
+    __typename?: "GitProvider";
+    id: string;
+    repository?: {
+      __typename?: "GitRepository";
+      id: string;
+      branches: Array<string>;
+    } | null;
+  } | null;
+};
+
+export type GetGitProvidersForSelectQueryVariables = Exact<{
+  query?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type GetGitProvidersForSelectQuery = {
+  __typename?: "Query";
+  gitProviders: {
+    __typename?: "GitProviderConnection";
+    edges: Array<{
+      __typename?: "GitProviderEdge";
+      node: {
+        __typename?: "GitProvider";
+        id: string;
+        name: string;
+        type: GitProviderType;
+      };
+    }>;
+  };
+};
+
+export type GetGitRepositoriesForSelectQueryVariables = Exact<{
+  gitProviderId: Scalars["ID"]["input"];
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  perPage?: InputMaybe<Scalars["Int"]["input"]>;
+  search?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type GetGitRepositoriesForSelectQuery = {
+  __typename?: "Query";
+  gitProvider?: {
+    __typename?: "GitProvider";
+    id: string;
+    repositories: Array<{
+      __typename?: "GitRepository";
+      id: string;
+      name: string;
+      fullName: string;
+      owner: string;
+      defaultBranch: string;
+      htmlUrl: string;
+    }>;
+  } | null;
 };
 
 export type WorkspaceSwitcherWorkspacesQueryVariables = Exact<{
@@ -1623,6 +1661,14 @@ export type GetServiceQuery = {
       path?: string | null;
       port: number;
     } | null;
+    gitSource?: {
+      __typename?: "GitSource";
+      owner: string;
+      repo: string;
+      branch: string;
+      path?: string | null;
+      provider: { __typename?: "GitProvider"; id: string };
+    } | null;
   } | null;
 };
 
@@ -1660,6 +1706,14 @@ export type ServiceDetailFragment = {
     path?: string | null;
     port: number;
   } | null;
+  gitSource?: {
+    __typename?: "GitSource";
+    owner: string;
+    repo: string;
+    branch: string;
+    path?: string | null;
+    provider: { __typename?: "GitProvider"; id: string };
+  } | null;
 } & { " $fragmentName"?: "ServiceDetailFragment" };
 
 export type UpdateServiceResourcesMutationVariables = Exact<{
@@ -1681,6 +1735,31 @@ export type DeleteServiceMutationVariables = Exact<{
 export type DeleteServiceMutation = {
   __typename?: "Mutation";
   deleteService: { __typename?: "Service"; id: string };
+};
+
+export type GetGitProviderAuthorizedQueryVariables = Exact<{
+  gitProviderId: Scalars["ID"]["input"];
+}>;
+
+export type GetGitProviderAuthorizedQuery = {
+  __typename?: "Query";
+  gitProvider?: {
+    __typename?: "GitProvider";
+    id: string;
+    authorized: boolean;
+  } | null;
+};
+
+export type UpdateServiceSourceMutationVariables = Exact<{
+  id: Scalars["ID"]["input"];
+  input: UpdateServiceInput;
+}>;
+
+export type UpdateServiceSourceMutation = {
+  __typename?: "Mutation";
+  updateService: { __typename?: "Service"; id: string } & {
+    " $fragmentRefs"?: { ServiceDetailFragment: ServiceDetailFragment };
+  };
 };
 
 export type GetVolumesQueryVariables = Exact<{
@@ -2163,6 +2242,29 @@ export const ServiceDetailFragmentDoc = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitSource" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provider" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "owner" } },
+                { kind: "Field", name: { kind: "Name", value: "repo" } },
+                { kind: "Field", name: { kind: "Name", value: "branch" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -2409,6 +2511,318 @@ export const CreateServiceDialogDocument = {
 } as unknown as DocumentNode<
   CreateServiceDialogMutation,
   CreateServiceDialogMutationVariables
+>;
+export const GetGitBranchesForSelectDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetGitBranchesForSelect" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "gitProviderId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "owner" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "repo" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitProvider" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "gitProviderId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "repository" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "owner" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "owner" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "repo" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "repo" },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "branches" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetGitBranchesForSelectQuery,
+  GetGitBranchesForSelectQueryVariables
+>;
+export const GetGitProvidersForSelectDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetGitProvidersForSelect" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "query" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitProviders" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "query" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "query" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "first" },
+                value: { kind: "IntValue", value: "20" },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "edges" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "node" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "name" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "type" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetGitProvidersForSelectQuery,
+  GetGitProvidersForSelectQueryVariables
+>;
+export const GetGitRepositoriesForSelectDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetGitRepositoriesForSelect" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "gitProviderId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "perPage" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "search" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitProvider" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "gitProviderId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "repositories" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "page" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "page" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "perPage" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "perPage" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "search" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "search" },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "name" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "fullName" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "owner" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "defaultBranch" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "htmlUrl" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetGitRepositoriesForSelectQuery,
+  GetGitRepositoriesForSelectQueryVariables
 >;
 export const WorkspaceSwitcherWorkspacesDocument = {
   kind: "Document",
@@ -4049,6 +4463,29 @@ export const UpdateServiceEnvironmentDocument = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitSource" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provider" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "owner" } },
+                { kind: "Field", name: { kind: "Name", value: "repo" } },
+                { kind: "Field", name: { kind: "Name", value: "branch" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -4195,6 +4632,29 @@ export const UpdateServiceImageDocument = {
                 { kind: "Field", name: { kind: "Name", value: "type" } },
                 { kind: "Field", name: { kind: "Name", value: "path" } },
                 { kind: "Field", name: { kind: "Name", value: "port" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitSource" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provider" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "owner" } },
+                { kind: "Field", name: { kind: "Name", value: "repo" } },
+                { kind: "Field", name: { kind: "Name", value: "branch" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
               ],
             },
           },
@@ -4895,6 +5355,29 @@ export const UpdateServicePortsDocument = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitSource" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provider" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "owner" } },
+                { kind: "Field", name: { kind: "Name", value: "repo" } },
+                { kind: "Field", name: { kind: "Name", value: "branch" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -5025,6 +5508,29 @@ export const GetServiceDocument = {
                 { kind: "Field", name: { kind: "Name", value: "type" } },
                 { kind: "Field", name: { kind: "Name", value: "path" } },
                 { kind: "Field", name: { kind: "Name", value: "port" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitSource" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provider" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "owner" } },
+                { kind: "Field", name: { kind: "Name", value: "repo" } },
+                { kind: "Field", name: { kind: "Name", value: "branch" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
               ],
             },
           },
@@ -5174,6 +5680,29 @@ export const UpdateServiceResourcesDocument = {
               ],
             },
           },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitSource" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provider" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "owner" } },
+                { kind: "Field", name: { kind: "Name", value: "repo" } },
+                { kind: "Field", name: { kind: "Name", value: "branch" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+              ],
+            },
+          },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
         ],
@@ -5231,6 +5760,230 @@ export const DeleteServiceDocument = {
 } as unknown as DocumentNode<
   DeleteServiceMutation,
   DeleteServiceMutationVariables
+>;
+export const GetGitProviderAuthorizedDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetGitProviderAuthorized" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "gitProviderId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitProvider" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "gitProviderId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "authorized" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetGitProviderAuthorizedQuery,
+  GetGitProviderAuthorizedQueryVariables
+>;
+export const UpdateServiceSourceDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UpdateServiceSource" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "UpdateServiceInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateService" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ServiceDetail" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ServiceDetail" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Service" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "image" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "registry" } },
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "tag" } },
+                { kind: "Field", name: { kind: "Name", value: "username" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "ports" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "port" } },
+                { kind: "Field", name: { kind: "Name", value: "protocol" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "environmentVariables" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "key" } },
+                { kind: "Field", name: { kind: "Name", value: "value" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resourceLimits" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "cpu" } },
+                { kind: "Field", name: { kind: "Name", value: "memory" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "healthCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+                { kind: "Field", name: { kind: "Name", value: "port" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gitSource" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provider" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "owner" } },
+                { kind: "Field", name: { kind: "Name", value: "repo" } },
+                { kind: "Field", name: { kind: "Name", value: "branch" } },
+                { kind: "Field", name: { kind: "Name", value: "path" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateServiceSourceMutation,
+  UpdateServiceSourceMutationVariables
 >;
 export const GetVolumesDocument = {
   kind: "Document",

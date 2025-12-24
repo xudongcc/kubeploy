@@ -2,14 +2,10 @@ import { Field, ID, InputType } from '@nest-boot/graphql';
 import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class GitRepositoryInput {
+export class GitSourceInput {
   @IsString()
   @Field(() => ID, { description: 'GitProvider ID' })
-  gitProviderId!: string;
-
-  @IsString()
-  @Field(() => String, { description: 'OAuth Account ID' })
-  accountId!: string;
+  providerId!: string;
 
   @IsString()
   @Field(() => String)

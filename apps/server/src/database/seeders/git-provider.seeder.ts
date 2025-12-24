@@ -1,8 +1,8 @@
-import type { EntityManager } from '@mikro-orm/core';
+import type { EntityManager } from '@mikro-orm/postgresql';
 import { Seeder } from '@mikro-orm/seeder';
 
 import { GitProviderType } from '@/git-provider/enums/git-provider-type.enum';
-import { GitProvider } from '@/git-provider/git-provider.entity';
+import { GitProvider } from '@/git-provider/entities/git-provider.entity';
 
 export class GitProviderSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
@@ -12,12 +12,13 @@ export class GitProviderSeeder extends Seeder {
 
     if (githubClientId && githubClientSecret) {
       await em.upsert(GitProvider, {
+        id: '1',
         name: 'GitHub',
-        workspace: null,
         type: GitProviderType.GITHUB,
         url: 'https://github.com',
         clientId: githubClientId,
         clientSecret: githubClientSecret,
+        workspace: null,
       });
     }
 
@@ -28,12 +29,13 @@ export class GitProviderSeeder extends Seeder {
 
     if (gitlabClientId && gitlabClientSecret) {
       await em.upsert(GitProvider, {
+        id: '2',
         name: 'GitLab',
-        workspace: null,
         type: GitProviderType.GITLAB,
         url: gitlabUrl,
         clientId: gitlabClientId,
         clientSecret: gitlabClientSecret,
+        workspace: null,
       });
     }
   }

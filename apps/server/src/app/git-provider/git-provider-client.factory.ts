@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { GitHubDriver } from './drivers/github.driver';
 import { GitLabDriver } from './drivers/gitlab.driver';
 import { GitProviderType } from './enums/git-provider-type.enum';
-import { GitProvider } from './git-provider.entity';
+import { GitProvider } from './entities/git-provider.entity';
 import { IGitProviderDriver } from './interfaces/git-provider-driver.interface';
 
 @Injectable()

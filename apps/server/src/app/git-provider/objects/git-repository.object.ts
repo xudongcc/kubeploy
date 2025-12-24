@@ -1,9 +1,20 @@
-import { Field, ID, ObjectType } from '@nest-boot/graphql';
+import { Field, HideField, ID, ObjectType } from '@nest-boot/graphql';
+import { GitProvider } from '../entities/git-provider.entity';
+import { Ref } from '@mikro-orm/core';
+import { Workspace } from '@/workspace/workspace.entity';
 
 @ObjectType()
-export class GitRepositoryObject {
+export class GitRepository {
   @Field(() => ID)
   id!: string;
+
+  /** Internal field for resolver context */
+  @HideField()
+  workspace!: Ref<Workspace>;
+
+  /** Internal field for resolver context */
+  @HideField()
+  provider!: Ref<GitProvider>;
 
   @Field(() => String)
   name!: string;
@@ -14,14 +25,8 @@ export class GitRepositoryObject {
   @Field(() => String)
   owner!: string;
 
-  @Field(() => String, { nullable: true })
-  description?: string;
-
   @Field(() => String)
   defaultBranch!: string;
-
-  @Field(() => Boolean)
-  private!: boolean;
 
   @Field(() => String)
   cloneUrl!: string;

@@ -7,17 +7,15 @@ import {
   Property,
   Ref,
   t,
-  Unique,
 } from '@mikro-orm/core';
 import { Field, HideField, ID, ObjectType } from '@nest-boot/graphql';
 import { Sonyflake } from 'sonyflake-js';
 
 import { Workspace } from '@/workspace/workspace.entity';
 
-import { GitProviderType } from './enums/git-provider-type.enum';
+import { GitProviderType } from '../enums/git-provider-type.enum';
 
 @ObjectType()
-@Unique({ properties: ['name', 'workspace'] })
 @Entity()
 export class GitProvider {
   @Field(() => ID)
@@ -39,11 +37,11 @@ export class GitProvider {
   url!: string;
 
   @HideField()
-  @Property({ type: t.string })
+  @Property({ type: t.string, hidden: true, lazy: true })
   clientId!: string;
 
   @HideField()
-  @Property({ type: t.string })
+  @Property({ type: t.string, hidden: true, lazy: true })
   clientSecret!: string;
 
   @ManyToOne(() => Workspace, { nullable: true })

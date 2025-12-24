@@ -83,6 +83,7 @@
     "delete": "删除",
     "deleting": "删除中...",
     "edit": "编辑",
+    "loading": "加载中...",
     "name": "名称",
     "save": "保存",
     "saving": "保存中...",
@@ -361,6 +362,42 @@
       },
       "description": "更新您的服务设置。"
     },
+    "source": {
+      "description": "配置服务的源代码仓库。",
+      "form": {
+        "authorization": {
+          "authorize": "授权",
+          "notAuthorized": "您尚未授权此 Git 提供商访问您的仓库",
+          "reauthorize": "重新授权"
+        },
+        "branch": {
+          "label": "分支",
+          "noResults": "未找到分支",
+          "placeholder": "选择分支",
+          "searchPlaceholder": "搜索分支..."
+        },
+        "enabled": {
+          "label": "启用 Git 仓库"
+        },
+        "path": {
+          "hint": "包含应用代码的子目录（例如：/ 或 /apps/api）",
+          "label": "构建路径",
+          "placeholder": "/"
+        },
+        "provider": {
+          "label": "Git 提供商",
+          "placeholder": "选择提供商"
+        },
+        "repository": {
+          "label": "仓库",
+          "noResults": "未找到仓库",
+          "placeholder": "选择仓库",
+          "searchPlaceholder": "搜索仓库...",
+          "viewRepository": "查看仓库"
+        }
+      },
+      "title": "源代码"
+    },
     "tabs": {
       "environment": "环境变量",
       "logs": "日志",
@@ -368,6 +405,7 @@
       "network": "网络",
       "overview": "概览",
       "settings": "设置",
+      "source": "源代码",
       "terminal": "终端",
       "volumes": "硬盘"
     },

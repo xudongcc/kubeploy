@@ -23,17 +23,13 @@ import { Workspace } from '@/workspace/workspace.entity';
 
 import { HealthCheckType } from './enums/health-check-type.enum';
 import { ServicePortProtocol } from './enums/service-port-protocol.enum';
+import { GitProviderAccount } from '@/git-provider/entities/git-provider-account.entity';
 
-@ObjectType({ description: 'Git repository configuration for a service' })
+@ObjectType({ description: 'Git source configuration for a service' })
 @Embeddable()
-export class GitRepository {
-  @Field(() => ID, { description: 'GitProvider ID' })
-  @Property({ type: t.bigint })
-  gitProviderId!: string;
-
-  @Field(() => String, { description: 'OAuth Account ID' })
-  @Property({ type: t.string })
-  accountId!: string;
+export class GitSource {
+  @ManyToOne(() => GitProviderAccount)
+  account!: Ref<GitProviderAccount>;
 
   @Field(() => String)
   @Property({ type: t.string })
@@ -192,12 +188,12 @@ export class Service {
   healthCheck: Opt<HealthCheck> | null = null;
 
   // eslint-disable-next-line @nest-boot/entity-property-config-from-types
-  @Field(() => GitRepository, {
+  @Field(() => GitSource, {
     nullable: true,
-    description: 'Git repository configuration for source code',
+    description: 'Git source configuration for source code',
   })
-  @Embedded(() => GitRepository, { nullable: true })
-  gitRepository: Opt<GitRepository> | null = null;
+  @Embedded(() => GitSource, { nullable: true })
+  gitSource: Opt<GitSource> | null = null;
 
   @Field(() => Date)
   @Property({ type: t.datetime, defaultRaw: 'now()' })

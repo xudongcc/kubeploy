@@ -1,12 +1,13 @@
 import { ArgsType, ObjectType } from '@nest-boot/graphql';
 import { ConnectionBuilder } from '@nest-boot/graphql-connection';
 
-import { GitProvider } from './git-provider.entity';
+import { GitProvider } from './entities/git-provider.entity';
 
 export const { Connection, ConnectionArgs } = new ConnectionBuilder(GitProvider)
   .addField({
     type: 'string',
     field: 'name',
+    filterable: true,
     searchable: true,
   })
   .addField({

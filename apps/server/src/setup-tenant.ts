@@ -163,6 +163,19 @@ async function bootstrap() {
     $$;
   `);
 
+  logger.log('Creating git_provider system read policy...');
+  await knex.raw(/* SQL */ `
+    DO $$
+    BEGIN
+        EXECUTE 'DROP POLICY IF EXISTS git_provider_system_read_policy ON public.git_provider;';
+
+        EXECUTE 'CREATE POLICY git_provider_system_read_policy ON public.git_provider AS PERMISSIVE FOR SELECT TO authenticated USING (
+            workspace_id IS NULL
+        );';
+    END
+    $$;
+  `);
+
   logger.log('Tenant setup completed successfully!');
 
   await app.close();

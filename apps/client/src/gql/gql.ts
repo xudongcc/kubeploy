@@ -16,6 +16,9 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
 type Documents = {
   "\n  query GetClustersForSelect($workspaceId: ID!, $query: String) {\n    workspace(id: $workspaceId) {\n      clusters(query: $query, first: 20) {\n        edges {\n          node {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetClustersForSelectDocument;
   "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.CreateServiceDialogDocument;
+  "\n  query GetGitBranchesForSelect(\n    $gitProviderId: ID!\n    $owner: String!\n    $repo: String!\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repository(owner: $owner, repo: $repo) {\n        id\n        branches\n      }\n    }\n  }\n": typeof types.GetGitBranchesForSelectDocument;
+  "\n  query GetGitProvidersForSelect($query: String) {\n    gitProviders(query: $query, first: 20) {\n      edges {\n        node {\n          id\n          name\n          type\n        }\n      }\n    }\n  }\n": typeof types.GetGitProvidersForSelectDocument;
+  "\n  query GetGitRepositoriesForSelect(\n    $gitProviderId: ID!\n    $page: Int\n    $perPage: Int\n    $search: String\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repositories(page: $page, perPage: $perPage, search: $search) {\n        id\n        name\n        fullName\n        owner\n        defaultBranch\n        htmlUrl\n      }\n    }\n  }\n": typeof types.GetGitRepositoriesForSelectDocument;
   "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n": typeof types.WorkspaceSwitcherWorkspacesDocument;
   "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n    createdAt\n    updatedAt\n  }\n": typeof types.GetCurrentUserDocument;
   "\n  query GetCluster($id: ID!) {\n    cluster(id: $id) {\n      id\n      ...ClusterDetail @unmask\n    }\n  }\n\n  fragment ClusterDetail on Cluster {\n    id\n    name\n    server\n    createdAt\n    nodes {\n      name\n      ip\n      status\n      usedCpu\n      usedMemory\n      totalCpu\n      totalMemory\n    }\n  }\n": typeof types.GetClusterDocument;
@@ -40,9 +43,11 @@ type Documents = {
   "\n  mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {\n    updateDomain(id: $id, input: $input) {\n      id\n      ...DomainItem\n    }\n  }\n": typeof types.UpdateDomainDocument;
   "\n  mutation DeleteDomain($id: ID!) {\n    deleteDomain(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteDomainDocument;
   "\n  mutation UpdateServicePorts($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServicePortsDocument;
-  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    createdAt\n    updatedAt\n  }\n": typeof types.GetServiceDocument;
+  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    gitSource {\n      provider {\n        id\n      }\n      owner\n      repo\n      branch\n      path\n    }\n    createdAt\n    updatedAt\n  }\n": typeof types.GetServiceDocument;
   "\n  mutation UpdateServiceResources($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceResourcesDocument;
   "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteServiceDocument;
+  "\n  query GetGitProviderAuthorized($gitProviderId: ID!) {\n    gitProvider(id: $gitProviderId) {\n      id\n      authorized\n    }\n  }\n": typeof types.GetGitProviderAuthorizedDocument;
+  "\n  mutation UpdateServiceSource($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n": typeof types.UpdateServiceSourceDocument;
   "\n  query GetVolumes(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: VolumeOrder\n  ) {\n    service(id: $serviceId) {\n      id\n      volumes(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...VolumeItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment VolumeItem on Volume {\n    id\n    name\n    size\n    mountPath\n    createdAt\n  }\n": typeof types.GetVolumesDocument;
   "\n  mutation CreateVolume($input: CreateVolumeInput!) {\n    createVolume(input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n": typeof types.CreateVolumeDocument;
   "\n  mutation UpdateVolume($id: ID!, $input: UpdateVolumeInput!) {\n    updateVolume(id: $id, input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n": typeof types.UpdateVolumeDocument;
@@ -60,6 +65,12 @@ const documents: Documents = {
     types.GetClustersForSelectDocument,
   "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n":
     types.CreateServiceDialogDocument,
+  "\n  query GetGitBranchesForSelect(\n    $gitProviderId: ID!\n    $owner: String!\n    $repo: String!\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repository(owner: $owner, repo: $repo) {\n        id\n        branches\n      }\n    }\n  }\n":
+    types.GetGitBranchesForSelectDocument,
+  "\n  query GetGitProvidersForSelect($query: String) {\n    gitProviders(query: $query, first: 20) {\n      edges {\n        node {\n          id\n          name\n          type\n        }\n      }\n    }\n  }\n":
+    types.GetGitProvidersForSelectDocument,
+  "\n  query GetGitRepositoriesForSelect(\n    $gitProviderId: ID!\n    $page: Int\n    $perPage: Int\n    $search: String\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repositories(page: $page, perPage: $perPage, search: $search) {\n        id\n        name\n        fullName\n        owner\n        defaultBranch\n        htmlUrl\n      }\n    }\n  }\n":
+    types.GetGitRepositoriesForSelectDocument,
   "\n  query WorkspaceSwitcherWorkspaces {\n    workspaces(first: 10) {\n      edges {\n        node {\n          id\n          ...WorkspaceSwitcherWorkspace @unmask\n        }\n      }\n    }\n  }\n\n  fragment WorkspaceSwitcherWorkspace on Workspace {\n    id\n    name\n  }\n":
     types.WorkspaceSwitcherWorkspacesDocument,
   "\n  query GetCurrentUser {\n    currentUser {\n      id\n      ...CurrentUser @unmask\n    }\n  }\n\n  fragment CurrentUser on User {\n    id\n    name\n    email\n    createdAt\n    updatedAt\n  }\n":
@@ -108,12 +119,16 @@ const documents: Documents = {
     types.DeleteDomainDocument,
   "\n  mutation UpdateServicePorts($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
     types.UpdateServicePortsDocument,
-  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    createdAt\n    updatedAt\n  }\n":
+  "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    gitSource {\n      provider {\n        id\n      }\n      owner\n      repo\n      branch\n      path\n    }\n    createdAt\n    updatedAt\n  }\n":
     types.GetServiceDocument,
   "\n  mutation UpdateServiceResources($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
     types.UpdateServiceResourcesDocument,
   "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n":
     types.DeleteServiceDocument,
+  "\n  query GetGitProviderAuthorized($gitProviderId: ID!) {\n    gitProvider(id: $gitProviderId) {\n      id\n      authorized\n    }\n  }\n":
+    types.GetGitProviderAuthorizedDocument,
+  "\n  mutation UpdateServiceSource($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n":
+    types.UpdateServiceSourceDocument,
   "\n  query GetVolumes(\n    $serviceId: ID!\n    $after: String\n    $before: String\n    $first: Int\n    $last: Int\n    $orderBy: VolumeOrder\n  ) {\n    service(id: $serviceId) {\n      id\n      volumes(\n        after: $after\n        before: $before\n        first: $first\n        last: $last\n        orderBy: $orderBy\n      ) {\n        edges {\n          node {\n            id\n            ...VolumeItem @unmask\n          }\n        }\n        pageInfo {\n          endCursor\n          hasNextPage\n          hasPreviousPage\n          startCursor\n        }\n      }\n    }\n  }\n\n  fragment VolumeItem on Volume {\n    id\n    name\n    size\n    mountPath\n    createdAt\n  }\n":
     types.GetVolumesDocument,
   "\n  mutation CreateVolume($input: CreateVolumeInput!) {\n    createVolume(input: $input) {\n      id\n      ...VolumeItem\n    }\n  }\n":
@@ -164,6 +179,24 @@ export function graphql(
 export function graphql(
   source: "\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n",
 ): (typeof documents)["\n  mutation CreateServiceDialog($input: CreateServiceInput!) {\n    createService(input: $input) {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  query GetGitBranchesForSelect(\n    $gitProviderId: ID!\n    $owner: String!\n    $repo: String!\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repository(owner: $owner, repo: $repo) {\n        id\n        branches\n      }\n    }\n  }\n",
+): (typeof documents)["\n  query GetGitBranchesForSelect(\n    $gitProviderId: ID!\n    $owner: String!\n    $repo: String!\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repository(owner: $owner, repo: $repo) {\n        id\n        branches\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  query GetGitProvidersForSelect($query: String) {\n    gitProviders(query: $query, first: 20) {\n      edges {\n        node {\n          id\n          name\n          type\n        }\n      }\n    }\n  }\n",
+): (typeof documents)["\n  query GetGitProvidersForSelect($query: String) {\n    gitProviders(query: $query, first: 20) {\n      edges {\n        node {\n          id\n          name\n          type\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  query GetGitRepositoriesForSelect(\n    $gitProviderId: ID!\n    $page: Int\n    $perPage: Int\n    $search: String\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repositories(page: $page, perPage: $perPage, search: $search) {\n        id\n        name\n        fullName\n        owner\n        defaultBranch\n        htmlUrl\n      }\n    }\n  }\n",
+): (typeof documents)["\n  query GetGitRepositoriesForSelect(\n    $gitProviderId: ID!\n    $page: Int\n    $perPage: Int\n    $search: String\n  ) {\n    gitProvider(id: $gitProviderId) {\n      id\n      repositories(page: $page, perPage: $perPage, search: $search) {\n        id\n        name\n        fullName\n        owner\n        defaultBranch\n        htmlUrl\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -312,8 +345,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    createdAt\n    updatedAt\n  }\n",
-): (typeof documents)["\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    createdAt\n    updatedAt\n  }\n"];
+  source: "\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    gitSource {\n      provider {\n        id\n      }\n      owner\n      repo\n      branch\n      path\n    }\n    createdAt\n    updatedAt\n  }\n",
+): (typeof documents)["\n  query GetService($id: ID!) {\n    service(id: $id) {\n      id\n      ...ServiceDetail @unmask\n    }\n  }\n\n  fragment ServiceDetail on Service {\n    id\n    name\n    image {\n      registry\n      name\n      tag\n      username\n    }\n    ports {\n      port\n      protocol\n    }\n    environmentVariables {\n      key\n      value\n    }\n    resourceLimits {\n      cpu\n      memory\n    }\n    healthCheck {\n      type\n      path\n      port\n    }\n    gitSource {\n      provider {\n        id\n      }\n      owner\n      repo\n      branch\n      path\n    }\n    createdAt\n    updatedAt\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -326,6 +359,18 @@ export function graphql(
 export function graphql(
   source: "\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n",
 ): (typeof documents)["\n  mutation DeleteService($id: ID!) {\n    deleteService(id: $id) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  query GetGitProviderAuthorized($gitProviderId: ID!) {\n    gitProvider(id: $gitProviderId) {\n      id\n      authorized\n    }\n  }\n",
+): (typeof documents)["\n  query GetGitProviderAuthorized($gitProviderId: ID!) {\n    gitProvider(id: $gitProviderId) {\n      id\n      authorized\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation UpdateServiceSource($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n",
+): (typeof documents)["\n  mutation UpdateServiceSource($id: ID!, $input: UpdateServiceInput!) {\n    updateService(id: $id, input: $input) {\n      id\n      ...ServiceDetail\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

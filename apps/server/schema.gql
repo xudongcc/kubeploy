@@ -227,23 +227,13 @@ input EnvironmentVariableInput {
   value: String!
 }
 
-type GitAccountObject {
-  accountId: String!
-  id: ID!
-  providerId: String!
-  username: String
-}
-
-type GitBranchObject {
-  name: String!
-  protected: Boolean!
-  sha: String!
-}
-
 type GitProvider {
+  authorized: Boolean!
   createdAt: DateTime!
   id: ID!
   name: String!
+  repositories(page: Int, perPage: Int, search: String): [GitRepository!]!
+  repository(owner: String!, repo: String!): GitRepository
   type: GitProviderType!
 
   """Base URL (e.g., https://github.com or https://gitlab.com)"""
@@ -299,45 +289,38 @@ enum GitProviderType {
   GITLAB
 }
 
-"""Git repository configuration for a service"""
 type GitRepository {
-  """OAuth Account ID"""
-  accountId: String!
-  branch: String!
-
-  """GitProvider ID"""
-  gitProviderId: ID!
-  owner: String!
-
-  """Subdirectory path within the repository"""
-  path: String
-  repo: String!
-}
-
-input GitRepositoryInput {
-  """OAuth Account ID"""
-  accountId: String!
-  branch: String!
-
-  """GitProvider ID"""
-  gitProviderId: ID!
-  owner: String!
-
-  """Subdirectory path within the repository"""
-  path: String
-  repo: String!
-}
-
-type GitRepositoryObject {
+  branches(search: String): [String!]!
   cloneUrl: String!
   defaultBranch: String!
-  description: String
   fullName: String!
   htmlUrl: String!
   id: ID!
   name: String!
   owner: String!
-  private: Boolean!
+}
+
+"""Git source configuration for a service"""
+type GitSource {
+  branch: String!
+  owner: String!
+
+  """Subdirectory path within the repository"""
+  path: String
+  provider: GitProvider!
+  repo: String!
+}
+
+input GitSourceInput {
+  branch: String!
+  owner: String!
+
+  """Subdirectory path within the repository"""
+  path: String
+
+  """GitProvider ID"""
+  providerId: ID!
+  repo: String!
 }
 
 """Health check configuration for a service"""
@@ -510,8 +493,6 @@ type Query {
   currentWorkspace: Workspace!
   currentWorkspaceMember: WorkspaceMember!
   domain(id: ID!): Domain
-  gitAccounts(gitProviderId: ID!): [GitAccountObject!]!
-  gitBranches(accountId: String!, gitProviderId: ID!, owner: String!, repo: String!): [GitBranchObject!]!
   gitProvider(id: ID!): GitProvider
   gitProviders(
     """Returns the elements that come after the specified cursor."""
@@ -535,11 +516,10 @@ type Query {
     """
     Apply one or multiple filters to the query.
     Supported filter parameters:
-    `created_at`
+    `name`, `created_at`
     """
     query: String
   ): GitProviderConnection!
-  gitRepositories(accountId: String!, gitProviderId: ID!, page: Int, perPage: Int, search: String): [GitRepositoryObject!]!
   project(id: ID!): Project
   service(id: ID!): Service
   volume(id: ID!): Volume
@@ -648,8 +628,8 @@ type Service {
   ): DomainConnection!
   environmentVariables: [EnvironmentVariable!]!
 
-  """Git repository configuration for source code"""
-  gitRepository: GitRepository
+  """Git source configuration for source code"""
+  gitSource: GitSource
 
   """
   Health check configuration applied to liveness, readiness, and startup probes
@@ -796,7 +776,7 @@ input UpdateProjectInput {
 input UpdateServiceInput {
   description: String
   environmentVariables: [EnvironmentVariableInput!]
-  gitRepository: GitRepositoryInput
+  gitSource: GitSourceInput
   healthCheck: HealthCheckInput
   image: ImageInput
   ports: [ServicePortInput!]

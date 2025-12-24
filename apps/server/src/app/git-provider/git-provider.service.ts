@@ -2,11 +2,8 @@ import { EntityManager } from '@mikro-orm/core';
 import { EntityService } from '@nest-boot/mikro-orm';
 import { Injectable } from '@nestjs/common';
 
-import { Account } from '@/auth/entities/account.entity';
-import { User } from '@/user/user.entity';
-
-import { GitProviderType } from './enums/git-provider-type.enum';
-import { GitProvider } from './git-provider.entity';
+import { GitProviderAccount } from './entities/git-provider-account.entity';
+import { GitProvider } from './entities/git-provider.entity';
 import { GitProviderClientFactory } from './git-provider-client.factory';
 import {
   GitBranch,
@@ -23,38 +20,48 @@ export class GitProviderService extends EntityService<GitProvider> {
   }
 
   /**
-   * Get OAuth accounts for a specific GitProvider type
+   * Get GitProviderAccount for a specific GitProvider and Workspace
+   * Returns the first account found (one workspace can only have one account per provider)
    */
-  async getAccountsForProvider(
-    user: User,
-    gitProvider: GitProvider,
-  ): Promise<Account[]> {
-    const providerId =
-      gitProvider.type === GitProviderType.GITHUB ? 'github' : 'gitlab';
-    return await this.em.find(Account, {
-      userId: user.id,
-      providerId,
+  async getAccount(
+    workspaceId: string,
+    gitProviderId: string,
+  ): Promise<GitProviderAccount | null> {
+    return await this.em.findOne(GitProviderAccount, {
+      workspace: workspaceId,
+      provider: gitProviderId,
     });
   }
 
   /**
-   * Get an account by ID
+   * Check if a workspace has authorized a specific GitProvider
    */
-  async getAccountById(accountId: string): Promise<Account | null> {
-    return await this.em.findOne(Account, { id: accountId });
+  async isAuthorized(
+    workspaceId: string,
+    gitProviderId: string,
+  ): Promise<boolean> {
+    const account = await this.getAccount(workspaceId, gitProviderId);
+    return account !== null;
   }
 
   /**
-   * List repositories for a given GitProvider and Account
+   * List repositories for a given GitProvider and Workspace
    */
   async listRepositories(
-    gitProvider: GitProvider,
-    account: Account,
+    workspaceId: string,
+    gitProviderId: string,
     page?: number,
     perPage?: number,
     search?: string,
   ): Promise<{ repositories: GitRepository[]; totalCount: number }> {
-    const driver = this.clientFactory.getDriver(gitProvider, account.accessToken!);
+    const gitProvider = await this.findOneOrFail(gitProviderId);
+    const account = await this.getAccount(workspaceId, gitProviderId);
+
+    if (!account) {
+      throw new Error('Not authorized');
+    }
+
+    const driver = this.clientFactory.getDriver(gitProvider, account.accessToken);
     return driver.listRepositories(page, perPage, search);
   }
 
@@ -62,12 +69,19 @@ export class GitProviderService extends EntityService<GitProvider> {
    * List branches of a repository
    */
   async listBranches(
-    gitProvider: GitProvider,
-    account: Account,
+    workspaceId: string,
+    gitProviderId: string,
     owner: string,
     repo: string,
   ): Promise<GitBranch[]> {
-    const driver = this.clientFactory.getDriver(gitProvider, account.accessToken!);
+    const gitProvider = await this.findOneOrFail(gitProviderId);
+    const account = await this.getAccount(workspaceId, gitProviderId);
+
+    if (!account) {
+      throw new Error('Not authorized');
+    }
+
+    const driver = this.clientFactory.getDriver(gitProvider, account.accessToken);
     return driver.listBranches(owner, repo);
   }
 }

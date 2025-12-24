@@ -46,6 +46,15 @@ const GET_SERVICE_QUERY = graphql(`
       path
       port
     }
+    gitSource {
+      provider {
+        id
+      }
+      owner
+      repo
+      branch
+      path
+    }
     createdAt
     updatedAt
   }
@@ -122,6 +131,17 @@ function RouteComponent() {
             serviceId,
           },
           activeOptions: { exact: true },
+        }),
+      },
+      {
+        title: t("service.tabs.source"),
+        link: linkOptions({
+          to: "/workspaces/$workspaceId/projects/$projectId/services/$serviceId/source",
+          params: {
+            workspaceId,
+            projectId,
+            serviceId,
+          },
         }),
       },
       {

@@ -83,6 +83,7 @@
     "delete": "Delete",
     "deleting": "Deleting...",
     "edit": "Edit",
+    "loading": "Loading...",
     "name": "Name",
     "save": "Save",
     "saving": "Saving...",
@@ -361,6 +362,42 @@
       },
       "description": "Update your service settings."
     },
+    "source": {
+      "description": "Configure the source code repository for your service.",
+      "form": {
+        "authorization": {
+          "authorize": "Authorize",
+          "notAuthorized": "You haven't authorized this Git provider to access your repositories",
+          "reauthorize": "Reauthorize"
+        },
+        "branch": {
+          "label": "Branch",
+          "noResults": "No branches found",
+          "placeholder": "Select a branch",
+          "searchPlaceholder": "Search branches..."
+        },
+        "enabled": {
+          "label": "Enable Git Repository"
+        },
+        "path": {
+          "hint": "The subdirectory containing your application code (e.g., / or /apps/api)",
+          "label": "Build Path",
+          "placeholder": "/"
+        },
+        "provider": {
+          "label": "Git Provider",
+          "placeholder": "Select a provider"
+        },
+        "repository": {
+          "label": "Repository",
+          "noResults": "No repositories found",
+          "placeholder": "Select a repository",
+          "searchPlaceholder": "Search repositories...",
+          "viewRepository": "View Repository"
+        }
+      },
+      "title": "Source"
+    },
     "tabs": {
       "environment": "Environment",
       "logs": "Logs",
@@ -368,6 +405,7 @@
       "network": "Network",
       "overview": "Overview",
       "settings": "Settings",
+      "source": "Source",
       "terminal": "Terminal",
       "volumes": "Volumes"
     },
