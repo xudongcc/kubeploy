@@ -14,12 +14,34 @@ const AuthDynamicModule = AuthModule.forRootAsync({
   inject: [ConfigService, EntityManager],
   useFactory: (configService: ConfigService, em: EntityManager) => ({
     trustedOrigins: ['*'],
-    socialProviders: {
-      github: {
-        clientId: configService.getOrThrow('GITHUB_CLIENT_ID'),
-        clientSecret: configService.getOrThrow('GITHUB_CLIENT_SECRET'),
-      },
-    },
+    socialProviders: (() => {
+      const githubClientId = configService.get('GITHUB_CLIENT_ID');
+      const githubClientSecret = configService.get('GITHUB_CLIENT_SECRET');
+
+      const gitlabUrl = configService.get('GITLAB_URL', 'https://gitlab.com');
+      const gitlabClientId = configService.get('GITLAB_CLIENT_ID');
+      const gitlabClientSecret = configService.get('GITLAB_CLIENT_SECRET');
+
+      return {
+        ...(githubClientId && githubClientSecret
+          ? {
+              github: {
+                clientId: githubClientId,
+                clientSecret: githubClientSecret,
+              },
+            }
+          : {}),
+        ...(gitlabClientId && gitlabClientSecret
+          ? {
+              gitlab: {
+                url: gitlabUrl,
+                clientId: gitlabClientId,
+                clientSecret: gitlabClientSecret,
+              },
+            }
+          : {}),
+      };
+    })(),
     entities: {
       user: User,
       account: Account,

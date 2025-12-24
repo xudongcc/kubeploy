@@ -4,6 +4,8 @@
     "byClickingContinue": "By clicking continue, you agree to our",
     "loginWithGitHub": "Login with GitHub",
     "loginWithGitHubAccount": "Login with your GitHub account to continue",
+    "loginWithGitLab": "Login with GitLab",
+    "loginWithGitLabAccount": "Login with your GitLab account to continue",
     "logout": "Log out",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",

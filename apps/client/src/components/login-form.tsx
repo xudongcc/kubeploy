@@ -44,6 +44,18 @@ export function LoginForm({
                 >
                   {t("auth.loginWithGitHub")}
                 </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() =>
+                    authClient.signIn.social({
+                      provider: "gitlab",
+                      callbackURL: redirect,
+                    })
+                  }
+                >
+                  {t("auth.loginWithGitLab")}
+                </Button>
               </Field>
               {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
