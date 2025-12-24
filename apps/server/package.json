@@ -20,7 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:create": "mikro-orm migration:create",
-    "migration:up": "mikro-orm migration:up && node dist/setup-tenant.js",
+    "migration:up": "mikro-orm migration:up && node dist/setup-tenant.js && mikro-orm seeder:run",
     "migration:down": "mikro-orm migration:down",
     "seeder:create": "mikro-orm seeder:create",
     "seeder:run": "mikro-orm seeder:run"
@@ -56,6 +56,7 @@
     "@nestjs/platform-socket.io": "^11.1.9",
     "@nestjs/serve-static": "^5.0.4",
     "@nestjs/websockets": "^11.1.9",
+    "@octokit/rest": "^22.0.1",
     "axios": "^1.13.2",
     "better-auth": "^1.4.5",
     "bullmq": "^5.65.1",

@@ -40,6 +40,11 @@ export type Scalars = {
    */
   DomainFilter: { input: any; output: any };
   /**
+   * A filter for GitProvider that accepts MongoDB query syntax.
+   * Supported fields: name, created_at
+   */
+  GitProviderFilter: { input: any; output: any };
+  /**
    * A filter for Project that accepts MongoDB query syntax.
    * Supported fields: name, created_at
    */
@@ -250,6 +255,109 @@ export type EnvironmentVariable = {
 export type EnvironmentVariableInput = {
   key: Scalars["String"]["input"];
   value: Scalars["String"]["input"];
+};
+
+export type GitAccountObject = {
+  __typename?: "GitAccountObject";
+  accountId: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  providerId: Scalars["String"]["output"];
+  username?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type GitBranchObject = {
+  __typename?: "GitBranchObject";
+  name: Scalars["String"]["output"];
+  protected: Scalars["Boolean"]["output"];
+  sha: Scalars["String"]["output"];
+};
+
+export type GitProvider = {
+  __typename?: "GitProvider";
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  name: Scalars["String"]["output"];
+  type: GitProviderType;
+  /** Base URL (e.g., https://github.com or https://gitlab.com) */
+  url: Scalars["String"]["output"];
+};
+
+export type GitProviderConnection = {
+  __typename?: "GitProviderConnection";
+  /** A list of edges. */
+  edges: Array<GitProviderEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** Identifies the total count of items in the connection. */
+  totalCount: Scalars["Int"]["output"];
+};
+
+/** An auto-generated type which holds one GitProvider and a cursor during pagination. */
+export type GitProviderEdge = {
+  __typename?: "GitProviderEdge";
+  /** A cursor for use in pagination. */
+  cursor: Scalars["String"]["output"];
+  /** The item at the end of GitProviderEdge. */
+  node: GitProvider;
+};
+
+/** Ordering options for gitprovider connections */
+export type GitProviderOrder = {
+  /** The ordering direction. */
+  direction: OrderDirection;
+  /** The field to order gitproviders by. */
+  field: GitProviderOrderField;
+};
+
+/** Properties by which gitprovider connections can be ordered. */
+export enum GitProviderOrderField {
+  CREATED_AT = "CREATED_AT",
+  ID = "ID",
+}
+
+/** Type of git provider */
+export enum GitProviderType {
+  GITHUB = "GITHUB",
+  GITLAB = "GITLAB",
+}
+
+/** Git repository configuration for a service */
+export type GitRepository = {
+  __typename?: "GitRepository";
+  /** OAuth Account ID */
+  accountId: Scalars["String"]["output"];
+  branch: Scalars["String"]["output"];
+  /** GitProvider ID */
+  gitProviderId: Scalars["ID"]["output"];
+  owner: Scalars["String"]["output"];
+  /** Subdirectory path within the repository */
+  path?: Maybe<Scalars["String"]["output"]>;
+  repo: Scalars["String"]["output"];
+};
+
+export type GitRepositoryInput = {
+  /** OAuth Account ID */
+  accountId: Scalars["String"]["input"];
+  branch: Scalars["String"]["input"];
+  /** GitProvider ID */
+  gitProviderId: Scalars["ID"]["input"];
+  owner: Scalars["String"]["input"];
+  /** Subdirectory path within the repository */
+  path?: InputMaybe<Scalars["String"]["input"]>;
+  repo: Scalars["String"]["input"];
+};
+
+export type GitRepositoryObject = {
+  __typename?: "GitRepositoryObject";
+  cloneUrl: Scalars["String"]["output"];
+  defaultBranch: Scalars["String"]["output"];
+  description?: Maybe<Scalars["String"]["output"]>;
+  fullName: Scalars["String"]["output"];
+  htmlUrl: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  name: Scalars["String"]["output"];
+  owner: Scalars["String"]["output"];
+  private: Scalars["Boolean"]["output"];
 };
 
 /** Health check configuration for a service */
@@ -495,6 +603,11 @@ export type Query = {
   currentWorkspace: Workspace;
   currentWorkspaceMember: WorkspaceMember;
   domain?: Maybe<Domain>;
+  gitAccounts: Array<GitAccountObject>;
+  gitBranches: Array<GitBranchObject>;
+  gitProvider?: Maybe<GitProvider>;
+  gitProviders: GitProviderConnection;
+  gitRepositories: Array<GitRepositoryObject>;
   project?: Maybe<Project>;
   service?: Maybe<Service>;
   volume?: Maybe<Volume>;
@@ -511,6 +624,39 @@ export type QueryClusterArgs = {
 
 export type QueryDomainArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type QueryGitAccountsArgs = {
+  gitProviderId: Scalars["ID"]["input"];
+};
+
+export type QueryGitBranchesArgs = {
+  accountId: Scalars["String"]["input"];
+  gitProviderId: Scalars["ID"]["input"];
+  owner: Scalars["String"]["input"];
+  repo: Scalars["String"]["input"];
+};
+
+export type QueryGitProviderArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryGitProvidersArgs = {
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<Scalars["GitProviderFilter"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<GitProviderOrder>;
+  query?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryGitRepositoriesArgs = {
+  accountId: Scalars["String"]["input"];
+  gitProviderId: Scalars["ID"]["input"];
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  perPage?: InputMaybe<Scalars["Int"]["input"]>;
+  search?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type QueryProjectArgs = {
@@ -579,6 +725,8 @@ export type Service = {
   description?: Maybe<Scalars["String"]["output"]>;
   domains: DomainConnection;
   environmentVariables: Array<EnvironmentVariable>;
+  /** Git repository configuration for source code */
+  gitRepository?: Maybe<GitRepository>;
   /** Health check configuration applied to liveness, readiness, and startup probes */
   healthCheck?: Maybe<HealthCheck>;
   id: Scalars["ID"]["output"];
@@ -706,6 +854,7 @@ export type UpdateProjectInput = {
 export type UpdateServiceInput = {
   description?: InputMaybe<Scalars["String"]["input"]>;
   environmentVariables?: InputMaybe<Array<EnvironmentVariableInput>>;
+  gitRepository?: InputMaybe<GitRepositoryInput>;
   healthCheck?: InputMaybe<HealthCheckInput>;
   image?: InputMaybe<ImageInput>;
   ports?: InputMaybe<Array<ServicePortInput>>;

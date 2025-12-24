@@ -24,6 +24,37 @@ import { Workspace } from '@/workspace/workspace.entity';
 import { HealthCheckType } from './enums/health-check-type.enum';
 import { ServicePortProtocol } from './enums/service-port-protocol.enum';
 
+@ObjectType({ description: 'Git repository configuration for a service' })
+@Embeddable()
+export class GitRepository {
+  @Field(() => ID, { description: 'GitProvider ID' })
+  @Property({ type: t.bigint })
+  gitProviderId!: string;
+
+  @Field(() => String, { description: 'OAuth Account ID' })
+  @Property({ type: t.string })
+  accountId!: string;
+
+  @Field(() => String)
+  @Property({ type: t.string })
+  owner!: string;
+
+  @Field(() => String)
+  @Property({ type: t.string })
+  repo!: string;
+
+  @Field(() => String)
+  @Property({ type: t.string })
+  branch!: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Subdirectory path within the repository',
+  })
+  @Property({ type: t.string, nullable: true })
+  path: Opt<string> | null = null;
+}
+
 @ObjectType()
 @Embeddable()
 export class ServicePort {
@@ -159,6 +190,14 @@ export class Service {
   })
   @Embedded(() => HealthCheck, { nullable: true })
   healthCheck: Opt<HealthCheck> | null = null;
+
+  // eslint-disable-next-line @nest-boot/entity-property-config-from-types
+  @Field(() => GitRepository, {
+    nullable: true,
+    description: 'Git repository configuration for source code',
+  })
+  @Embedded(() => GitRepository, { nullable: true })
+  gitRepository: Opt<GitRepository> | null = null;
 
   @Field(() => Date)
   @Property({ type: t.datetime, defaultRaw: 'now()' })

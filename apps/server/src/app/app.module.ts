@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ClusterModule } from '@/cluster/cluster.module';
 import { CommonModule } from '@/common/common.module';
 import { DomainModule } from '@/domain/domain.module';
+import { GitProviderModule } from '@/git-provider/git-provider.module';
 import { ProjectModule } from '@/project/project.module';
 import { RuntimeLogModule } from '@/runtime-log/runtime-log.module';
 import { ServiceModule } from '@/service/service.module';
@@ -25,6 +26,7 @@ import { WorkspaceMemberModule } from '@/workspace-member/workspace-member.modul
     TerminalModule,
     DomainModule,
     VolumeModule,
+    GitProviderModule,
   ],
 })
 export class AppModule {}

@@ -2,6 +2,8 @@ import { Field, InputType } from '@nest-boot/graphql';
 import { Type } from 'class-transformer';
 import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 
+import { GitRepositoryInput } from '@/git-provider/inputs/git-repository.input';
+
 import { EnvironmentVariableInput } from './environment-variable.input';
 import { HealthCheckInput } from './health-check.input';
 import { ImageInput } from './image.input';
@@ -46,4 +48,10 @@ export class UpdateServiceInput {
   @Type(() => HealthCheckInput)
   @Field(() => HealthCheckInput, { nullable: true })
   healthCheck?: HealthCheckInput | null;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => GitRepositoryInput)
+  @Field(() => GitRepositoryInput, { nullable: true })
+  gitRepository?: GitRepositoryInput | null;
 }

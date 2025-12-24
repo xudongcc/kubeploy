@@ -227,6 +227,119 @@ input EnvironmentVariableInput {
   value: String!
 }
 
+type GitAccountObject {
+  accountId: String!
+  id: ID!
+  providerId: String!
+  username: String
+}
+
+type GitBranchObject {
+  name: String!
+  protected: Boolean!
+  sha: String!
+}
+
+type GitProvider {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  type: GitProviderType!
+
+  """Base URL (e.g., https://github.com or https://gitlab.com)"""
+  url: String!
+}
+
+type GitProviderConnection {
+  """A list of edges."""
+  edges: [GitProviderEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""
+An auto-generated type which holds one GitProvider and a cursor during pagination.
+"""
+type GitProviderEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of GitProviderEdge."""
+  node: GitProvider!
+}
+
+"""
+A filter for GitProvider that accepts MongoDB query syntax.
+Supported fields: name, created_at
+"""
+scalar GitProviderFilter
+
+"""Ordering options for gitprovider connections"""
+input GitProviderOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order gitproviders by."""
+  field: GitProviderOrderField!
+}
+
+"""Properties by which gitprovider connections can be ordered."""
+enum GitProviderOrderField {
+  CREATED_AT
+  ID
+}
+
+"""Type of git provider"""
+enum GitProviderType {
+  GITHUB
+  GITLAB
+}
+
+"""Git repository configuration for a service"""
+type GitRepository {
+  """OAuth Account ID"""
+  accountId: String!
+  branch: String!
+
+  """GitProvider ID"""
+  gitProviderId: ID!
+  owner: String!
+
+  """Subdirectory path within the repository"""
+  path: String
+  repo: String!
+}
+
+input GitRepositoryInput {
+  """OAuth Account ID"""
+  accountId: String!
+  branch: String!
+
+  """GitProvider ID"""
+  gitProviderId: ID!
+  owner: String!
+
+  """Subdirectory path within the repository"""
+  path: String
+  repo: String!
+}
+
+type GitRepositoryObject {
+  cloneUrl: String!
+  defaultBranch: String!
+  description: String
+  fullName: String!
+  htmlUrl: String!
+  id: ID!
+  name: String!
+  owner: String!
+  private: Boolean!
+}
+
 """Health check configuration for a service"""
 type HealthCheck {
   """HTTP path to probe (required for HTTP type)"""
@@ -397,6 +510,36 @@ type Query {
   currentWorkspace: Workspace!
   currentWorkspaceMember: WorkspaceMember!
   domain(id: ID!): Domain
+  gitAccounts(gitProviderId: ID!): [GitAccountObject!]!
+  gitBranches(accountId: String!, gitProviderId: ID!, owner: String!, repo: String!): [GitBranchObject!]!
+  gitProvider(id: ID!): GitProvider
+  gitProviders(
+    """Returns the elements that come after the specified cursor."""
+    after: String
+
+    """Returns the elements that come before the specified cursor."""
+    before: String
+
+    """Filter gitproviders using MongoDB query syntax."""
+    filter: GitProviderFilter
+
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+
+    """Ordering options for the returned gitproviders."""
+    orderBy: GitProviderOrder
+
+    """
+    Apply one or multiple filters to the query.
+    Supported filter parameters:
+    `created_at`
+    """
+    query: String
+  ): GitProviderConnection!
+  gitRepositories(accountId: String!, gitProviderId: ID!, page: Int, perPage: Int, search: String): [GitRepositoryObject!]!
   project(id: ID!): Project
   service(id: ID!): Service
   volume(id: ID!): Volume
@@ -504,6 +647,9 @@ type Service {
     query: String
   ): DomainConnection!
   environmentVariables: [EnvironmentVariable!]!
+
+  """Git repository configuration for source code"""
+  gitRepository: GitRepository
 
   """
   Health check configuration applied to liveness, readiness, and startup probes
@@ -650,6 +796,7 @@ input UpdateProjectInput {
 input UpdateServiceInput {
   description: String
   environmentVariables: [EnvironmentVariableInput!]
+  gitRepository: GitRepositoryInput
   healthCheck: HealthCheckInput
   image: ImageInput
   ports: [ServicePortInput!]
