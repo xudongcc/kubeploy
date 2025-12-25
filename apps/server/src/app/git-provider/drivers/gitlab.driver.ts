@@ -1,73 +1,160 @@
-import axios, { AxiosInstance } from 'axios';
+import { BadRequestException } from '@nestjs/common';
 
+import { GitProviderAccount } from '../entities/git-provider-account.entity';
+import { GitProvider } from '../entities/git-provider.entity';
 import {
   GitBranch,
+  GitProviderDriver,
   GitRepository,
-  IGitProviderDriver,
 } from '../interfaces/git-provider-driver.interface';
+import { GitProviderTokens } from '../interfaces/git-provider-tokens.interface';
+import { GitProviderUserInfo } from '../interfaces/git-provider-user-info.interface';
 
-export class GitLabDriver implements IGitProviderDriver {
-  private readonly client: AxiosInstance;
+export class GitLabGitProviderDriver implements GitProviderDriver {
+  constructor(private readonly gitProvider: GitProvider) {}
 
-  constructor(
-    private readonly accessToken: string,
-    private readonly apiUrl: string,
-  ) {
-    this.client = axios.create({
-      baseURL: apiUrl,
+  private get baseUrl(): string {
+    return this.gitProvider.url;
+  }
+
+  private get apiUrl(): string {
+    return `${this.baseUrl}/api/v4`;
+  }
+
+  buildAuthUrl(clientId: string, redirectUri: string, state: string): string {
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'api read_user read_repository',
+      state,
+    });
+    return `${this.baseUrl}/oauth/authorize?${params.toString()}`;
+  }
+
+  async exchangeCode(
+    clientId: string,
+    clientSecret: string,
+    code: string,
+    redirectUri: string,
+  ): Promise<GitProviderTokens> {
+    const response = await fetch(`${this.baseUrl}/oauth/token`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: redirectUri,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new BadRequestException(
+        data.error_description || 'Failed to exchange code',
+      );
+    }
+
+    return {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresAt: data.expires_in
+        ? new Date(Date.now() + data.expires_in * 1000)
+        : undefined,
+    };
+  }
+
+  async getUserInfo(accessToken: string): Promise<GitProviderUserInfo> {
+    const response = await fetch(`${this.apiUrl}/user`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    if (!response.ok) {
+      throw new BadRequestException('Failed to get user info from GitLab');
+    }
+
+    const data = await response.json();
+    return { id: String(data.id) };
   }
 
-  async listRepositories(
+  async getRepositories(
+    account: GitProviderAccount,
     page = 1,
     perPage = 30,
     search?: string,
   ): Promise<{ repositories: GitRepository[]; totalCount: number }> {
-    const params: Record<string, unknown> = {
-      page,
-      per_page: perPage,
-      membership: true,
+    const params = new URLSearchParams({
+      page: page.toString(),
+      per_page: perPage.toString(),
+      membership: 'true',
       order_by: 'last_activity_at',
-    };
+    });
 
     if (search) {
-      params.search = search;
+      params.set('search', search);
     }
 
-    const response = await this.client.get<GitLabProject[]>('/projects', {
-      params,
+    const response = await fetch(`${this.apiUrl}/projects?${params.toString()}`, {
+      headers: this.getHeaders(account),
     });
-    const totalCount = parseInt(
-      (response.headers['x-total'] as string) || '0',
-      10,
-    );
+
+    if (!response.ok) {
+      throw new BadRequestException('Failed to list repositories');
+    }
+
+    const totalCount = parseInt(response.headers.get('x-total') || '0', 10);
+    const data: GitLabProject[] = await response.json();
 
     return {
-      repositories: response.data.map((project) => this.mapRepository(project)),
+      repositories: data.map((project) => this.mapRepository(project)),
       totalCount,
     };
   }
 
-  async getRepository(owner: string, repo: string): Promise<GitRepository> {
+  async getRepository(
+    account: GitProviderAccount,
+    owner: string,
+    repo: string,
+  ): Promise<GitRepository> {
     const projectPath = encodeURIComponent(`${owner}/${repo}`);
-    const { data } = await this.client.get<GitLabProject>(
-      `/projects/${projectPath}`,
-    );
+    const response = await fetch(`${this.apiUrl}/projects/${projectPath}`, {
+      headers: this.getHeaders(account),
+    });
+
+    if (!response.ok) {
+      throw new BadRequestException('Failed to get repository');
+    }
+
+    const data: GitLabProject = await response.json();
     return this.mapRepository(data);
   }
 
-  async listBranches(owner: string, repo: string): Promise<GitBranch[]> {
+  async getBranches(
+    account: GitProviderAccount,
+    owner: string,
+    repo: string,
+  ): Promise<GitBranch[]> {
     const projectPath = encodeURIComponent(`${owner}/${repo}`);
-    const { data } = await this.client.get<GitLabBranch[]>(
-      `/projects/${projectPath}/repository/branches`,
+    const response = await fetch(
+      `${this.apiUrl}/projects/${projectPath}/repository/branches?per_page=100`,
       {
-        params: { per_page: 100 },
+        headers: this.getHeaders(account),
       },
     );
 
+    if (!response.ok) {
+      throw new BadRequestException('Failed to list branches');
+    }
+
+    const data: GitLabBranch[] = await response.json();
     return data.map((branch) => ({
       name: branch.name,
       sha: branch.commit.id,
@@ -75,11 +162,16 @@ export class GitLabDriver implements IGitProviderDriver {
     }));
   }
 
+  private getHeaders(account: GitProviderAccount): Record<string, string> {
+    return {
+      Authorization: `Bearer ${account.accessToken}`,
+    };
+  }
+
   private mapRepository(project: GitLabProject): GitRepository {
     return {
       id: project.id.toString(),
       name: project.path,
-      fullName: project.path_with_namespace,
       owner: project.namespace.path,
       description: project.description,
       defaultBranch: project.default_branch,
@@ -93,7 +185,6 @@ export class GitLabDriver implements IGitProviderDriver {
 interface GitLabProject {
   id: number;
   path: string;
-  path_with_namespace: string;
   namespace: {
     path: string;
   };

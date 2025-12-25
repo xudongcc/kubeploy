@@ -29,7 +29,6 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ClusterNodeStatus } from "@/gql/graphql";
 import { graphql } from "@/gql";
 import { zodValidator } from "@tanstack/zod-adapter";
 import z from "zod";

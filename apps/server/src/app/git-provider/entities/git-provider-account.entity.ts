@@ -11,21 +11,17 @@ import {
 import { Sonyflake } from 'sonyflake-js';
 
 import { User } from '@/user/user.entity';
-import { Workspace } from '@/workspace/workspace.entity';
 
 import { GitProvider } from './git-provider.entity';
 
 @Entity()
-@Unique({ properties: ['workspace', 'provider', 'providerUserId'] })
+@Unique({ properties: ['provider', 'user'] })
 export class GitProviderAccount {
   @PrimaryKey({ type: t.bigint })
   id: string = Sonyflake.next().toString();
 
   @Property({ type: t.string })
   providerUserId!: string;
-
-  @Property({ type: t.string, nullable: true })
-  username?: string;
 
   @Property({ type: t.text })
   accessToken!: string;
@@ -46,12 +42,9 @@ export class GitProviderAccount {
   })
   updatedAt: Opt<Date> = new Date();
 
-  @ManyToOne(() => Workspace)
-  workspace!: Ref<Workspace>;
+  @ManyToOne(() => GitProvider)
+  provider!: Ref<GitProvider>;
 
   @ManyToOne(() => User)
   user!: Ref<User>;
-
-  @ManyToOne(() => GitProvider)
-  provider!: Ref<GitProvider>;
 }

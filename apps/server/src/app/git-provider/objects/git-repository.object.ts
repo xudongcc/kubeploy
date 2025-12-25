@@ -20,9 +20,6 @@ export class GitRepository {
   name!: string;
 
   @Field(() => String)
-  fullName!: string;
-
-  @Field(() => String)
   owner!: string;
 
   @Field(() => String)

@@ -259,7 +259,7 @@ export type EnvironmentVariableInput = {
 
 export type GitProvider = {
   __typename?: "GitProvider";
-  authorized: Scalars["Boolean"]["output"];
+  authorization?: Maybe<GitProviderAuthorization>;
   createdAt: Scalars["DateTime"]["output"];
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
@@ -279,6 +279,14 @@ export type GitProviderRepositoriesArgs = {
 export type GitProviderRepositoryArgs = {
   owner: Scalars["String"]["input"];
   repo: Scalars["String"]["input"];
+};
+
+export type GitProviderAuthorization = {
+  __typename?: "GitProviderAuthorization";
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  member: WorkspaceMember;
+  workspace: Workspace;
 };
 
 export type GitProviderConnection = {
@@ -325,7 +333,6 @@ export type GitRepository = {
   branches: Array<Scalars["String"]["output"]>;
   cloneUrl: Scalars["String"]["output"];
   defaultBranch: Scalars["String"]["output"];
-  fullName: Scalars["String"]["output"];
   htmlUrl: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
@@ -334,27 +341,6 @@ export type GitRepository = {
 
 export type GitRepositoryBranchesArgs = {
   search?: InputMaybe<Scalars["String"]["input"]>;
-};
-
-/** Git source configuration for a service */
-export type GitSource = {
-  __typename?: "GitSource";
-  branch: Scalars["String"]["output"];
-  owner: Scalars["String"]["output"];
-  /** Subdirectory path within the repository */
-  path?: Maybe<Scalars["String"]["output"]>;
-  provider: GitProvider;
-  repo: Scalars["String"]["output"];
-};
-
-export type GitSourceInput = {
-  branch: Scalars["String"]["input"];
-  owner: Scalars["String"]["input"];
-  /** Subdirectory path within the repository */
-  path?: InputMaybe<Scalars["String"]["input"]>;
-  /** GitProvider ID */
-  providerId: Scalars["ID"]["input"];
-  repo: Scalars["String"]["input"];
 };
 
 /** Health check configuration for a service */
@@ -700,8 +686,6 @@ export type Service = {
   description?: Maybe<Scalars["String"]["output"]>;
   domains: DomainConnection;
   environmentVariables: Array<EnvironmentVariable>;
-  /** Git source configuration for source code */
-  gitSource?: Maybe<GitSource>;
   /** Health check configuration applied to liveness, readiness, and startup probes */
   healthCheck?: Maybe<HealthCheck>;
   id: Scalars["ID"]["output"];
@@ -711,6 +695,8 @@ export type Service = {
   ports: Array<ServicePort>;
   project: Project;
   resourceLimits: ResourceLimits;
+  /** Source configuration for source code */
+  source?: Maybe<ServiceSource>;
   status: ServiceStatus;
   updatedAt: Scalars["DateTime"]["output"];
   volumes: VolumeConnection;
@@ -799,6 +785,28 @@ export enum ServicePortProtocol {
   UDP = "UDP",
 }
 
+/** Source configuration for a service */
+export type ServiceSource = {
+  __typename?: "ServiceSource";
+  authorization?: Maybe<GitProviderAuthorization>;
+  branch: Scalars["String"]["output"];
+  owner: Scalars["String"]["output"];
+  /** Subdirectory path within the repository */
+  path?: Maybe<Scalars["String"]["output"]>;
+  provider: GitProvider;
+  repo: Scalars["String"]["output"];
+};
+
+export type ServiceSourceInput = {
+  /** GitProviderAuthorization ID */
+  authorizationId: Scalars["ID"]["input"];
+  branch: Scalars["String"]["input"];
+  owner: Scalars["String"]["input"];
+  /** Subdirectory path within the repository */
+  path?: InputMaybe<Scalars["String"]["input"]>;
+  repo: Scalars["String"]["input"];
+};
+
 export enum ServiceStatus {
   BUILDING = "BUILDING",
   DEPLOYING = "DEPLOYING",
@@ -829,11 +837,11 @@ export type UpdateProjectInput = {
 export type UpdateServiceInput = {
   description?: InputMaybe<Scalars["String"]["input"]>;
   environmentVariables?: InputMaybe<Array<EnvironmentVariableInput>>;
-  gitSource?: InputMaybe<GitSourceInput>;
   healthCheck?: InputMaybe<HealthCheckInput>;
   image?: InputMaybe<ImageInput>;
   ports?: InputMaybe<Array<ServicePortInput>>;
   resourceLimits?: InputMaybe<ResourceLimitsInput>;
+  source?: InputMaybe<ServiceSourceInput>;
 };
 
 export type UpdateVolumeInput = {
@@ -1128,7 +1136,6 @@ export type GetGitRepositoriesForSelectQuery = {
       __typename?: "GitRepository";
       id: string;
       name: string;
-      fullName: string;
       owner: string;
       defaultBranch: string;
       htmlUrl: string;
@@ -1661,8 +1668,8 @@ export type GetServiceQuery = {
       path?: string | null;
       port: number;
     } | null;
-    gitSource?: {
-      __typename?: "GitSource";
+    source?: {
+      __typename?: "ServiceSource";
       owner: string;
       repo: string;
       branch: string;
@@ -1706,8 +1713,8 @@ export type ServiceDetailFragment = {
     path?: string | null;
     port: number;
   } | null;
-  gitSource?: {
-    __typename?: "GitSource";
+  source?: {
+    __typename?: "ServiceSource";
     owner: string;
     repo: string;
     branch: string;
@@ -1737,16 +1744,19 @@ export type DeleteServiceMutation = {
   deleteService: { __typename?: "Service"; id: string };
 };
 
-export type GetGitProviderAuthorizedQueryVariables = Exact<{
+export type GetGitProviderAuthorizationQueryVariables = Exact<{
   gitProviderId: Scalars["ID"]["input"];
 }>;
 
-export type GetGitProviderAuthorizedQuery = {
+export type GetGitProviderAuthorizationQuery = {
   __typename?: "Query";
   gitProvider?: {
     __typename?: "GitProvider";
     id: string;
-    authorized: boolean;
+    authorization?: {
+      __typename?: "GitProviderAuthorization";
+      id: string;
+    } | null;
   } | null;
 };
 
@@ -2244,7 +2254,7 @@ export const ServiceDetailFragmentDoc = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "gitSource" },
+            name: { kind: "Name", value: "source" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -2797,10 +2807,6 @@ export const GetGitRepositoriesForSelectDocument = {
                     selections: [
                       { kind: "Field", name: { kind: "Name", value: "id" } },
                       { kind: "Field", name: { kind: "Name", value: "name" } },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "fullName" },
-                      },
                       { kind: "Field", name: { kind: "Name", value: "owner" } },
                       {
                         kind: "Field",
@@ -4465,7 +4471,7 @@ export const UpdateServiceEnvironmentDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "gitSource" },
+            name: { kind: "Name", value: "source" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -4637,7 +4643,7 @@ export const UpdateServiceImageDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "gitSource" },
+            name: { kind: "Name", value: "source" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -5357,7 +5363,7 @@ export const UpdateServicePortsDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "gitSource" },
+            name: { kind: "Name", value: "source" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -5513,7 +5519,7 @@ export const GetServiceDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "gitSource" },
+            name: { kind: "Name", value: "source" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -5682,7 +5688,7 @@ export const UpdateServiceResourcesDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "gitSource" },
+            name: { kind: "Name", value: "source" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -5761,13 +5767,13 @@ export const DeleteServiceDocument = {
   DeleteServiceMutation,
   DeleteServiceMutationVariables
 >;
-export const GetGitProviderAuthorizedDocument = {
+export const GetGitProviderAuthorizationDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "query",
-      name: { kind: "Name", value: "GetGitProviderAuthorized" },
+      name: { kind: "Name", value: "GetGitProviderAuthorization" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -5801,7 +5807,16 @@ export const GetGitProviderAuthorizedDocument = {
               kind: "SelectionSet",
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "authorized" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "authorization" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
               ],
             },
           },
@@ -5810,8 +5825,8 @@ export const GetGitProviderAuthorizedDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  GetGitProviderAuthorizedQuery,
-  GetGitProviderAuthorizedQueryVariables
+  GetGitProviderAuthorizationQuery,
+  GetGitProviderAuthorizationQueryVariables
 >;
 export const UpdateServiceSourceDocument = {
   kind: "Document",
@@ -5954,7 +5969,7 @@ export const UpdateServiceSourceDocument = {
           },
           {
             kind: "Field",
-            name: { kind: "Name", value: "gitSource" },
+            name: { kind: "Name", value: "source" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [

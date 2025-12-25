@@ -14,7 +14,7 @@ import {
   DomainConnectionArgs,
 } from '@/domain/domain.connection-definition';
 import { Domain } from '@/domain/domain.entity';
-import { GitProviderService } from '@/git-provider/git-provider.service';
+import { GitProviderAuthorizationService } from '@/git-provider/services/git-provider-authorization.service';
 import { Can, PermissionAction } from '@/lib/permission';
 import { Project } from '@/project/project.entity';
 import {
@@ -23,21 +23,18 @@ import {
 } from '@/volume/volume.connection-definition';
 import { Volume } from '@/volume/volume.entity';
 
-import { ServiceStatus } from './enums/service-status.enum';
-import { CreateServiceInput } from './inputs/create-service.input';
-import { UpdateServiceInput } from './inputs/update-service.input';
-import { ServiceMetrics } from './objects/service-metrics.object';
-import { Service } from './service.entity';
-import { ServiceService } from './service.service';
-import { User } from '@/user/user.entity';
-import { CurrentUser } from '@nest-boot/auth';
-import { GitProviderAccountService } from '@/git-provider/git-provider-account.service';
+import { ServiceStatus } from '../enums/service-status.enum';
+import { CreateServiceInput } from '../inputs/create-service.input';
+import { UpdateServiceInput } from '../inputs/update-service.input';
+import { ServiceMetrics } from '../objects/service-metrics.object';
+import { Service } from '../service.entity';
+import { ServiceService } from '../service.service';
 
 @Resolver(() => Service)
 export class ServiceResolver {
   constructor(
     private readonly serviceService: ServiceService,
-    private readonly gitProviderAccountService: GitProviderAccountService,
+    private readonly gitProviderAuthorizationService: GitProviderAuthorizationService,
     private readonly cm: ConnectionManager,
   ) {}
 
@@ -72,25 +69,37 @@ export class ServiceResolver {
   @Can(PermissionAction.UPDATE, Service)
   @Mutation(() => Service)
   async updateService(
-    @CurrentUser() user: User,
     @Args({ name: 'id', type: () => ID }) id: string,
     @Args('input') input: UpdateServiceInput,
   ): Promise<Service> {
+    let sourceData = {};
+
+    if (input.source) {
+      const authorization =
+        await this.gitProviderAuthorizationService.findOneOrFail(
+          input.source.authorizationId,
+        );
+
+      const account = await authorization.account.loadOrFail();
+      const provider = await account.provider.loadOrFail();
+
+      sourceData = {
+        source: {
+          authorization,
+          provider,
+          owner: input.source.owner,
+          repo: input.source.repo,
+          branch: input.source.branch,
+          path: input.source.path,
+        },
+      };
+    } else if (input.source === null) {
+      sourceData = { source: null };
+    }
+
     return await this.serviceService.update(id, {
       ...input,
-      ...(input.gitSource
-        ? {
-            gitSource: {
-              account: await this.gitProviderAccountService.findOneOrFail({
-                provider: {
-                  id: input.gitSource.providerId,
-                },
-                user,
-              }),
-              ...input.gitSource,
-            },
-          }
-        : {}),
+      ...sourceData,
     });
   }
 

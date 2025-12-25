@@ -28,11 +28,13 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { graphql } from "@/gql";
 
-const GET_GIT_PROVIDER_AUTHORIZED_QUERY = graphql(`
-  query GetGitProviderAuthorized($gitProviderId: ID!) {
+const GET_GIT_PROVIDER_AUTHORIZATION_QUERY = graphql(`
+  query GetGitProviderAuthorization($gitProviderId: ID!) {
     gitProvider(id: $gitProviderId) {
       id
-      authorized
+      authorization {
+        id
+      }
     }
   }
 `);
@@ -64,49 +66,49 @@ function RouteComponent() {
 
   // State for selected values
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(
-    service.gitSource?.provider.id ?? null,
+    service.source?.provider.id ?? null,
   );
   const [selectedRepo, setSelectedRepo] = useState<GitRepository | null>(
-    service.gitSource
+    service.source
       ? {
           id: "",
-          name: service.gitSource.repo,
-          fullName: `${service.gitSource.owner}/${service.gitSource.repo}`,
-          owner: service.gitSource.owner,
-          defaultBranch: service.gitSource.branch,
+          name: service.source.repo,
+          owner: service.source.owner,
+          defaultBranch: service.source.branch,
           htmlUrl: "",
         }
       : null,
   );
 
   // Check if provider is authorized
-  const { data: authorizedData, loading: authorizedLoading } = useQuery(
-    GET_GIT_PROVIDER_AUTHORIZED_QUERY,
+  const { data: authorizationData, loading: authorizationLoading } = useQuery(
+    GET_GIT_PROVIDER_AUTHORIZATION_QUERY,
     {
       variables: { gitProviderId: selectedProviderId! },
       skip: !selectedProviderId,
     },
   );
 
-  const isAuthorized = authorizedData?.gitProvider?.authorized ?? false;
+  const isAuthorized = authorizationData?.gitProvider?.authorization != null;
+  const authorizationId = authorizationData?.gitProvider?.authorization?.id;
 
   const form = useForm({
     defaultValues: {
-      enabled: !!service.gitSource,
-      providerId: service.gitSource?.provider.id ?? "",
-      owner: service.gitSource?.owner ?? "",
-      repo: service.gitSource?.repo ?? "",
-      branch: service.gitSource?.branch ?? "",
-      path: service.gitSource?.path ?? "/",
+      enabled: !!service.source,
+      owner: service.source?.owner ?? "",
+      repo: service.source?.repo ?? "",
+      branch: service.source?.branch ?? "",
+      path: service.source?.path ?? "/",
     },
     onSubmit: async ({ value }) => {
+      if (!authorizationId) return;
       await updateService({
         variables: {
           id: serviceId,
           input: {
-            gitSource: value.enabled
+            source: value.enabled
               ? {
-                  providerId: value.providerId,
+                  authorizationId,
                   owner: value.owner,
                   repo: value.repo,
                   branch: value.branch,
@@ -119,13 +121,7 @@ function RouteComponent() {
     },
   });
 
-  // Update form when selections change
-  useEffect(() => {
-    if (selectedProviderId) {
-      form.setFieldValue("providerId", selectedProviderId);
-    }
-  }, [selectedProviderId]);
-
+  // Update form when repo selection changes
   useEffect(() => {
     if (selectedRepo) {
       form.setFieldValue("owner", selectedRepo.owner);
@@ -224,7 +220,7 @@ function RouteComponent() {
                       {/* Authorization Status */}
                       {selectedProviderId && (
                         <div className="flex flex-col gap-2">
-                          {authorizedLoading ? (
+                          {authorizationLoading ? (
                             <Skeleton className="h-10 w-full" />
                           ) : !isAuthorized ? (
                             <div className="flex flex-col gap-2">

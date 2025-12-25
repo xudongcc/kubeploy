@@ -302,11 +302,11 @@ importers:
         specifier: ^6.6.1
         version: 6.6.1(@mikro-orm/core@6.6.1)
       '@nest-boot/auth':
-        specifier: ^7.7.5
-        version: 7.7.5(d85c5c4b57005226acf656798edca4d3)
+        specifier: ^7.8.0
+        version: 7.8.0(d85c5c4b57005226acf656798edca4d3)
       '@nest-boot/auth-rls':
-        specifier: ^7.2.3
-        version: 7.2.3(@mikro-orm/core@6.6.1)(@mikro-orm/postgresql@6.6.1(@mikro-orm/core@6.6.1))(@nest-boot/auth@7.7.5(d85c5c4b57005226acf656798edca4d3))(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nest-boot/mikro-orm-request-transaction@7.1.4(f70836200ede1b46c19939518d4cc4a8))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+        specifier: ^7.3.1
+        version: 7.3.1(@mikro-orm/core@6.6.1)(@mikro-orm/postgresql@6.6.1(@mikro-orm/core@6.6.1))(@nest-boot/auth@7.8.0(d85c5c4b57005226acf656798edca4d3))(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nest-boot/mikro-orm-request-transaction@7.1.4(f70836200ede1b46c19939518d4cc4a8))(@nest-boot/request-context@7.4.2(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nest-boot/bullmq':
         specifier: ^7.0.2
         version: 7.0.2(@nest-boot/request-context@7.4.2(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/bullmq@11.0.4(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(bullmq@5.65.1))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(bullmq@5.65.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -2387,22 +2387,23 @@ packages:
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
 
-  '@nest-boot/auth-rls@7.2.3':
-    resolution: {integrity: sha512-gNHRVQnO6fXCkywcR56khT1BBci8Lolk4QtDZp3jy1UgozZOkoxbGxBO+F5EciQS/MUiafVyfRoGet3taVlcYw==}
+  '@nest-boot/auth-rls@7.3.1':
+    resolution: {integrity: sha512-UF042UkmSmq3cP28YSTX267+jC6dFWoto/RWoq0QoRoGkVlzKfqMdlGO3gNCc1OsoD4LoaVFBF3slKN4wbTArQ==}
     peerDependencies:
       '@mikro-orm/core': ^6.0.0
       '@mikro-orm/postgresql': ^6.0.0
       '@nest-boot/auth': ^7.0.0
       '@nest-boot/middleware': ^7.0.0
       '@nest-boot/mikro-orm-request-transaction': ^7.0.0
+      '@nest-boot/request-context': ^7.0.0
       '@nestjs/common': ^11.0.0
       '@nestjs/core': ^11.0.0
       express: ^5.0.0
       reflect-metadata: ^0.2.2
       rxjs: ^7.0.0
 
-  '@nest-boot/auth@7.7.5':
-    resolution: {integrity: sha512-dDYLJBI0C1tAqdC+GndBfuMjnRXQWs2rluMXcOp34dURfiRpXaT509OeS6vQLvhT/6ZaVfQAipSzsnKvMDbQzg==}
+  '@nest-boot/auth@7.8.0':
+    resolution: {integrity: sha512-lm7+L4f/fLeDt0TfjppI5wCaq3L1HGzaJ3qFcn+HRE2lKrDum61ZjEhFMow6X3r/6DkAjDltzL0vB9G1iL+j4g==}
     peerDependencies:
       '@mikro-orm/core': ^6.0.0
       '@nest-boot/middleware': ^7.0.0
@@ -9889,7 +9890,7 @@ snapshots:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.18
       '@standard-schema/spec': 1.0.0
-      better-call: 1.1.4(zod@4.1.13)
+      better-call: 1.1.4(zod@3.25.76)
       jose: 6.1.3
       kysely: 0.28.8
       nanostores: 1.1.0
@@ -11489,20 +11490,21 @@ snapshots:
       '@tybys/wasm-util': 0.10.1
     optional: true
 
-  '@nest-boot/auth-rls@7.2.3(@mikro-orm/core@6.6.1)(@mikro-orm/postgresql@6.6.1(@mikro-orm/core@6.6.1))(@nest-boot/auth@7.7.5(d85c5c4b57005226acf656798edca4d3))(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nest-boot/mikro-orm-request-transaction@7.1.4(f70836200ede1b46c19939518d4cc4a8))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+  '@nest-boot/auth-rls@7.3.1(@mikro-orm/core@6.6.1)(@mikro-orm/postgresql@6.6.1(@mikro-orm/core@6.6.1))(@nest-boot/auth@7.8.0(d85c5c4b57005226acf656798edca4d3))(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nest-boot/mikro-orm-request-transaction@7.1.4(f70836200ede1b46c19939518d4cc4a8))(@nest-boot/request-context@7.4.2(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
       '@mikro-orm/core': 6.6.1
       '@mikro-orm/postgresql': 6.6.1(@mikro-orm/core@6.6.1)
-      '@nest-boot/auth': 7.7.5(d85c5c4b57005226acf656798edca4d3)
+      '@nest-boot/auth': 7.8.0(d85c5c4b57005226acf656798edca4d3)
       '@nest-boot/middleware': 7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nest-boot/mikro-orm-request-transaction': 7.1.4(f70836200ede1b46c19939518d4cc4a8)
+      '@nest-boot/request-context': 7.4.2(@nest-boot/middleware@7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/common': 11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.9(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.9)(@nestjs/websockets@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       express: 5.1.0
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
 
-  '@nest-boot/auth@7.7.5(d85c5c4b57005226acf656798edca4d3)':
+  '@nest-boot/auth@7.8.0(d85c5c4b57005226acf656798edca4d3)':
     dependencies:
       '@mikro-orm/core': 6.6.1
       '@nest-boot/middleware': 7.2.2(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -14426,7 +14428,7 @@ snapshots:
       '@better-fetch/fetch': 1.1.18
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.4(zod@4.1.13)
+      better-call: 1.1.4(zod@3.25.76)
       defu: 6.1.4
       jose: 6.1.3
       kysely: 0.28.8
@@ -14439,6 +14441,15 @@ snapshots:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
       solid-js: 1.9.10
+
+  better-call@1.1.4(zod@3.25.76):
+    dependencies:
+      '@better-auth/utils': 0.3.0
+      '@better-fetch/fetch': 1.1.18
+      rou3: 0.7.10
+      set-cookie-parser: 2.7.2
+    optionalDependencies:
+      zod: 3.25.76
 
   better-call@1.1.4(zod@4.1.13):
     dependencies:

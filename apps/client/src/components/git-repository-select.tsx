@@ -32,7 +32,6 @@ const GET_GIT_REPOSITORIES_QUERY = graphql(`
       repositories(page: $page, perPage: $perPage, search: $search) {
         id
         name
-        fullName
         owner
         defaultBranch
         htmlUrl
@@ -44,7 +43,6 @@ const GET_GIT_REPOSITORIES_QUERY = graphql(`
 export interface GitRepository {
   id: string;
   name: string;
-  fullName: string;
   owner: string;
   defaultBranch: string;
   htmlUrl: string;
@@ -103,7 +101,7 @@ export function GitRepositorySelect({
           disabled={disabled || (loading && repositories.length === 0)}
         >
           <span className="truncate">
-            {value ? value.fullName : (placeholder ?? t("service.source.form.repository.placeholder"))}
+            {value ? `${value.owner}/${value.name}` : (placeholder ?? t("service.source.form.repository.placeholder"))}
           </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -123,12 +121,11 @@ export function GitRepositorySelect({
               {repositories.map((repo) => (
                 <CommandItem
                   key={repo.id}
-                  value={repo.fullName}
+                  value={`${repo.owner}/${repo.name}`}
                   onSelect={() => {
                     onChange?.({
                       id: repo.id,
                       name: repo.name,
-                      fullName: repo.fullName,
                       owner: repo.owner,
                       defaultBranch: repo.defaultBranch,
                       htmlUrl: repo.htmlUrl,
@@ -137,7 +134,7 @@ export function GitRepositorySelect({
                   }}
                   className="flex w-full items-center justify-between gap-2"
                 >
-                  <span className="truncate">{repo.fullName}</span>
+                  <span className="truncate">{`${repo.owner}/${repo.name}`}</span>
                   <Check
                     className={cn(
                       "h-4 w-4 shrink-0",

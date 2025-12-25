@@ -46,7 +46,7 @@ const GET_SERVICE_QUERY = graphql(`
       path
       port
     }
-    gitSource {
+    source {
       provider {
         id
       }

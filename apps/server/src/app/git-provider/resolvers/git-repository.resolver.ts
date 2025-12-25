@@ -1,6 +1,6 @@
 import { Args, Parent, ResolveField, Resolver } from '@nest-boot/graphql';
 
-import { GitProviderService } from '../git-provider.service';
+import { GitProviderService } from '../services/git-provider.service';
 import { GitRepository } from '../objects/git-repository.object';
 
 @Resolver(() => GitRepository)
@@ -18,7 +18,7 @@ export class GitRepositoryResolver {
     const workspace = repository.workspace.getEntity();
     const provider = repository.provider.getEntity();
 
-    const branches = await this.gitProviderService.listBranches(
+    const branches = await this.gitProviderService.getBranches(
       workspace.id,
       provider.id,
       repository.owner,

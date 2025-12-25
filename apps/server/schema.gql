@@ -228,7 +228,7 @@ input EnvironmentVariableInput {
 }
 
 type GitProvider {
-  authorized: Boolean!
+  authorization: GitProviderAuthorization
   createdAt: DateTime!
   id: ID!
   name: String!
@@ -238,6 +238,13 @@ type GitProvider {
 
   """Base URL (e.g., https://github.com or https://gitlab.com)"""
   url: String!
+}
+
+type GitProviderAuthorization {
+  createdAt: DateTime!
+  id: ID!
+  member: WorkspaceMember!
+  workspace: Workspace!
 }
 
 type GitProviderConnection {
@@ -293,34 +300,10 @@ type GitRepository {
   branches(search: String): [String!]!
   cloneUrl: String!
   defaultBranch: String!
-  fullName: String!
   htmlUrl: String!
   id: ID!
   name: String!
   owner: String!
-}
-
-"""Git source configuration for a service"""
-type GitSource {
-  branch: String!
-  owner: String!
-
-  """Subdirectory path within the repository"""
-  path: String
-  provider: GitProvider!
-  repo: String!
-}
-
-input GitSourceInput {
-  branch: String!
-  owner: String!
-
-  """Subdirectory path within the repository"""
-  path: String
-
-  """GitProvider ID"""
-  providerId: ID!
-  repo: String!
 }
 
 """Health check configuration for a service"""
@@ -628,9 +611,6 @@ type Service {
   ): DomainConnection!
   environmentVariables: [EnvironmentVariable!]!
 
-  """Git source configuration for source code"""
-  gitSource: GitSource
-
   """
   Health check configuration applied to liveness, readiness, and startup probes
   """
@@ -642,6 +622,9 @@ type Service {
   ports: [ServicePort!]!
   project: Project!
   resourceLimits: ResourceLimits!
+
+  """Source configuration for source code"""
+  source: ServiceSource
   status: ServiceStatus!
   updatedAt: DateTime!
   volumes(
@@ -746,6 +729,29 @@ enum ServicePortProtocol {
   UDP
 }
 
+"""Source configuration for a service"""
+type ServiceSource {
+  authorization: GitProviderAuthorization
+  branch: String!
+  owner: String!
+
+  """Subdirectory path within the repository"""
+  path: String
+  provider: GitProvider!
+  repo: String!
+}
+
+input ServiceSourceInput {
+  """GitProviderAuthorization ID"""
+  authorizationId: ID!
+  branch: String!
+  owner: String!
+
+  """Subdirectory path within the repository"""
+  path: String
+  repo: String!
+}
+
 enum ServiceStatus {
   BUILDING
   DEPLOYING
@@ -776,11 +782,11 @@ input UpdateProjectInput {
 input UpdateServiceInput {
   description: String
   environmentVariables: [EnvironmentVariableInput!]
-  gitSource: GitSourceInput
   healthCheck: HealthCheckInput
   image: ImageInput
   ports: [ServicePortInput!]
   resourceLimits: ResourceLimitsInput
+  source: ServiceSourceInput
 }
 
 input UpdateVolumeInput {

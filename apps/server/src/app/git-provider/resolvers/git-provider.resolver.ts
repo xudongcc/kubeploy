@@ -17,8 +17,9 @@ import {
   GitProviderConnection,
   GitProviderConnectionArgs,
 } from '../git-provider.connection-definition';
+import { GitProviderAuthorization } from '../entities/git-provider-authorization.entity';
 import { GitProvider } from '../entities/git-provider.entity';
-import { GitProviderService } from '../git-provider.service';
+import { GitProviderService } from '../services/git-provider.service';
 import { GitRepository } from '../objects/git-repository.object';
 
 @Resolver(() => GitProvider)
@@ -44,14 +45,14 @@ export class GitProviderResolver {
   }
 
   /**
-   * Check if workspace has authorized this GitProvider
+   * Get the authorization for this GitProvider in the current workspace
    */
-  @ResolveField(() => Boolean)
-  async authorized(
+  @ResolveField(() => GitProviderAuthorization, { nullable: true })
+  async authorization(
     @Parent() gitProvider: GitProvider,
     @CurrentWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
-    return await this.gitProviderService.isAuthorized(
+  ): Promise<GitProviderAuthorization | null> {
+    return await this.gitProviderService.getAuthorization(
       workspace.id,
       gitProvider.id,
     );
@@ -68,7 +69,7 @@ export class GitProviderResolver {
     @Args('perPage', { type: () => Int, nullable: true }) perPage?: number,
     @Args('search', { nullable: true }) search?: string,
   ): Promise<GitRepository[]> {
-    const result = await this.gitProviderService.listRepositories(
+    const result = await this.gitProviderService.getRepositories(
       workspace.id,
       gitProvider.id,
       page,
@@ -81,7 +82,6 @@ export class GitProviderResolver {
       workspace: ref(workspace),
       provider: ref(gitProvider),
       name: repo.name,
-      fullName: repo.fullName,
       owner: repo.owner,
       defaultBranch: repo.defaultBranch,
       cloneUrl: repo.cloneUrl,
@@ -99,7 +99,7 @@ export class GitProviderResolver {
     @Args('owner') owner: string,
     @Args('repo') repo: string,
   ): Promise<GitRepository | null> {
-    const result = await this.gitProviderService.listRepositories(
+    const result = await this.gitProviderService.getRepositories(
       workspace.id,
       gitProvider.id,
       1,
@@ -120,7 +120,6 @@ export class GitProviderResolver {
       workspace: ref(workspace),
       provider: ref(gitProvider),
       name: foundRepo.name,
-      fullName: foundRepo.fullName,
       owner: foundRepo.owner,
       defaultBranch: foundRepo.defaultBranch,
       cloneUrl: foundRepo.cloneUrl,

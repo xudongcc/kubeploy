@@ -1,7 +1,8 @@
 import { EntityManager } from '@mikro-orm/postgresql';
 import { AuthModule } from '@nest-boot/auth';
-import { RequestContext } from '@nest-boot/request-context';
+import { REQUEST, RequestContext } from '@nest-boot/request-context';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 
 import { Account } from '@/auth/entities/account.entity';
 import { Session } from '@/auth/entities/session.entity';
@@ -48,9 +49,11 @@ const AuthDynamicModule = AuthModule.forRootAsync({
       session: Session,
       verification: Verification,
     },
-    onAuthenticated: async ({ req, res }) => {
-      const user: User | undefined = res.locals.user;
-      const workspaceId = req.headers['x-workspace-id'];
+    onAuthenticated: async () => {
+      const user = RequestContext.get(User);
+      const request = RequestContext.get<Request>(REQUEST);
+
+      const workspaceId = request?.headers['x-workspace-id'];
 
       if (user && typeof workspaceId === 'string') {
         const workspaceMember = await em.findOne(
@@ -68,9 +71,6 @@ const AuthDynamicModule = AuthModule.forRootAsync({
           const workspace = workspaceMember.workspace.getEntity();
 
           if (workspace) {
-            res.locals.workspace = workspace;
-            res.locals.workspaceMember = workspaceMember;
-
             RequestContext.set(Workspace, workspace);
             RequestContext.set(WorkspaceMember, workspaceMember);
           }

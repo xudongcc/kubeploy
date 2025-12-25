@@ -1,90 +1,202 @@
-import { Octokit } from '@octokit/rest';
+import { BadRequestException } from '@nestjs/common';
 
+import { GitProviderAccount } from '../entities/git-provider-account.entity';
+import { GitProvider } from '../entities/git-provider.entity';
 import {
   GitBranch,
+  GitProviderDriver,
   GitRepository,
-  IGitProviderDriver,
 } from '../interfaces/git-provider-driver.interface';
+import { GitProviderTokens } from '../interfaces/git-provider-tokens.interface';
+import { GitProviderUserInfo } from '../interfaces/git-provider-user-info.interface';
 
-export class GitHubDriver implements IGitProviderDriver {
-  private readonly client: Octokit;
+export class GitHubGitProviderDriver implements GitProviderDriver {
+  constructor(private readonly gitProvider: GitProvider) {}
 
-  constructor(
-    private readonly accessToken: string,
-    private readonly apiUrl: string,
-  ) {
-    this.client = new Octokit({
-      auth: accessToken,
-      baseUrl: apiUrl,
-    });
+  private get baseUrl(): string {
+    return this.gitProvider.url;
   }
 
-  async listRepositories(
+  private get apiUrl(): string {
+    // GitHub Enterprise uses /api/v3, github.com uses api.github.com
+    if (this.baseUrl === 'https://github.com') {
+      return 'https://api.github.com';
+    }
+    return `${this.baseUrl}/api/v3`;
+  }
+
+  buildAuthUrl(clientId: string, redirectUri: string, state: string): string {
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: 'repo,read:user',
+      state,
+    });
+    return `${this.baseUrl}/login/oauth/authorize?${params.toString()}`;
+  }
+
+  async exchangeCode(
+    clientId: string,
+    clientSecret: string,
+    code: string,
+    redirectUri: string,
+  ): Promise<GitProviderTokens> {
+    const response = await fetch(`${this.baseUrl}/login/oauth/access_token`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+        redirect_uri: redirectUri,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new BadRequestException(
+        data.error_description || 'Failed to exchange code',
+      );
+    }
+
+    return {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresAt: data.expires_in
+        ? new Date(Date.now() + data.expires_in * 1000)
+        : undefined,
+    };
+  }
+
+  async getUserInfo(accessToken: string): Promise<GitProviderUserInfo> {
+    const response = await fetch(`${this.apiUrl}/user`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new BadRequestException('Failed to get user info from GitHub');
+    }
+
+    const data = await response.json();
+    return { id: String(data.id) };
+  }
+
+  async getRepositories(
+    account: GitProviderAccount,
     page = 1,
     perPage = 30,
     search?: string,
   ): Promise<{ repositories: GitRepository[]; totalCount: number }> {
     if (search) {
-      // Use search API for filtering
-      const { data } = await this.client.search.repos({
+      const params = new URLSearchParams({
         q: `${search} user:@me`,
-        page,
-        per_page: perPage,
+        page: page.toString(),
+        per_page: perPage.toString(),
       });
 
+      const response = await fetch(
+        `${this.apiUrl}/search/repositories?${params.toString()}`,
+        {
+          headers: this.getHeaders(account),
+        },
+      );
+
+      if (!response.ok) {
+        throw new BadRequestException('Failed to search repositories');
+      }
+
+      const data = await response.json();
       return {
-        repositories: data.items.map((repo) => this.mapRepository(repo)),
+        repositories: data.items.map((repo: GitHubRepo) =>
+          this.mapRepository(repo),
+        ),
         totalCount: data.total_count,
       };
     }
 
-    // List all repositories for authenticated user
-    const { data } = await this.client.repos.listForAuthenticatedUser({
-      page,
-      per_page: perPage,
+    const params = new URLSearchParams({
+      page: page.toString(),
+      per_page: perPage.toString(),
       sort: 'updated',
     });
 
+    const response = await fetch(
+      `${this.apiUrl}/user/repos?${params.toString()}`,
+      {
+        headers: this.getHeaders(account),
+      },
+    );
+
+    if (!response.ok) {
+      throw new BadRequestException('Failed to list repositories');
+    }
+
+    const data = await response.json();
     return {
-      repositories: data.map((repo) => this.mapRepository(repo)),
+      repositories: data.map((repo: GitHubRepo) => this.mapRepository(repo)),
       totalCount: data.length,
     };
   }
 
-  async getRepository(owner: string, repo: string): Promise<GitRepository> {
-    const { data } = await this.client.repos.get({ owner, repo });
+  async getRepository(
+    account: GitProviderAccount,
+    owner: string,
+    repo: string,
+  ): Promise<GitRepository> {
+    const response = await fetch(`${this.apiUrl}/repos/${owner}/${repo}`, {
+      headers: this.getHeaders(account),
+    });
+
+    if (!response.ok) {
+      throw new BadRequestException('Failed to get repository');
+    }
+
+    const data = await response.json();
     return this.mapRepository(data);
   }
 
-  async listBranches(owner: string, repo: string): Promise<GitBranch[]> {
-    const { data } = await this.client.repos.listBranches({
-      owner,
-      repo,
-      per_page: 100,
-    });
+  async getBranches(
+    account: GitProviderAccount,
+    owner: string,
+    repo: string,
+  ): Promise<GitBranch[]> {
+    const response = await fetch(
+      `${this.apiUrl}/repos/${owner}/${repo}/branches?per_page=100`,
+      {
+        headers: this.getHeaders(account),
+      },
+    );
 
-    return data.map((branch) => ({
+    if (!response.ok) {
+      throw new BadRequestException('Failed to list branches');
+    }
+
+    const data = await response.json();
+    return data.map((branch: GitHubBranch) => ({
       name: branch.name,
       sha: branch.commit.sha,
       protected: branch.protected,
     }));
   }
 
-  private mapRepository(repo: {
-    id: number;
-    name: string;
-    full_name: string;
-    owner: { login: string } | null;
-    description: string | null;
-    default_branch: string;
-    private: boolean;
-    clone_url: string;
-    html_url: string;
-  }): GitRepository {
+  private getHeaders(account: GitProviderAccount): Record<string, string> {
+    return {
+      Accept: 'application/vnd.github.v3+json',
+      Authorization: `Bearer ${account.accessToken}`,
+    };
+  }
+
+  private mapRepository(repo: GitHubRepo): GitRepository {
     return {
       id: repo.id.toString(),
       name: repo.name,
-      fullName: repo.full_name,
       owner: repo.owner?.login ?? '',
       description: repo.description,
       defaultBranch: repo.default_branch,
@@ -93,4 +205,21 @@ export class GitHubDriver implements IGitProviderDriver {
       htmlUrl: repo.html_url,
     };
   }
+}
+
+interface GitHubRepo {
+  id: number;
+  name: string;
+  owner: { login: string } | null;
+  description: string | null;
+  default_branch: string;
+  private: boolean;
+  clone_url: string;
+  html_url: string;
+}
+
+interface GitHubBranch {
+  name: string;
+  commit: { sha: string };
+  protected: boolean;
 }
